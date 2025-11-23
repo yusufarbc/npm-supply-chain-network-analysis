@@ -44,15 +44,39 @@ result = run_pipeline(
 )
 ```
 
-### 🔄 Ağ Genişletme Modu (Dependent Paketler)
+### 🔄 İki Farklı Genişletme Modu
 
-**Varsayılan:** Sadece Top N paketlerin dependencies'leri eklenir.
-
-**Genişletme ile:** Top N'e bağımlı olan (dependent) paketler de network'e dahil edilir:
+#### **Mod 1: Dependencies Zincirleme (depth parametresi)**
+**Yön:** İleri → Paketlerin bağımlılıklarını takip et
 
 ```python
 result = run_pipeline(
-    top_n=2000,                         # Top 2K paket (max limit)
+    top_n=1000,
+    depth=2,                  # 🆕 İkinci kademe dependencies
+    results_dir="../results"
+)
+```
+
+**Çalışma Mantığı:**
+```
+Kademe 0: [react, lodash, webpack] (Top 1000)
+    ↓ (dependencies)
+Kademe 1: [prop-types, scheduler, ...] (~3K paket)
+    ↓ (dependencies)  <-- depth=2 ile bu kademe eklenir
+Kademe 2: [object-assign, fbjs, ...] (~8K paket)
+```
+
+**Veri Kaynağı:** NPM Registry (sınırsız, hızlı)
+**Sonuç:** depth=1 → ~3K-5K düğüm, depth=2 → ~8K-15K düğüm
+
+---
+
+#### **Mod 2: Dependents Genişletme (expand_with_dependents)**
+**Yön:** Geri ← Kim bu paketleri kullanıyor?
+
+```python
+result = run_pipeline(
+    top_n=2000,                         # Max 2000 (ecosyste.ms limiti)
     expand_with_dependents=True,        # 🆕 Dependent paketleri de ekle
     max_packages_to_expand=500,         # İlk 500 paket için dependent çek
     max_dependents_per_package=20,      # Her paket için max 20 dependent
@@ -60,17 +84,68 @@ result = run_pipeline(
 )
 ```
 
-**Ne değişir:**
-- Top N → Dependencies (normal)
-- **+** Top N'e bağımlı olanlar (dependents) → node olarak eklenir
-- **+** Bu dependent paketlerin dependencies'i de çekilir
+**Çalışma Mantığı:**
+```
+Top N: [react, lodash, ...]
+    ↑ (kim kullanıyor?)  <-- Libraries.io API
+Dependents: [gatsby, next, create-react-app, ...]
+    ↓ (dependencies)  <-- Bu paketlerin bağımlılıkları da eklenir
+Network genişler: ~15K-30K düğüm
+```
 
-**Sonuç:** Ağ çok daha büyük olur (örn. Top 2K + genişletme → ~15K-30K düğüm)
+**Veri Kaynağı:** Libraries.io API (rate limited ~60/dk, yavaş)
+**Sonuç:** Ağ çok daha büyük, dependent ilişkileri görünür
 
-⚠️ **Önemli Limitler:**
-- **ecosyste.ms / npmleaderboard:** Max **2000** paket sağlar (`top_n` üst limit)
-- **Libraries.io API:** Rate limit var (~60/dakika)
-- **Öneri:** `max_packages_to_expand=500-1000`, `max_dependents_per_package=20`
+---
+
+**Karşılaştırma:**
+
+| Özellik | depth=N | expand_with_dependents |
+|---------|---------|------------------------|
+| **Yön** | İleri (→) | Geri (←) + İleri |
+| **Soru** | "Ne kullanıyor?" | "Kim kullanıyor?" |
+| **API** | NPM Registry | Libraries.io + NPM |
+| **Hız** | Hızlı | Yavaş (rate limit) |
+| **Boyut** | Kontrollü | Çok büyür |
+| **Öneri** | depth=1-2 yeterli | Özel analizler için |
+
+⚠️ **Önemli Limitler ve Veri Kaynakları:**
+
+**1. ecosyste.ms / npmleaderboard (Sadece İlk Liste):**
+- Max **2000** paket → Bu sadece **Kademe 0** (başlangıç seed listesi) içindir
+- `top_n` parametresi için üst limit
+- **DİKKAT:** Bu limit tüm graf için değil, sadece ilk Top N seçimi için!
+
+**2. NPM Registry (Dependencies - Sınırsız):**
+- Her paket için `package.json` çeker
+- Kademe 1, 2, 3... için **sınırsız** bağımlılık çekebilir
+- `depth` parametresi ile kontrol edilir (varsayılan: 1 kademe)
+
+**3. Libraries.io API (Dependents - Rate Limited):**
+- Rate limit: ~60 istek/dakika
+- **Sadece** `expand_with_dependents=True` iken kullanılır
+- Öneri: `max_packages_to_expand=500-1000`, `max_dependents_per_package=20`
+
+**depth Parametresi Nasıl Çalışır:**
+```
+depth=1 (varsayılan):
+  Kademe 0: Top N (örn: 1000)           [ecosyste.ms]
+  Kademe 1: Dependencies (0 → 1)        [NPM Registry]
+  Toplam: ~3K-5K düğüm
+
+depth=2:
+  Kademe 0: Top N                       [ecosyste.ms]
+  Kademe 1: Dependencies (0 → 1)        [NPM Registry]
+  Kademe 2: Dependencies (1 → 2)        [NPM Registry]
+  Toplam: ~8K-15K düğüm
+
+depth=7:
+  Kademe 0: Top N                       [ecosyste.ms]
+  Kademe 1-7: Dependencies zincirleme   [NPM Registry - sınırsız]
+  Toplam: ~50K-100K düğüm (tehlikeli!)
+```
+
+**Öneri:** `depth=1` yeterlidir, `depth=2` analiz için makul, `depth>3` önerilmez (hesaplama patlaması)
 
 **Bu tek hücre tüm pipeline'ı çalıştırır:**
 1. ✅ Top N paket listesini çeker (max 2000 - ecosyste.ms limiti)

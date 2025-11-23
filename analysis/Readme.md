@@ -14,22 +14,52 @@ Yazılım tedarik zincirinde kritiklik haritalaması: NPM ekosisteminin topoloji
 
 ## 📊 Veri Kaynağı
 
-### Ana Kaynak: ecosyste.ms API
-- **URL:** `https://packages.ecosyste.ms/api/v1/registries/npmjs.org/package_names`
-- **Limit:** Per page max 1000, sayfalama ile 10K+ paket çekilebilir
-- **Sıralama:** İndirme sayısına göre (downloads DESC)
-- **Alternatifler:** npm registry search API, npms.io (yedek olarak)
+### Üç Farklı Veri Kaynağı ve Limitleri
 
-### Bağımlılık Verisi
-- **Kaynak:** NPM Registry (`https://registry.npmjs.org/{package}`)
+#### 1. ecosyste.ms API (Sadece Kademe 0 - İlk Seed List)
+- **URL:** `https://packages.ecosyste.ms/api/v1/registries/npmjs.org/package_names`
+- **Limit:** Max **2000 paket** → Bu limit **SADECE** başlangıç listesi (Kademe 0) için!
+- **Kullanım:** `top_n` parametresi (max 2000)
+- **Sıralama:** İndirme sayısına göre (downloads DESC)
+- **Örnek:** `top_n=1000` → ecosyste.ms'den 1000 paket çeker (Kademe 0)
+
+**ÖNEMLİ:** Bu 2000 limiti tüm graf için değil, sadece Top N seçimi için geçerlidir!
+
+#### 2. NPM Registry (Kademe 1, 2, 3... - Sınırsız Dependencies)
+- **URL:** `https://registry.npmjs.org/{package}`
+- **Limit:** **Sınırsız!** Her paket için bağımlılık çekilebilir
+- **Kullanım:** `depth` parametresi ile kontrol edilir
 - **Versiyon:** Latest tag veya en güncel versiyon
 - **Alan:** `dependencies` (opsiyonel: `peerDependencies`)
 - **Önbellek:** `results/cache_deps.json` (tekrar sorguları önler)
 
-### Dependent (Bağımlı) Verisi (Genişletme Modu)
-- **Kaynak:** Libraries.io API (`https://libraries.io/api/npm/{package}/dependents`)
-- **Rate Limit:** ~60 istek/dakika (API key olmadan)
+**depth Parametresi Nasıl Çalışır:**
+```
+top_n=1000, depth=1:
+  Kademe 0: 1000 paket (ecosyste.ms - max 2000)
+  Kademe 1: ~3K-5K paket (NPM Registry - sınırsız)
+  Toplam: ~4K-6K düğüm
+
+top_n=1000, depth=2:
+  Kademe 0: 1000 paket (ecosyste.ms - max 2000)
+  Kademe 1: ~3K-5K paket (NPM Registry - sınırsız)
+  Kademe 2: ~8K-15K paket (NPM Registry - sınırsız)
+  Toplam: ~12K-20K düğüm
+
+top_n=1000, depth=7:
+  Kademe 0: 1000 paket (ecosyste.ms - max 2000)
+  Kademe 1-7: ~50K-100K paket (NPM Registry - sınırsız)
+  Toplam: ~50K-100K düğüm (!!!) - Önerilmez
+```
+
+**Sonuç:** 1000 paket ile depth=7 → 10K-50K düğüm mümkündür!
+
+#### 3. Libraries.io API (Dependents - Rate Limited)
+- **URL:** `https://libraries.io/api/npm/{package}/dependents`
+- **Limit:** Rate limited (~60 istek/dakika)
 - **Kullanım:** `expand_with_dependents=True` parametresi ile aktif edilir
+- **Yön:** Ters bağımlılık (kim bu paketi kullanıyor?)
+- **Özellik:** Yavaş ama dependent ilişkilerini gösterir
 
 ## 📁 İçerik
 
@@ -50,21 +80,25 @@ Analiz pipeline'ı şu adımlardan oluşur:
 ┌─────────────────────────────────────────────┐
 │  1. Top N Paket Listesi (ecosyste.ms API)  │
 │     • İndirme sayısına göre sıralı          │
-│     • Varsayılan: Top 1000                  │
+│     • MAX 2000 paket (Kademe 0 seed list)   │
+│     • Bu limit SADECE ilk liste için!       │
 └──────────────────┬──────────────────────────┘
                    ↓
 ┌─────────────────────────────────────────────┐
 │  2. Dependencies Çekme (NPM Registry)       │
 │     • Her paket için package.json al        │
-│     • dependencies alanını parse et         │
+│     • depth parametresi ile kademe kontrolü │
+│     • Kademe 1, 2, ... SINIRSIZ çekilir    │
 │     • Cache ile tekrar sorguları önle       │
 └──────────────────┬──────────────────────────┘
                    ↓
 ┌─────────────────────────────────────────────┐
 │  3. Yönlü Graf Oluşturma (NetworkX)         │
 │     • Kenar: Dependent → Dependency         │
-│     • Top 1000 + dependencies = 1200-1500   │
-│     • In-degree = kaç paket ona bağımlı    │
+│     • Düğüm sayısı depth'e göre değişir:    │
+│       - depth=1: ~3K-5K düğüm              │
+│       - depth=2: ~8K-15K düğüm             │
+│       - depth=7: ~50K-100K düğüm (!!!)     │
 └──────────────────┬──────────────────────────┘
                    ↓
 ┌─────────────────────────────────────────────┐
@@ -88,11 +122,22 @@ Analiz pipeline'ı şu adımlardan oluşur:
 └─────────────────────────────────────────────┘
 ```
 
-**Beklenen Sonuçlar:**
-- **Düğüm:** ~1200-1500 (Top 1000 + dependencies)
-- **Kenar:** ~2000-4000 (bağımlılık ilişkileri)
-- **Süre:** 2-3 dakika (cache varsa 10 saniye)
-- **Kritik paketler:** In-degree yüksek olanlar (örn: tslib, lodash)
+**Beklenen Sonuçlar (depth parametresine göre):**
+
+| top_n | depth | Düğüm | Kenar | Süre | Açıklama |
+|-------|-------|-------|-------|------|----------|
+| 1000 | 1 | ~3K-5K | ~8K-12K | 2-3 dk | **Önerilen** (temel analiz) |
+| 1000 | 2 | ~8K-15K | ~25K-40K | 5-10 dk | Orta analiz |
+| 1000 | 3 | ~20K-35K | ~80K-120K | 15-30 dk | Derin analiz |
+| 1000 | 7 | ~50K-100K | ~200K+ | 1-2 saat | **Önerilmez** (patlama!) |
+| 2000 | 1 | ~6K-10K | ~15K-25K | 5-8 dk | Max seed (ecosyste.ms limiti) |
+
+**Kritik Paketler:** In-degree yüksek olanlar (örn: tslib, lodash, react)
+
+**DİKKAT:** 
+- ecosyste.ms'in 2000 limiti **sadece Kademe 0** içindir
+- Kademe 1, 2, 3... NPM Registry'den **sınırsız** çekilir
+- depth > 2 önerilmez (exponansiyel büyüme)
 
 ## ⚠️ Teknik Zorluklar ve Sınırlamalar
 
@@ -232,28 +277,80 @@ result = run_pipeline(
 7. ✅ Görselleştirmeleri oluşturur (PNG+SVG)
 8. ✅ LaTeX tabloları hazırlar
 
-## 🔄 1. Basamak Genişletme (Dependent Paketler)
+## 🔄 İki Tür Ağ Genişletme
 
-### Standart Mod (Varsayılan)
-```
-Top N Paketler
-    ↓ (dependencies)
-N'in Bağımlılıkları
-```
-**Örnek:** Top 1000 → ~3K-5K düğüm
+### 📌 Temel Fark: depth vs expand_with_dependents
 
-### Genişletme Modu 🆕
+| Özellik | **depth=N** | **expand_with_dependents=True** |
+|---------|-------------|----------------------------------|
+| **Yön** | İleri (→) | Geri (←) + İleri |
+| **Soru** | "Bu paket neye bağımlı?" | "Kim bu paketi kullanıyor?" |
+| **API** | NPM Registry | Libraries.io + NPM Registry |
+| **Limit** | **Sınırsız** (NPM Registry) | Rate limited (~60/dk) |
+| **2000 Limiti** | **Sadece Kademe 0 için** | **Sadece Kademe 0 için** |
+| **Hız** | Hızlı (2-10 dk) | Yavaş (30 dk - 2 saat) |
+| **Düğüm Artışı** | Kontrollü (exponansiyel) | Çok büyük (dependent sayısına bağlı) |
+| **Kullanım** | **Varsayılan - önerilir** | Özel analiz (dependent haritası) |
+
+---
+
+### Mod 1: Dependencies Zincirleme (depth parametresi) **[ÖNERİLEN]**
+
+**Yön:** İleri → "Bu paket neye bağımlı?"
+
 ```
-Top N Paketler
-    ↓ (dependencies)
-N'in Bağımlılıkları
-    ↑ (dependents - kim kullanıyor?)
-Top N'e Bağımlı Olanlar
-    ↓ (dependencies)
-Dependent'ların Bağımlılıkları
+Kademe 0: [react, lodash, webpack] (Top 1000 - ecosyste.ms)
+    ↓ (dependencies - NPM Registry)
+Kademe 1: [prop-types, scheduler, ...] (~3K paket - SINIRSIZ)
+    ↓ (dependencies - depth=2 ile)
+Kademe 2: [object-assign, fbjs, ...] (~8K paket - SINIRSIZ)
+    ↓ (depth=3 ile)
+Kademe 3: [...] (~20K paket - SINIRSIZ)
 ```
 
-**Örnek:** Top 1000 (ilk 500'ü genişlet) → ~8K-15K düğüm
+**Örnek:**
+```python
+result = run_pipeline(
+    top_n=1000,     # ecosyste.ms'den Top 1000 (Kademe 0)
+    depth=2,        # Kademe 1 + Kademe 2 dependencies çek
+)
+# Kademe 0: 1000 paket (ecosyste.ms limiti)
+# Kademe 1: ~3K paket (NPM Registry - sınırsız)
+# Kademe 2: ~8K paket (NPM Registry - sınırsız)
+# Toplam: ~12K düğüm
+```
+
+**Veri Kaynağı:** NPM Registry (sınırsız, hızlı)
+**2000 Limiti:** Sadece Kademe 0 seed list için geçerli, Kademe 1+ sınırsız!
+
+---
+
+### Mod 2: Dependents Genişletme (expand_with_dependents) **[ÖZEL KULLANIM]**
+
+**Yön:** Geri (←) + İleri → "Kim bu paketi kullanıyor?"
+
+```
+Top N Paketler: [react, lodash, ...]
+    ↑ (kim kullanıyor? - Libraries.io API)
+Dependents: [gatsby, next, create-react-app, ...]
+    ↓ (dependencies - NPM Registry)
+Dependent'ların Bağımlılıkları: [...]
+```
+
+**Örnek:**
+```python
+result = run_pipeline(
+    top_n=2000,                      # Max 2000 (ecosyste.ms limiti)
+    expand_with_dependents=True,     # 🆕 Dependent ekleme AÇIK
+    max_packages_to_expand=500,      # İlk 500 paket için dependent çek
+    max_dependents_per_package=20,   # Her paket için max 20 dependent
+)
+# Top 2000 + her birinin 20 dependent + dependent'ların deps
+# Toplam: ~15K-30K düğüm
+```
+
+**Veri Kaynağı:** Libraries.io API (rate limited, yavaş)
+**Sonuç:** Ağ çok büyür, dependent ilişkileri görünür
 
 ### Nasıl Çalışır?
 
@@ -299,16 +396,33 @@ result = run_pipeline(
 - **2000 paket × 50 dependent** = 100K API çağrısı = **28+ saat!** 😱
 - **Çözüm:** `max_packages_to_expand` ve `max_dependents_per_package` ile kontrol
 
-### Önerilen Ayarlar:
+### Önerilen Ayarlar (depth vs expand_with_dependents):
 
-| Senaryo | top_n | max_expand | max_deps | Süre | Düğüm Sayısı |
-|---------|-------|------------|----------|------|--------------|
-| **Test** | 100 | 50 | 10 | 5 dk | ~800-1200 |
-| **Küçük Analiz** | 500 | 200 | 15 | 20 dk | ~3K-6K |
-| **Orta Analiz** | 1000 | 500 | 20 | 60 dk | ~8K-15K |
-| **Büyük Analiz** | 2000 | 1000 | 20 | 2-3 saat | ~15K-30K |
+#### 🚀 Standart Analiz (depth parametresi - Önerilen)
 
-⚠️ **Önemli:** npmleaderboard.org max 2000 paket gösterir, bu nedenle `top_n=2000` üst limittir.
+| Senaryo | top_n | depth | Süre | Düğüm | Kenar | Açıklama |
+|---------|-------|-------|------|-------|-------|----------|
+| **Test** | 100 | 1 | 1 dk | ~500-800 | ~1K-2K | Hızlı test |
+| **Küçük** | 500 | 1 | 2 dk | ~2K-3K | ~5K-8K | Temel analiz |
+| **Orta** | 1000 | 1 | 3-5 dk | ~3K-5K | ~8K-12K | **Önerilen** |
+| **Derin** | 1000 | 2 | 8-15 dk | ~8K-15K | ~25K-40K | İleri analiz |
+| **Max Seed** | 2000 | 1 | 5-8 dk | ~6K-10K | ~15K-25K | ecosyste.ms max |
+| ⚠️ **Patlama** | 1000 | 7 | 1-2 saat | ~50K-100K | ~200K+ | **Önerilmez!** |
+
+#### 🔬 Dependent Genişletme (expand_with_dependents - Özel)
+
+| Senaryo | top_n | max_expand | max_deps | Süre | Düğüm | Açıklama |
+|---------|-------|------------|----------|------|-------|----------|
+| **Test** | 100 | 50 | 10 | 5-10 dk | ~800-1200 | Dependent test |
+| **Küçük** | 500 | 200 | 15 | 20-30 dk | ~3K-6K | Dependent analiz |
+| **Orta** | 1000 | 500 | 20 | 1-1.5 saat | ~8K-15K | Dependent haritası |
+| **Büyük** | 2000 | 1000 | 20 | 2-3 saat | ~15K-30K | Tam dependent ağ |
+
+⚠️ **ÖNEMLİ:** 
+- **ecosyste.ms limiti (2000):** Sadece **Kademe 0** (başlangıç seed listesi) için!
+- **NPM Registry:** Kademe 1, 2, 3... için **sınırsız** bağımlılık çekebilir
+- **depth parametresi:** Sınırsız kademe çeker, ama exponansiyel büyüme nedeniyle depth>2 önerilmez
+- **expand_with_dependents:** Libraries.io rate limit nedeniyle yavaş, özel kullanım için
 
 ## 📦 Çıktılar
 
