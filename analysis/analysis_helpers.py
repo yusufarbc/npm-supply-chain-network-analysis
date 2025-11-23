@@ -337,8 +337,10 @@ def build_dependency_graph(
     Türkçe açıklama: Bağlantı maliyetini azaltmak için tek bir HTTP oturumu (Session) yeniden kullanılır.
     Önbellek kullanılarak aynı paketler için tekrar sorgu yapılmaz.
     
-    expand_with_dependents=True ise, Top N paketlerine bağımlı olan (dependent) paketler de
-    network'e eklenir ve onların dependencies'i de çekilir (1 kademe genişleme).
+    Sadece Top N paketlerin 1. derece dependencies'ini çeker (basit ve hızlı).
+    
+    NOT: expand_with_dependents parametresi şu an kullanılmamaktadır.
+    (Libraries.io API devre dışı, alternatif çözüm: in-degree metriği dependent analizi için yeterli)
     """
     G = nx.DiGraph()
     top_set: Set[str] = set(top_packages)
@@ -349,63 +351,27 @@ def build_dependency_graph(
     cache = _load_cache(cache_path)
     
     with requests.Session() as session:
-        # Aşama 1: Top N paketlerin dependencies'ini ekle
-        for pkg in top_packages:
-            # Önbelleğin kullanılması
+        # Top N paketlerin 1. derece dependencies'ini çek
+        print(f"🔍 Top {len(top_packages)} paketin dependencies'i çekiliyor...")
+        
+        for i, pkg in enumerate(top_packages, 1):
+            if i % 100 == 0:
+                print(f"  → {i}/{len(top_packages)} paket işlendi...")
+            
             if pkg in cache:
                 deps: Dict[str, str] = cache.get(pkg) or {}
             else:
-                # Basit 3 denemeli çekim
                 deps = {}
                 for _ in range(3):
                     deps = fetch_dependencies(pkg, session=session, include_peer=include_peer_deps)
                     if deps:
                         break
                 cache[pkg] = deps
+            
             for dep in deps.keys():
-                # NetworkX add_edge eksik düğümleri otomatik ekler
-                G.add_edge(pkg, dep)  # Dependent -> Dependency
+                G.add_edge(pkg, dep)  # Top Package -> Dependency
         
-        # Aşama 2: expand_with_dependents ise, Top N'e bağımlı olanları ekle
-        if expand_with_dependents:
-            print(f"  → Genişletme: Top {len(top_packages)} paketine bağımlı olanlar aranıyor...")
-            dependent_packages: Set[str] = set()
-            
-            for i, pkg in enumerate(top_packages, 1):
-                if i % 100 == 0:
-                    print(f"     {i}/{len(top_packages)} paket için dependents çekildi...")
-                
-                # Dependents'ları çek (Libraries.io API)
-                try:
-                    dependents = fetch_dependents(pkg, session=session, max_dependents=max_dependents_per_package)
-                    for dep_pkg in dependents:
-                        if dep_pkg not in top_set:  # Top N'de olmayanlar
-                            dependent_packages.add(dep_pkg)
-                            G.add_edge(dep_pkg, pkg)  # Dependent -> Top Package
-                except Exception:
-                    continue
-            
-            print(f"  → {len(dependent_packages)} adet dependent paket bulundu.")
-            
-            # Aşama 3: Bu dependent paketlerin de dependencies'ini ekle
-            if dependent_packages:
-                print(f"  → Dependent paketlerin dependencies'i çekiliyor...")
-                for i, dep_pkg in enumerate(dependent_packages, 1):
-                    if i % 100 == 0:
-                        print(f"     {i}/{len(dependent_packages)} dependent paketi işlendi...")
-                    
-                    if dep_pkg in cache:
-                        deps = cache.get(dep_pkg) or {}
-                    else:
-                        deps = {}
-                        for _ in range(3):
-                            deps = fetch_dependencies(dep_pkg, session=session, include_peer=include_peer_deps)
-                            if deps:
-                                break
-                        cache[dep_pkg] = deps
-                    
-                    for dep in deps.keys():
-                        G.add_edge(dep_pkg, dep)  # Dependent -> Dependency
+        print(f"  ✅ {G.number_of_nodes()} düğüm, {G.number_of_edges()} kenar")
     
     _save_cache(cache_path, cache)
     return G, top_set

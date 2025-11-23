@@ -42,6 +42,146 @@ Yazılım tedarik zincirinde kritiklik haritalaması: NPM ekosisteminin topoloji
 - **`GEPHI_GUIDE.md`** — Gephi görselleştirme kılavuzu
 - Kavramsal rapor: `../academic/topolojik-risk-degerlendirmesi.md`
 
+## 🔄 Çalışma Mantığı
+
+Analiz pipeline'ı şu adımlardan oluşur:
+
+```
+┌─────────────────────────────────────────────┐
+│  1. Top N Paket Listesi (ecosyste.ms API)  │
+│     • İndirme sayısına göre sıralı          │
+│     • Varsayılan: Top 1000                  │
+└──────────────────┬──────────────────────────┘
+                   ↓
+┌─────────────────────────────────────────────┐
+│  2. Dependencies Çekme (NPM Registry)       │
+│     • Her paket için package.json al        │
+│     • dependencies alanını parse et         │
+│     • Cache ile tekrar sorguları önle       │
+└──────────────────┬──────────────────────────┘
+                   ↓
+┌─────────────────────────────────────────────┐
+│  3. Yönlü Graf Oluşturma (NetworkX)         │
+│     • Kenar: Dependent → Dependency         │
+│     • Top 1000 + dependencies = 1200-1500   │
+│     • In-degree = kaç paket ona bağımlı    │
+└──────────────────┬──────────────────────────┘
+                   ↓
+┌─────────────────────────────────────────────┐
+│  4. Metrik Hesaplama                        │
+│     • In-Degree: Etki alanı (dependent)     │
+│     • Out-Degree: Karmaşıklık (dependency)  │
+│     • Betweenness: Köprü rolü (k=200)       │
+└──────────────────┬──────────────────────────┘
+                   ↓
+┌─────────────────────────────────────────────┐
+│  5. Risk Skorlama (Min-Max Normalizasyon)   │
+│     Risk = 0.5×In + 0.2×Out + 0.3×Between   │
+│     • En kritik paketleri tespit et         │
+└──────────────────┬──────────────────────────┘
+                   ↓
+┌─────────────────────────────────────────────┐
+│  6. Export & Görselleştirme                 │
+│     • CSV: edges, metrics, risk_scores      │
+│     • Gephi: nodes.csv + edges.csv          │
+│     • PNG/SVG: Dağılım ve top N grafikleri  │
+└─────────────────────────────────────────────┘
+```
+
+**Beklenen Sonuçlar:**
+- **Düğüm:** ~1200-1500 (Top 1000 + dependencies)
+- **Kenar:** ~2000-4000 (bağımlılık ilişkileri)
+- **Süre:** 2-3 dakika (cache varsa 10 saniye)
+- **Kritik paketler:** In-degree yüksek olanlar (örn: tslib, lodash)
+
+## ⚠️ Teknik Zorluklar ve Sınırlamalar
+
+### 1. Dependent (Ters Bağımlılık) Verisinin Eksikliği
+
+**Sorun:** NPM ekosisteminde bir paketi **kimin kullandığını** (dependents) bulmak teknik olarak zordur.
+
+#### 1.1 Libraries.io API Devre Dışı
+```
+❌ https://libraries.io/api/npm/{package}/dependents
+→ {"message": "Disabled for performance reasons"}
+```
+- **Açıklama:** Libraries.io, `/dependents` endpoint'ini **performans nedeniyle kapatmış**
+- **Test Edildi:** 2025-11-23 tarihinde doğrulandı (react, lodash gibi popüler paketlerde)
+- **Etki:** 1. derece dependent verisi API üzerinden çekilemiyor
+
+#### 1.2 NPM Registry API'sinde Reverse Dependency Yok
+- NPM Registry sadece **ileri yönlü bağımlılıklar** (dependencies) sağlar
+- Bir paketi kimin kullandığını bulmak için **tüm 3.6M+ paketi taramak** gerekir
+- **Maliyet:** Kabul edilemez düzeyde yavaş ve API rate limit sorunları
+
+#### 1.3 Mevcut Çözüm: In-Degree Metriği
+✅ **Alternatif yaklaşım:** Top N paketlerin dependencies'ini çekip, her dependency'nin **in-degree** (kaç Top N paketi ona bağlı) metriğini kullanarak **dolaylı dependent analizi** yapıyoruz.
+
+**Örnek:**
+```
+react → loose-envify  (react, loose-envify'e bağımlı)
+babel → loose-envify  (babel, loose-envify'e bağımlı)
+→ loose-envify'nin in-degree = 2 (2 paket ona dependent)
+```
+
+**Sonuç:** Tam dependent verisi yerine, **in-degree metriği kritik paketleri tespit etmek için yeterli**.
+
+### 2. Ağ Boyutu ve Hesaplama Performansı
+
+#### 2.1 İkinci Kademe Dependencies Maliyeti
+- **1. Kademe:** Top 1000 paketi → ~1200-1500 düğüm, ~2000-4000 kenar
+- **2. Kademe:** + Dependencies'lerin dependencies → ~10K-50K düğüm, ~100K+ kenar
+- **Sorun:** Betweenness centrality hesabı O(n³) karmaşıklığında, büyük graflarda saatler sürebilir
+
+#### 2.2 Mevcut Çözüm: Örnekleme ve 1. Kademe Sınırı
+```python
+# Betweenness için k-node sampling
+btw = nx.betweenness_centrality(G, k=200, normalized=True)
+
+# Sadece 1. kademe dependencies (2. kademe devre dışı)
+G, top_set = build_dependency_graph(top_packages, expand_with_dependents=False)
+```
+
+### 3. API Rate Limiting ve Güvenilirlik
+
+#### 3.1 Ecosyste.ms API
+- **Limit:** Max 1000 paket/sayfa, toplam ~2000-5000 paket çekilebilir
+- **Sıralama:** İndirme sayısına göre, ancak güncel olmayabilir
+- **Sorun:** Nadir durumlarda timeout veya boş yanıt
+
+#### 3.2 NPM Registry
+- **Rate Limit:** Sınırsız (public endpoint) ama yavaş
+- **Güvenilirlik:** %99+ uptime, ama network hataları olabilir
+- **Çözüm:** 3 denemeli retry mekanizması ve local cache
+
+#### 3.3 Önbellek Stratejisi
+```python
+cache_deps.json  # Her paket için dependencies önbelleği
+→ Tekrar çalıştırmada API sorgusu yapılmaz (hızlı test)
+```
+
+### 4. Veri Kalitesi ve Tamlık
+
+#### 4.1 Deprecated ve Eski Paketler
+- **Sorun:** Top N listesinde deprecated veya bakımsız paketler olabilir
+- **Etki:** Risk analizi güncel olmayabilir
+- **Örnek:** left-pad gibi kaldırılmış paketler
+
+#### 4.2 PeerDependencies Dahil Edilmemesi
+- **Varsayılan:** Sadece `dependencies` çekiliyor
+- **İsteğe Bağlı:** `include_peer_deps=True` ile aktif edilebilir
+- **Sorun:** PeerDeps dahil edilirse graf çok büyür, gürültü artar
+
+### 5. Görselleştirme Sınırlamaları
+
+#### 5.1 Matplotlib ile Büyük Graf Çizimi
+- **Mümkün Değil:** 1000+ düğümlü grafı matplotlib'de çizmek okunaksız
+- **Çözüm:** Gephi CSV export, sadece metrik grafikleri matplotlib'de
+
+#### 5.2 Gephi Performansı
+- **10K+ düğüm:** Force Atlas 2 layout saatler sürebilir
+- **Çözüm:** Filter ile en riskli 500-1000 düğüme odaklan
+
 ## 🔧 Kurulum
 
 ### Windows PowerShell
