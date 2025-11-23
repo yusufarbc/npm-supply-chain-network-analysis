@@ -154,6 +154,7 @@
             <img src="results/plots/top20_cascade_impact.png" alt="Top 20 basamaklanma etkisi grafiği" loading="lazy" />
           </figure>
           <footer>
+            <a class="chip" href="results/plots/top20_cascade_impact.png" download><b>PNG</b> indir</a>
             <a class="chip" href="results/cascade_impact.csv" download><b>CSV</b> tam liste</a>
           </footer>
         </div>
@@ -168,6 +169,62 @@
           <footer>
             <a class="chip" href="results/plots/risk_vs_cascade.svg" download><b>SVG</b> indir</a>
             <a class="chip" href="results/plots/risk_vs_cascade.png" download><b>PNG</b> indir</a>
+          </footer>
+        </div>
+      </div>
+
+      <h2>Derece Dağılımları & Korelasyonlar</h2>
+      <div class="chart-grid">
+        <div class="chart-card">
+          <h4>Derece Histogramları</h4>
+          <figure>
+            <picture>
+              <source type="image/svg+xml" srcset="results/plots/degree_histograms.svg" />
+              <img src="results/plots/degree_histograms.png" alt="In-degree ve out-degree histogramları" loading="lazy" />
+            </picture>
+          </figure>
+          <footer>
+            <a class="chip" href="results/plots/degree_histograms.svg" download><b>SVG</b> indir</a>
+            <a class="chip" href="results/plots/degree_histograms.png" download><b>PNG</b> indir</a>
+          </footer>
+        </div>
+        <div class="chart-card">
+          <h4>Derece Dağılımı (Log-Log)</h4>
+          <figure>
+            <picture>
+              <source type="image/svg+xml" srcset="results/plots/degree_distributions.svg" />
+              <img src="results/plots/degree_distributions.png" alt="In-degree ve out-degree log-log dağılımı" loading="lazy" />
+            </picture>
+          </figure>
+          <footer>
+            <a class="chip" href="results/plots/degree_distributions.svg" download><b>SVG</b> indir</a>
+            <a class="chip" href="results/plots/degree_distributions.png" download><b>PNG</b> indir</a>
+          </footer>
+        </div>
+        <div class="chart-card">
+          <h4>Meṫrik Korelasyonları</h4>
+          <figure>
+            <picture>
+              <source type="image/svg+xml" srcset="results/plots/metric_correlations.svg" />
+              <img src="results/plots/metric_correlations.png" alt="Merkeziyet metrik korelasyon ısı haritası" loading="lazy" />
+            </picture>
+          </figure>
+          <footer>
+            <a class="chip" href="results/plots/metric_correlations.svg" download><b>SVG</b> indir</a>
+            <a class="chip" href="results/plots/metric_correlations.png" download><b>PNG</b> indir</a>
+          </footer>
+        </div>
+        <div class="chart-card">
+          <h4>Saçılım Korelasyonları</h4>
+          <figure>
+            <picture>
+              <source type="image/svg+xml" srcset="results/plots/scatter_correlations.svg" />
+              <img src="results/plots/scatter_correlations.png" alt="Derece ve betweenness saçılım korelasyonları" loading="lazy" />
+            </picture>
+          </figure>
+          <footer>
+            <a class="chip" href="results/plots/scatter_correlations.svg" download><b>SVG</b> indir</a>
+            <a class="chip" href="results/plots/scatter_correlations.png" download><b>PNG</b> indir</a>
           </footer>
         </div>
       </div>
@@ -210,7 +267,8 @@
           <footer>
             <a class="chip" href="results/plots/top10_in_degree.svg" download><b>SVG</b> indir</a>
             <a class="chip" href="results/plots/top10_in_degree.png" download><b>PNG</b> indir</a>
-            <a class="chip" href="results/top20_in_degree.csv" download><b>CSV</b> veri</a>
+            <a class="chip" href="results/top20_in_degree.csv" download><b>CSV</b> top 20</a>
+            <a class="chip" href="results/top20_in_top.csv" download><b>CSV</b> top paketler</a>
           </footer>
         </div>
         <div class="chart-card">
@@ -219,7 +277,8 @@
           <footer>
             <a class="chip" href="results/plots/top10_out_degree.svg" download><b>SVG</b> indir</a>
             <a class="chip" href="results/plots/top10_out_degree.png" download><b>PNG</b> indir</a>
-            <a class="chip" href="results/top20_out_degree.csv" download><b>CSV</b> veri</a>
+            <a class="chip" href="results/top20_out_degree.csv" download><b>CSV</b> top 20</a>
+            <a class="chip" href="results/top20_out_top.csv" download><b>CSV</b> top paketler</a>
           </footer>
         </div>
         <div class="chart-card">
@@ -228,7 +287,8 @@
           <footer>
             <a class="chip" href="results/plots/top10_betweenness.svg" download><b>SVG</b> indir</a>
             <a class="chip" href="results/plots/top10_betweenness.png" download><b>PNG</b> indir</a>
-            <a class="chip" href="results/top20_betweenness.csv" download><b>CSV</b> veri</a>
+            <a class="chip" href="results/top20_betweenness.csv" download><b>CSV</b> top 20</a>
+            <a class="chip" href="results/top20_btw_top.csv" download><b>CSV</b> top paketler</a>
           </footer>
         </div>
         <div class="chart-card">
@@ -253,6 +313,7 @@
         <ul>
           <li><code>results/edges.csv</code> <span class="muted">Bağımlılık kenar listesi</span></li>
           <li><code>results/metrics.csv</code> <span class="muted">In/Out/Betweenness metrikleri</span></li>
+          <li><code>results/graph_stats.csv</code> <span class="muted">Graf genel özet metrikleri</span></li>
           <li><code>results/risk_scores.csv</code> <span class="muted">Bileşik risk skorları</span></li>
           <li><code>results/cascade_impact.csv</code> <span class="muted">Basamaklanma büyüklükleri</span></li>
           <li><code>results/edge_betweenness_top10.csv</code> <span class="muted">En kritik kenarlar</span></li>
