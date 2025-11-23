@@ -2,7 +2,7 @@
 
 Bu proje, NPM ekosistemindeki paketleri yönlü bir ağ olarak modelleyip merkeziyet metrikleriyle yapısal riski ölçer. Amaç, klasik zafiyet skorlarının ötesine geçerek bir paketin ağ içindeki konumundan doğan sistemik riski görünür kılmaktır.
 
-Canlı önizleme: https://yusufarbc.github.io/npm-complex-network-analysis/
+Canlı önizleme: https://yusufarbc.github.io/npm-supply-chain-network-analysis/
 
 ## Hızlı Başlangıç
 
