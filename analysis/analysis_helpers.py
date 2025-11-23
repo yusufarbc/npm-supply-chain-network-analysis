@@ -330,6 +330,7 @@ def build_dependency_graph(
     include_peer_deps: bool = False,
     expand_with_dependents: bool = False,
     max_dependents_per_package: int = 50,
+    depth: int = 3,
 ) -> Tuple[nx.DiGraph, Set[str]]:
     """
     Top N listesi için yönlü bir bağımlılık ağı (Dependent -> Dependency) kur ve döndür.
@@ -337,10 +338,13 @@ def build_dependency_graph(
     Türkçe açıklama: Bağlantı maliyetini azaltmak için tek bir HTTP oturumu (Session) yeniden kullanılır.
     Önbellek kullanılarak aynı paketler için tekrar sorgu yapılmaz.
     
-    Sadece Top N paketlerin 1. derece dependencies'ini çeker (basit ve hızlı).
+    Çok kademeli dependency analizi:
+    - depth=1: Sadece Top N'in dependencies'i
+    - depth=2: Top N + 1. kademe dependencies'in dependencies'i
+    - depth=3: Top N + 1. kademe + 2. kademe dependencies'in dependencies'i (varsayılan)
     
-    NOT: expand_with_dependents parametresi şu an kullanılmamaktadır.
-    (Libraries.io API devre dışı, alternatif çözüm: in-degree metriği dependent analizi için yeterli)
+    Örnek (depth=3):
+    Top 1000 → Dependencies (1. kademe) → Dependencies (2. kademe) → Dependencies (3. kademe)
     """
     G = nx.DiGraph()
     top_set: Set[str] = set(top_packages)
@@ -351,27 +355,53 @@ def build_dependency_graph(
     cache = _load_cache(cache_path)
     
     with requests.Session() as session:
-        # Top N paketlerin 1. derece dependencies'ini çek
-        print(f"🔍 Top {len(top_packages)} paketin dependencies'i çekiliyor...")
+        # Başlangıç: Top N paketleri
+        current_level = set(top_packages)
+        all_processed = set()
         
-        for i, pkg in enumerate(top_packages, 1):
-            if i % 100 == 0:
-                print(f"  → {i}/{len(top_packages)} paket işlendi...")
+        for level in range(1, depth + 1):
+            print(f"\n🔍 Kademe {level}: {len(current_level)} paketin dependencies'i çekiliyor...")
+            next_level = set()
             
-            if pkg in cache:
-                deps: Dict[str, str] = cache.get(pkg) or {}
-            else:
-                deps = {}
-                for _ in range(3):
-                    deps = fetch_dependencies(pkg, session=session, include_peer=include_peer_deps)
-                    if deps:
-                        break
-                cache[pkg] = deps
+            for i, pkg in enumerate(current_level, 1):
+                if i % 100 == 0:
+                    print(f"  → {i}/{len(current_level)} paket işlendi...")
+                
+                # Zaten işlendiyse atla
+                if pkg in all_processed:
+                    continue
+                all_processed.add(pkg)
+                
+                # Cache'den veya API'den dependencies çek
+                if pkg in cache:
+                    deps: Dict[str, str] = cache.get(pkg) or {}
+                else:
+                    deps = {}
+                    for _ in range(3):
+                        deps = fetch_dependencies(pkg, session=session, include_peer=include_peer_deps)
+                        if deps:
+                            break
+                    cache[pkg] = deps
+                
+                # Kenarları ekle ve bir sonraki seviye için topla
+                for dep in deps.keys():
+                    G.add_edge(pkg, dep)  # Package -> Dependency
+                    
+                    # Bir sonraki kademe için dependencies'i topla
+                    if level < depth and dep not in all_processed:
+                        next_level.add(dep)
             
-            for dep in deps.keys():
-                G.add_edge(pkg, dep)  # Top Package -> Dependency
+            print(f"  ✅ Kademe {level} tamamlandı: {G.number_of_nodes()} düğüm, {G.number_of_edges()} kenar")
+            
+            # Bir sonraki kademeye geç
+            current_level = next_level
+            
+            # Eğer bir sonraki kademe boşsa dur
+            if not current_level:
+                print(f"  ℹ️ Kademe {level + 1} için yeni paket yok, durduruluyor.")
+                break
         
-        print(f"  ✅ {G.number_of_nodes()} düğüm, {G.number_of_edges()} kenar")
+        print(f"\n📊 Final: {G.number_of_nodes()} düğüm, {G.number_of_edges()} kenar (Derinlik: {depth})")
     
     _save_cache(cache_path, cache)
     return G, top_set
