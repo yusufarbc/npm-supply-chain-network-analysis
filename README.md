@@ -219,7 +219,7 @@ result = run_pipeline(top_n=1000)
 3. Tekrar import → **`gephi_nodes.csv`** → Nodes table
 4. Layout → Force Atlas 2
 
-**Detaylı kılavuz:** [`analysis/GEPHI_GUIDE.md`](analysis/GEPHI_GUIDE.md)
+**Detaylı kılavuz:** 
 - Layout önerileri (Force Atlas 2, OpenORD)
 - Düğüm boyutu/renk ayarları
 - Filtreleme senaryoları
