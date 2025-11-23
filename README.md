@@ -59,3 +59,18 @@ Detaylar: `analysis/README.md`, `results/README.md`.
 - Büyük graflarda betweenness pahalı olabilir; örnekleme (`SAMPLE_K`) önerilir.
 - API yanıtlarındaki geçici sorunlar için önbellek kullanılır: `results/cache_deps.json`.
 - Örneklemeli betweenness için `seed=42` ile tekrarlanabilirlik sağlanır.
+
+## Gephi Dışa Aktarım
+
+Bu repodaki `results/` dizininden Gephi ile açılabilecek dosyalar üretebilirsiniz. Her paket için deterministik bir `id` atanır.
+
+- Komut:
+```
+python analysis/export_for_gephi.py --results results
+```
+- Çıktılar (`results/`):
+	- `gephi_nodes.csv` — `id,label,package,in_degree,out_degree,betweenness,risk_score,is_topN`
+	- `gephi_edges.csv` — `source,target,weight,directed` (source/target = id)
+	- Opsiyonel `graph.gexf` — `--gexf` ile oluşturulur (networkx mevcutsa)
+
+Gephi'de CSV'yi açarken `gephi_nodes.csv`'i Nodes olarak, `gephi_edges.csv`'i Edges olarak içe aktarın; `id` alanı node id olarak kullanılmalıdır.
