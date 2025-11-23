@@ -9,13 +9,13 @@ express,27
 webpack,25
 jest-config,24
 @jest/reporters,23
-jest-runtime,22
 jest-runner,22
+jest-runtime,22
 jest-snapshot,21
 jest-circus,20
 jsdom,20
 eslint-plugin-import,19
 eslint-plugin-react,18
-babel-preset-current-node-syntax,15
 @babel/core,15
 @jest/transform,15
+babel-preset-current-node-syntax,15

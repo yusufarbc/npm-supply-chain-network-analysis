@@ -52,26 +52,26 @@ This file is an auto-generated summary of the dependency network analysis.
 - @aws-sdk/client-kms: 39
 
 ## Top-20 (All Nodes) - Betweenness
+- jest-snapshot: 0.000689
+- jest: 0.000601
+- @jest/core: 0.000481
+- @jest/transform: 0.000322
 - get-intrinsic: 0.000299
-- es-abstract: 0.000250
-- side-channel: 0.000209
-- @puppeteer/browsers: 0.000196
-- @aws-sdk/credential-provider-node: 0.000177
-- jest-snapshot: 0.000155
-- @aws-sdk/nested-clients: 0.000139
-- @jest/types: 0.000138
-- jest-util: 0.000122
-- @jest/transform: 0.000118
-- @aws-sdk/core: 0.000118
-- qs: 0.000116
-- jest-haste-map: 0.000114
-- call-bound: 0.000107
-- @babel/traverse: 0.000100
-- call-bind: 0.000088
-- proxy-agent: 0.000077
-- @smithy/smithy-client: 0.000077
-- side-channel-map: 0.000071
-- side-channel-weakmap: 0.000071
+- cypress: 0.000259
+- side-channel: 0.000204
+- @babel/core: 0.000204
+- @cypress/request: 0.000186
+- jest-haste-map: 0.000182
+- qs: 0.000176
+- execa: 0.000174
+- puppeteer: 0.000166
+- @babel/helper-compilation-targets: 0.000161
+- @jest/types: 0.000157
+- @babel/traverse: 0.000157
+- babel-preset-current-node-syntax: 0.000145
+- babel-plugin-istanbul: 0.000142
+- @babel/helper-create-class-features-plugin: 0.000141
+- http-signature: 0.000141
 
 ## Top-20 (Top N Cohort) - In-Degree
 - tslib: 138
@@ -89,11 +89,11 @@ This file is an auto-generated summary of the dependency network analysis.
 - @smithy/util-middleware: 29
 - @smithy/smithy-client: 28
 - call-bind: 27
-- chalk: 26
 - @smithy/core: 26
+- chalk: 26
 - @smithy/util-base64: 25
 - @jest/types: 24
-- @smithy/util-endpoints: 23
+- @smithy/middleware-endpoint: 23
 
 ## Top-20 (Top N Cohort) - Out-Degree
 - telecom-mas-agent: 83
@@ -106,38 +106,38 @@ This file is an auto-generated summary of the dependency network analysis.
 - webpack: 25
 - jest-config: 24
 - @jest/reporters: 23
-- jest-runtime: 22
 - jest-runner: 22
+- jest-runtime: 22
 - jest-snapshot: 21
 - jest-circus: 20
 - jsdom: 20
 - eslint-plugin-import: 19
 - eslint-plugin-react: 18
-- babel-preset-current-node-syntax: 15
 - @babel/core: 15
 - @jest/transform: 15
+- babel-preset-current-node-syntax: 15
 
 ## Top-20 (Top N Cohort) - Betweenness
+- jest-snapshot: 0.000689
+- jest: 0.000601
+- @jest/core: 0.000481
+- @jest/transform: 0.000322
 - get-intrinsic: 0.000299
-- es-abstract: 0.000250
-- side-channel: 0.000209
-- @aws-sdk/credential-provider-node: 0.000177
-- jest-snapshot: 0.000155
-- @jest/types: 0.000138
-- jest-util: 0.000122
-- @jest/transform: 0.000118
-- @aws-sdk/core: 0.000118
-- qs: 0.000116
-- jest-haste-map: 0.000114
-- call-bound: 0.000107
-- @babel/traverse: 0.000100
-- call-bind: 0.000088
-- @smithy/smithy-client: 0.000077
-- side-channel-weakmap: 0.000071
-- side-channel-map: 0.000071
-- @babel/core: 0.000070
-- execa: 0.000067
-- internal-slot: 0.000067
+- side-channel: 0.000204
+- @babel/core: 0.000204
+- jest-haste-map: 0.000182
+- qs: 0.000176
+- execa: 0.000174
+- @babel/helper-compilation-targets: 0.000161
+- @jest/types: 0.000157
+- @babel/traverse: 0.000157
+- babel-preset-current-node-syntax: 0.000145
+- babel-plugin-istanbul: 0.000142
+- @babel/helper-create-class-features-plugin: 0.000141
+- form-data: 0.000123
+- call-bind: 0.000122
+- which-typed-array: 0.000107
+- jest-config: 0.000098
 
 ## Files Created
 

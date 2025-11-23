@@ -14,8 +14,8 @@ es-errors,31
 @smithy/util-middleware,29
 @smithy/smithy-client,28
 call-bind,27
-chalk,26
 @smithy/core,26
+chalk,26
 @smithy/util-base64,25
 @jest/types,24
-@smithy/util-endpoints,23
+@smithy/middleware-endpoint,23

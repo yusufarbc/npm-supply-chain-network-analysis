@@ -1,35 +1,13 @@
 {
-  "original": {
+  "before": {
     "nodes": 1559,
     "edges": 4076
   },
-  "removed_packages": [
-    "tslib",
-    "es-abstract",
-    "get-intrinsic",
-    "@smithy/types",
-    "@babel/helper-plugin-utils",
-    "@aws-sdk/credential-provider-node",
-    "@aws-sdk/core",
-    "call-bound",
-    "@aws-sdk/nested-clients",
-    "@jest/types",
-    "side-channel",
-    "jest-snapshot",
-    "@puppeteer/browsers",
-    "@aws-sdk/types",
-    "jest-util",
-    "telecom-mas-agent",
-    "call-bind",
-    "@smithy/smithy-client",
-    "debug",
-    "@babel/traverse"
-  ],
-  "after_removal": {
+  "after": {
     "nodes": 1539.0,
-    "edges": 3163.0,
-    "components_count": 137.0,
-    "largest_component_size": 1230.0,
-    "diameter_lcc": 17.0
+    "edges": 3062.0,
+    "components_count": 184.0,
+    "largest_component_size": 1184.0,
+    "diameter_lcc": 16.0
   }
 }
