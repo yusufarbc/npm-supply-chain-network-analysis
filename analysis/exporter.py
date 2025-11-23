@@ -12,6 +12,11 @@ from typing import Dict, Optional, Iterable
 
 
 def read_metrics(path: Path) -> Dict[str, Dict[str, str]]:
+    """
+    metrics.csv dosyasını oku ve paket adına göre dict olarak döndür.
+    
+    Türkçe açıklama: Her paket için metrik değerlerini key-value çiftleri halinde tutar.
+    """
     data: Dict[str, Dict[str, str]] = {}
     if not path.exists():
         return data
@@ -26,6 +31,11 @@ def read_metrics(path: Path) -> Dict[str, Dict[str, str]]:
 
 
 def read_edges(path: Path) -> Iterable[Dict[str, str]]:
+    """
+    edges.csv dosyasını oku ve satırları dict listesi olarak döndür.
+    
+    Türkçe açıklama: Her kenar (source->target) için bir dict oluşturur.
+    """
     if not path.exists():
         return []
     with path.open(encoding="utf-8") as f:
@@ -35,11 +45,21 @@ def read_edges(path: Path) -> Iterable[Dict[str, str]]:
 
 
 def build_id_map(pkgs: set) -> Dict[str, int]:
+    """
+    Paket adlarından deterministik numerik ID haritası oluştur.
+    
+    Türkçe açıklama: Alfabetik sıralama ile tutarlı ID'ler üretir (Gephi için).
+    """
     ordered = sorted(pkgs)
     return {p: i + 1 for i, p in enumerate(ordered)}
 
 
 def write_nodes(nodes_path: Path, id_map: Dict[str, int], metrics: Dict[str, Dict[str, str]], risks: Optional[Dict[str, Dict[str, str]]] = None) -> None:
+    """
+    Düğüm listesini Gephi formatında CSV olarak yaz.
+    
+    Türkçe açıklama: Her düğüm için ID, etiket, metrikler ve risk skoru içerir.
+    """
     nodes_path.parent.mkdir(parents=True, exist_ok=True)
     with nodes_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
@@ -57,6 +77,11 @@ def write_nodes(nodes_path: Path, id_map: Dict[str, int], metrics: Dict[str, Dic
 
 
 def write_edges_csv(edges_path: Path, edges_rows, id_map: Dict[str, int]) -> None:
+    """
+    Kenar listesini Gephi formatında CSV olarak yaz.
+    
+    Türkçe açıklama: Numerik ID'ler kullanarak source->target ilişkilerini yazar.
+    """
     edges_path.parent.mkdir(parents=True, exist_ok=True)
     with edges_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
@@ -74,6 +99,11 @@ def write_edges_csv(edges_path: Path, edges_rows, id_map: Dict[str, int]) -> Non
 
 
 def write_gexf(gexf_path: Path, id_map: Dict[str, int], metrics: Dict[str, Dict[str, str]], edges_rows) -> None:
+    """
+    NetworkX kullanarak GEXF formatında graf dosyası üret.
+    
+    Türkçe açıklama: Gephi ve diğer araçlar için XML-tabanlı graf formatı.
+    """
     try:
         import networkx as nx
     except Exception:
@@ -108,7 +138,62 @@ def write_gexf(gexf_path: Path, id_map: Dict[str, int], metrics: Dict[str, Dict[
         print("Failed to write GEXF:", e)
 
 
+def export_gephi_from_graph(G, metrics_dict: Dict[str, Dict], risks_dict: Optional[Dict[str, Dict]], results_dir: Path) -> Dict[str, int]:
+    """
+    NetworkX grafından direkt Gephi dosyalarını üret (optimize edilmiş).
+    
+    Türkçe açıklama: Graf objesinden ID haritası oluşturur ve Gephi CSV'lerini yazar.
+    Bu fonksiyon pipeline içinden çağrılır, daha hızlı ve memory-efficient.
+    """
+    # Tüm düğümleri topla
+    all_nodes = set(G.nodes())
+    
+    # Deterministik ID haritası
+    id_map = build_id_map(all_nodes)
+    
+    # Nodes CSV - zenginleştirilmiş
+    nodes_path = results_dir / "gephi_nodes.csv"
+    nodes_path.parent.mkdir(parents=True, exist_ok=True)
+    with nodes_path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["Id", "Label", "package", "in_degree", "out_degree", "betweenness", "risk_score", "is_topN"])
+        for pkg in sorted(id_map.keys(), key=lambda x: id_map[x]):
+            pid = id_map[pkg]
+            m = metrics_dict.get(pkg, {})
+            in_d = m.get("in_degree", "0")
+            out_d = m.get("out_degree", "0")
+            btw = m.get("betweenness", "0.000000")
+            is_top = m.get("is_topN", "False")
+            risk = risks_dict.get(pkg, {}).get("risk_score", "") if risks_dict else ""
+            w.writerow([pid, pkg, pkg, in_d, out_d, btw, risk, is_top])
+    
+    # Edges CSV - ID bazlı (ANA ÇIKTI)
+    edges_path = results_dir / "gephi_edges.csv"
+    with edges_path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["Source", "Target", "Type", "Weight"])
+        for src, tgt in G.edges():
+            sid = id_map.get(src)
+            tid = id_map.get(tgt)
+            if sid is not None and tid is not None:
+                w.writerow([sid, tid, "Directed", 1])
+    
+    print(f"✓ Gephi dosyaları oluşturuldu:")
+    print(f"  - {nodes_path} ({len(id_map)} düğüm)")
+    print(f"  - {edges_path} ({G.number_of_edges()} kenar)")
+    
+    return id_map
+
+
 def export_for_gephi(results_dir: str = "results", write_gexf_flag: bool = False) -> Dict[str, int]:
+    """
+    Mevcut CSV'lerden Gephi dışa aktarım (geriye uyumluluk için).
+    
+    Türkçe açıklama: edges.csv, metrics.csv ve risk_scores.csv'den okur, 
+    gephi_nodes.csv ve gephi_edges.csv üretir. Opsiyonel olarak GEXF de oluşturur.
+    
+    NOT: Pipeline kullanıyorsanız, export_gephi_from_graph() otomatik çağrılır.
+    """
     res = Path(results_dir)
     edges_path = res / "edges.csv"
     metrics_path = res / "metrics.csv"
@@ -142,17 +227,3 @@ def export_for_gephi(results_dir: str = "results", write_gexf_flag: bool = False
         write_gexf(res / "graph.gexf", id_map, metrics, edges_rows)
 
     return id_map
-
-
-def main():
-    import argparse
-
-    p = argparse.ArgumentParser(description="Export graph for Gephi (CSV + optional GEXF)")
-    p.add_argument("--results", default="results", help="results directory (default: results)")
-    p.add_argument("--gexf", action="store_true", help="also write results/graph.gexf if networkx available")
-    args = p.parse_args()
-    export_for_gephi(args.results, args.gexf)
-
-
-if __name__ == "__main__":
-    main()

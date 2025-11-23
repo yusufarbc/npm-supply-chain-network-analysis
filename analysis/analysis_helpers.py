@@ -31,9 +31,12 @@ NPM_SEARCH_URL = "https://registry.npmjs.org/-/v1/search"
 NPM_REGISTRY_BASE = "https://registry.npmjs.org"
 
 
-# ecosyste.ms üzerinden tek sayfada (<=1000) Top N paket adlarını çek
 def _fetch_top_packages_ecosystems(limit: int) -> List[str]:
-    """ecosyste.ms paket adlarını tek sayfa (<=1000) olarak, indirmeye göre sıralayarak çek."""
+    """
+    ecosyste.ms API'sinden Top N paket adlarını çek (tek sayfa, max 1000).
+    
+    Türkçe açıklama: İndirme sayısına göre sıralı liste döndürür.
+    """
     per_page = min(max(limit, 1), 1000)
     params = {"per_page": per_page, "sort": "downloads", "page": 1}
     resp = requests.get(ECOSYSTEMS_PACKAGE_NAMES_URL, params=params, timeout=60)
@@ -42,9 +45,12 @@ def _fetch_top_packages_ecosystems(limit: int) -> List[str]:
     return names[:limit]
 
 
-# ecosyste.ms üzerinden sayfalayarak (per_page=1000) Top N paket adlarını topla
 def _fetch_top_packages_ecosystems_paginated(limit: int) -> List[str]:
-    """ecosyste.ms üzerinden sayfalayarak limit adede kadar paket adı topla (per_page=1000)."""
+    """
+    ecosyste.ms API'sinden sayfalayarak Top N paket adını topla (per_page=1000).
+    
+    Türkçe açıklama: Büyük N değerleri için kullanılır, her sayfa 1000 paket içerir.
+    """
     collected: List[str] = []
     per_page = 1000
     page = 1
@@ -72,10 +78,12 @@ def _fetch_top_packages_ecosystems_paginated(limit: int) -> List[str]:
     return deduped
 
 
-# npms.io popülerlik skoruna göre yaklaşık Top N paket adlarını çek (yedek)
 def _fetch_top_packages_npms(limit: int) -> List[str]:
-    """npms.io popülerlik skorunu yaklaşık olarak kullanarak isim listesi çek."""
-    # Basit arama: popüler bir tohum (react) ile başlayıp sonuçları al
+    """
+    npms.io API'sinden popüler paketleri çek (yedek yöntem).
+    
+    Türkçe açıklama: Basit arama sorgusuyla popülerlik skoruna göre sıralar.
+    """
     params = {"q": "react", "size": min(limit, 250)}
     resp = requests.get(NPMS_SEARCH_URL, params=params, timeout=60)
     resp.raise_for_status()
@@ -90,11 +98,11 @@ def _fetch_top_packages_npms(limit: int) -> List[str]:
 
 
 def _fetch_top_packages_npm_search_aggregate(limit: int) -> List[str]:
-    """NPM search API ile birden çok sorgu 'tohumu' kullanarak popüler paketleri topla (TR).
-
-    Tek bir wildcard sorgusu 400 döndürebildiği için, farklı tohum metinleri
-    (harfler ve popüler anahtarlar) ile birleştirerek daha geniş kapsama ulaşır.
-    Sonuçlar popularity detayıyla sıralanır ve tekilleştirilir.
+    """
+    NPM search API ile birden çok sorgu 'tohumu' kullanarak popüler paketleri topla.
+    
+    Türkçe açıklama: Tek bir wildcard sorgusu 400 döndürebildiği için, farklı tohum 
+    metinleri (harfler ve popüler anahtarlar) ile birleştirerek daha geniş kapsama ulaşır.
     """
     base = NPM_SEARCH_URL
     seeds = [
@@ -112,7 +120,7 @@ def _fetch_top_packages_npm_search_aggregate(limit: int) -> List[str]:
         "r",
     ]
     best: Dict[str, float] = {}
-    max_pages = 5  # her seed için en fazla 5 sayfa (5*250=1250)
+    max_pages = 5  # her seed için en fazla 5 sayfa
     for seed in seeds:
         for page in range(max_pages):
             params = {
@@ -139,12 +147,10 @@ def _fetch_top_packages_npm_search_aggregate(limit: int) -> List[str]:
                         .get("popularity", 0.0)
                     )
                     if pkg:
-                        # en yüksek popülerlik değerini tut
                         if pop is None:
                             pop = 0.0
                         if (pkg not in best) or (pop > best[pkg]):
                             best[pkg] = float(pop)
-                # yeterli veri toplandıysa erken çık
                 if len(best) >= max(limit * 2, 500):
                     break
             except Exception:
@@ -157,9 +163,13 @@ def _fetch_top_packages_npm_search_aggregate(limit: int) -> List[str]:
     return names[:limit]
 
 
-# Top N paket adlarını getir (öncelik ecosyste.ms; npm search / npms.io yedek)
 def fetch_top_packages(limit: int = 100) -> List[str]:
-    """En çok indirilen Top N paket adlarını getir (tercihen ecosyste.ms, ardından yedekler)."""
+    """
+    En çok indirilen Top N paket adlarını getir.
+    
+    Türkçe açıklama: Öncelik sırasıyla: ecosyste.ms -> npm search -> npms.io
+    Başarısız olan yöntem için bir sonrakine geçilir.
+    """
     try:
         # 1000 ve üzeri için sayfalı toplama daha güvenilir
         if limit >= 1000:
@@ -182,21 +192,25 @@ def fetch_top_packages(limit: int = 100) -> List[str]:
     return _fetch_top_packages_npms(limit)
 
 
-# NPM paket adını URL için güvenli biçimde kodla (scoped paketler dahil)
 def encode_npm_name(name: str) -> str:
-    """NPM paket adını URL yolunda güvenli kullanmak için kodla (scoped paketlerde '/' da kodlanır)."""
+    """
+    NPM paket adını URL yolunda güvenli kullanmak için kodla.
+    
+    Türkçe açıklama: Scoped paketlerdeki '/' karakteri de kodlanır.
+    """
     return quote(name, safe="")
 
 
-# Bir paketin en güncel sürümünden dependencies alanını çek
 def fetch_dependencies(
     package: str,
     session: Optional[requests.Session] = None,
     include_peer: bool = False,
 ) -> Dict[str, str]:
-    """Paketin npm registry'deki en güncel sürümünden `dependencies` alanını çek.
-
-    Daha verimli olmak için paylaşılan bir `requests.Session` (varsa) kullanır.
+    """
+    Paketin npm registry'deki en güncel sürümünden `dependencies` alanını çek.
+    
+    Türkçe açıklama: Daha verimli olmak için paylaşılan bir `requests.Session` (varsa) kullanır.
+    include_peer=True ise peerDependencies de dahil edilir.
     """
     encoded = encode_npm_name(package)
     url = f"{NPM_REGISTRY_BASE}/{encoded}"
@@ -224,14 +238,67 @@ def fetch_dependencies(
     if include_peer:
         peer = version_obj.get("peerDependencies", {}) if isinstance(version_obj, dict) else {}
         if isinstance(peer, dict):
-            # Birleşim (key set); aynı anahtar varsa dependencies öncelikli
             deps = dict({**peer, **(deps if isinstance(deps, dict) else {})})
     return deps if isinstance(deps, dict) else {}
 
 
-# Basit disk önbelleği (JSON) — bağımlılık sorguları için
+def fetch_dependents(
+    package: str,
+    session: Optional[requests.Session] = None,
+    max_dependents: int = 100,
+) -> List[str]:
+    """
+    Libraries.io API kullanarak bir pakete bağımlı olan (dependent) paketleri çek.
+    
+    Türkçe açıklama: Verilen paketi kullanan diğer npm paketlerini listeler.
+    max_dependents parametresi ile döndürülecek maksimum paket sayısı sınırlanabilir.
+    Libraries.io API'si rate limit uygular, bu nedenle çok fazla paket için dikkatli kullanılmalıdır.
+    """
+    http = session if session is not None else requests
+    dependents: List[str] = []
+    
+    # Libraries.io API endpoint (page başına 30 paket)
+    page = 1
+    per_page = 30
+    
+    while len(dependents) < max_dependents:
+        url = f"https://libraries.io/api/npm/{quote(package)}/dependents"
+        params = {"page": page, "per_page": per_page}
+        
+        try:
+            resp = http.get(url, params=params, timeout=30)
+            if resp.status_code != 200:
+                break
+            
+            data = resp.json()
+            if not isinstance(data, list) or len(data) == 0:
+                break
+            
+            for item in data:
+                if isinstance(item, dict):
+                    dep_name = item.get("name")
+                    if dep_name and isinstance(dep_name, str):
+                        dependents.append(dep_name)
+                        if len(dependents) >= max_dependents:
+                            break
+            
+            # Eğer tam sayfa gelmediyse son sayfa demektir
+            if len(data) < per_page:
+                break
+            
+            page += 1
+        except Exception:
+            break
+    
+    return dependents[:max_dependents]
+
+
 def _load_cache(path: Path) -> Dict[str, Dict[str, str]]:
-    """Önbelleği yükle (yoksa boş sözlük)."""
+    """
+    Önbelleği diskten yükle (JSON formatında).
+    
+    Türkçe açıklama: Dosya yoksa veya okuma hatası varsa boş sözlük döndürür.
+    """
     try:
         if path.exists():
             import json
@@ -242,7 +309,11 @@ def _load_cache(path: Path) -> Dict[str, Dict[str, str]]:
 
 
 def _save_cache(path: Path, cache: Dict[str, Dict[str, str]]) -> None:
-    """Önbelleği diske yaz (güvenli yazım)."""
+    """
+    Önbelleği diske yaz (JSON formatında, güvenli yazım).
+    
+    Türkçe açıklama: Temp dosya kullanarak atomik yazma yapar.
+    """
     try:
         import json, tempfile
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -253,15 +324,21 @@ def _save_cache(path: Path, cache: Dict[str, Dict[str, str]]) -> None:
         pass
 
 
-# Top N listesinden yönlü bağımlılık ağı kur (Dependent -> Dependency)
 def build_dependency_graph(
     top_packages: List[str],
     cache_path: Optional[Path] = None,
     include_peer_deps: bool = False,
+    expand_with_dependents: bool = False,
+    max_dependents_per_package: int = 50,
 ) -> Tuple[nx.DiGraph, Set[str]]:
-    """Top N listesi için yönlü bir bağımlılık ağı (Dependent -> Dependency) kur ve döndür.
-
-    Bağlantı maliyetini azaltmak için tek bir HTTP oturumu (Session) yeniden kullanılır.
+    """
+    Top N listesi için yönlü bir bağımlılık ağı (Dependent -> Dependency) kur ve döndür.
+    
+    Türkçe açıklama: Bağlantı maliyetini azaltmak için tek bir HTTP oturumu (Session) yeniden kullanılır.
+    Önbellek kullanılarak aynı paketler için tekrar sorgu yapılmaz.
+    
+    expand_with_dependents=True ise, Top N paketlerine bağımlı olan (dependent) paketler de
+    network'e eklenir ve onların dependencies'i de çekilir (1 kademe genişleme).
     """
     G = nx.DiGraph()
     top_set: Set[str] = set(top_packages)
@@ -270,7 +347,9 @@ def build_dependency_graph(
     if cache_path is None:
         cache_path = Path("results/cache_deps.json")
     cache = _load_cache(cache_path)
+    
     with requests.Session() as session:
+        # Aşama 1: Top N paketlerin dependencies'ini ekle
         for pkg in top_packages:
             # Önbelleğin kullanılması
             if pkg in cache:
@@ -286,17 +365,59 @@ def build_dependency_graph(
             for dep in deps.keys():
                 # NetworkX add_edge eksik düğümleri otomatik ekler
                 G.add_edge(pkg, dep)  # Dependent -> Dependency
+        
+        # Aşama 2: expand_with_dependents ise, Top N'e bağımlı olanları ekle
+        if expand_with_dependents:
+            print(f"  → Genişletme: Top {len(top_packages)} paketine bağımlı olanlar aranıyor...")
+            dependent_packages: Set[str] = set()
+            
+            for i, pkg in enumerate(top_packages, 1):
+                if i % 100 == 0:
+                    print(f"     {i}/{len(top_packages)} paket için dependents çekildi...")
+                
+                # Dependents'ları çek (Libraries.io API)
+                try:
+                    dependents = fetch_dependents(pkg, session=session, max_dependents=max_dependents_per_package)
+                    for dep_pkg in dependents:
+                        if dep_pkg not in top_set:  # Top N'de olmayanlar
+                            dependent_packages.add(dep_pkg)
+                            G.add_edge(dep_pkg, pkg)  # Dependent -> Top Package
+                except Exception:
+                    continue
+            
+            print(f"  → {len(dependent_packages)} adet dependent paket bulundu.")
+            
+            # Aşama 3: Bu dependent paketlerin de dependencies'ini ekle
+            if dependent_packages:
+                print(f"  → Dependent paketlerin dependencies'i çekiliyor...")
+                for i, dep_pkg in enumerate(dependent_packages, 1):
+                    if i % 100 == 0:
+                        print(f"     {i}/{len(dependent_packages)} dependent paketi işlendi...")
+                    
+                    if dep_pkg in cache:
+                        deps = cache.get(dep_pkg) or {}
+                    else:
+                        deps = {}
+                        for _ in range(3):
+                            deps = fetch_dependencies(dep_pkg, session=session, include_peer=include_peer_deps)
+                            if deps:
+                                break
+                        cache[dep_pkg] = deps
+                    
+                    for dep in deps.keys():
+                        G.add_edge(dep_pkg, dep)  # Dependent -> Dependency
+    
     _save_cache(cache_path, cache)
     return G, top_set
 
 
-# Ağ için in-degree, out-degree ve betweenness metriklerini hesapla
 def compute_metrics(
     G: nx.DiGraph, sample_k: Optional[int] = None
 ) -> Tuple[Dict[str, int], Dict[str, int], Dict[str, float]]:
-    """Ağ için in-degree, out-degree ve betweenness merkeziyet metriklerini hesapla.
-
-    Büyük graflarda (ör. >1200 düğüm) betweenness için örnekleme (k)
+    """
+    Ağ için in-degree, out-degree ve betweenness merkeziyet metriklerini hesapla.
+    
+    Türkçe açıklama: Büyük graflarda (ör. >1200 düğüm) betweenness için örnekleme (k)
     kullanarak hesabı hızlandırır. sample_k verilirse o değer esas alınır.
     """
     in_deg: Dict[str, int] = dict(G.in_degree())
@@ -313,9 +434,12 @@ def compute_metrics(
     return in_deg, out_deg, btw
 
 
-# --- Risk skoru (bileşik) ---
 def _minmax_norm(values: Dict[str, float]) -> Dict[str, float]:
-    """Min–max normalize et (tüm değerler aynıysa 0 döndür)."""
+    """
+    Min–max normalizasyon uygula.
+    
+    Türkçe açıklama: Tüm değerler aynıysa 0 döndürür.
+    """
     if not values:
         return {}
     vmin = min(values.values())
@@ -333,7 +457,11 @@ def compute_risk_scores(
     w_out: float = 0.2,
     w_btw: float = 0.3,
 ) -> Dict[str, float]:
-    """Normalize (min–max) edilmiş in/out/between ile bileşik risk skoru hesapla."""
+    """
+    Normalize (min–max) edilmiş in/out/between ile bileşik risk skoru hesapla.
+    
+    Türkçe açıklama: Varsayılan ağırlıklar: in_degree=0.5, out_degree=0.2, betweenness=0.3
+    """
     # float dönüştürme
     in_f = {k: float(v) for k, v in in_deg.items()}
     out_f = {k: float(v) for k, v in out_deg.items()}
@@ -355,7 +483,11 @@ def save_risk_scores(
     top_set: Set[str],
     out_path: Path,
 ) -> None:
-    """Risk skorlarını CSV olarak kaydet (paket, risk, in, out, between, is_topN)."""
+    """
+    Risk skorlarını CSV olarak kaydet.
+    
+    Türkçe açıklama: Sütunlar: package, risk_score, in_degree, out_degree, betweenness, is_topN
+    """
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
@@ -364,12 +496,16 @@ def save_risk_scores(
             w.writerow([n, f"{r:.6f}", in_deg.get(n, 0), out_deg.get(n, 0), f"{btw.get(n, 0.0):.6f}", str(n in top_set)])
 
 
-# --- Robustluk analizi ---
 def robustness_remove_and_stats(
     G: nx.DiGraph,
     remove_nodes: List[str],
 ) -> Dict[str, float]:
-    """Belirtilen düğümler kaldırıldıktan sonra bağlanırlık istatistikleri (zayıf)."""
+    """
+    Belirtilen düğümler kaldırıldıktan sonra bağlanırlık istatistikleri (zayıf).
+    
+    Türkçe açıklama: Kaldırma sonrası düğüm/kenar sayısı, bileşen sayısı, 
+    en büyük bileşen boyutu ve çap bilgisi döndürür.
+    """
     H = G.copy()
     H.remove_nodes_from(remove_nodes)
     W = H.to_undirected()
@@ -394,9 +530,12 @@ def robustness_remove_and_stats(
     return stats
 
 
-# Kenar listesini CSV olarak kaydet (source=dependent, target=dependency)
 def save_edges(G: nx.DiGraph, out_path: Path) -> None:
-    """Kenar listesini CSV olarak kaydet (source=dependent, target=dependency)."""
+    """
+    Kenar listesini CSV olarak kaydet.
+    
+    Türkçe açıklama: Format: source (dependent), target (dependency)
+    """
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
@@ -405,7 +544,6 @@ def save_edges(G: nx.DiGraph, out_path: Path) -> None:
             w.writerow([u, v])
 
 
-# Düğüm metriklerini CSV olarak kaydet (in_degree, out_degree, betweenness)
 def save_metrics(
     in_deg: Dict[str, int],
     out_deg: Dict[str, int],
@@ -413,7 +551,11 @@ def save_metrics(
     top_set: Set[str],
     out_path: Path,
 ) -> None:
-    """Düğüm metriklerini CSV olarak kaydet (paket, in_degree, out_degree, betweenness, is_topN)."""
+    """
+    Düğüm metriklerini CSV olarak kaydet.
+    
+    Türkçe açıklama: Sütunlar: package, in_degree, out_degree, betweenness, is_topN
+    """
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
@@ -429,58 +571,85 @@ def save_metrics(
             ])
 
 
-# Kısa bir Markdown raporu üret (in/out/between için ilk 20 listeler)
 def save_report(
     in_deg: Dict[str, int], out_deg: Dict[str, int], btw: Dict[str, float], top_set: Set[str], out_path: Path
 ) -> None:
-    """Kısa bir Markdown raporu üret ve kaydet (in/out/between için ilk 20 listeler)."""
+    """
+    Genişletilmiş Markdown özet raporu üret ve `results/readme.md` olarak kaydet.
+    
+    Türkçe açıklama: İçerik: Top-20 listeler, dosya açıklamaları, 
+    kullanım talimatları ve sonraki adımlar.
+    """
     out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Top lists
     top_in_all = sorted(in_deg.items(), key=lambda kv: kv[1], reverse=True)[:20]
     top_out_all = sorted(out_deg.items(), key=lambda kv: kv[1], reverse=True)[:20]
     top_btw_all = sorted(btw.items(), key=lambda kv: kv[1], reverse=True)[:20]
-    top_in_top = sorted(
-        ((n, in_deg.get(n, 0)) for n in top_set), key=lambda kv: kv[1], reverse=True
-    )[:20]
-    top_out_top = sorted(
-        ((n, out_deg.get(n, 0)) for n in top_set), key=lambda kv: kv[1], reverse=True
-    )[:20]
-    top_btw_top = sorted(
-        ((n, btw.get(n, 0.0)) for n in top_set), key=lambda kv: kv[1], reverse=True
-    )[:20]
+
+    # Top N cohort lists
+    top_in_top = sorted(((n, in_deg.get(n, 0)) for n in top_set), key=lambda kv: kv[1], reverse=True)[:20]
+    top_out_top = sorted(((n, out_deg.get(n, 0)) for n in top_set), key=lambda kv: kv[1], reverse=True)[:20]
+    top_btw_top = sorted(((n, btw.get(n, 0.0)) for n in top_set), key=lambda kv: kv[1], reverse=True)[:20]
 
     lines: List[str] = []
-    lines.append("# NPM Bağımlılık Ağı Raporu")
+    lines.append("# Results Summary")
     lines.append("")
-    lines.append("## In-Degree İlk 20 (Tüm Düğümler)")
+    lines.append("This file is an auto-generated summary of the dependency network analysis.")
+    lines.append("")
+    lines.append("## Quick Usage")
+    lines.append("")
+    lines.append("- All CSV outputs are in this `results/` directory (`edges.csv`, `metrics.csv`, `risk_scores.csv`, etc.).")
+    lines.append("- To inspect the graph in Gephi: run the exporter to produce `gephi_nodes.csv` and `gephi_edges.csv`, or open `graph.gexf` if present.")
+    lines.append("")
+    lines.append("## Top-20 (All Nodes) - In-Degree")
     for n, v in top_in_all:
         lines.append(f"- {n}: {v}")
     lines.append("")
-    lines.append("## Out-Degree İlk 20 (Tüm Düğümler)")
+    lines.append("## Top-20 (All Nodes) - Out-Degree")
     for n, v in top_out_all:
         lines.append(f"- {n}: {v}")
     lines.append("")
-    lines.append("## Betweenness İlk 20 (Tüm Düğümler)")
+    lines.append("## Top-20 (All Nodes) - Betweenness")
     for n, v in top_btw_all:
         lines.append(f"- {n}: {v:.6f}")
     lines.append("")
-    lines.append("## In-Degree İlk 20 (Top N Kohortu)")
+    lines.append("## Top-20 (Top N Cohort) - In-Degree")
     for n, v in top_in_top:
         lines.append(f"- {n}: {v}")
     lines.append("")
-    lines.append("## Out-Degree İlk 20 (Top N Kohortu)")
+    lines.append("## Top-20 (Top N Cohort) - Out-Degree")
     for n, v in top_out_top:
         lines.append(f"- {n}: {v}")
     lines.append("")
-    lines.append("## Betweenness İlk 20 (Top N Kohortu)")
+    lines.append("## Top-20 (Top N Cohort) - Betweenness")
     for n, v in top_btw_top:
         lines.append(f"- {n}: {v:.6f}")
+    lines.append("")
+    lines.append("## Files Created")
+    lines.append("")
+    lines.append("- `edges.csv` — edge list (source=dependent, target=dependency)")
+    lines.append("- `metrics.csv` — per-node metrics: in_degree,out_degree,betweenness,is_topN")
+    lines.append("- `risk_scores.csv` — combined risk score and component metrics")
+    lines.append("- `graph_stats.json` and `graph_stats.csv` — overall graph statistics")
+    lines.append("- `gephi_nodes.csv`, `gephi_edges.csv` — optional Gephi import files")
+    lines.append("")
+    lines.append("## Notes & Next Steps")
+    lines.append("")
+    lines.append("- Betweenness centrality is expensive for large graphs; consider sampling via `sample_k`.")
+    lines.append("- The exporter assigns deterministic numeric ids to packages for Gephi import.")
+    lines.append("- You can extend this report by adding sections with vulnerability data, CVE cross-references, or manual annotations.")
 
     out_path.write_text("\n".join(lines), encoding="utf-8")
 
 
-# Genel grafik istatistiklerini JSON olarak kaydet
 def save_graph_stats(G: nx.DiGraph, out_path: Path) -> None:
-    """Düğüm/kenar sayısı ve zayıf bileşen istatistiklerini JSON olarak kaydet."""
+    """
+    Genel grafik istatistiklerini JSON olarak kaydet.
+    
+    Türkçe açıklama: İçerik: düğüm/kenar sayısı, bileşen sayısı, 
+    en büyük bileşen boyutu, çap
+    """
     import json
     W = G.to_undirected()
     comps = list(nx.connected_components(W))
@@ -503,11 +672,11 @@ def save_graph_stats(G: nx.DiGraph, out_path: Path) -> None:
     out_path.write_text(json.dumps(stats, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-# Belirli tohum düğümler için ters yönde (dependents) yayılım etki boyutu
 def cascade_impact_counts(G: nx.DiGraph, seeds: List[str]) -> Dict[str, int]:
-    """Her seed için, ters yön (dependents) boyunca erişilebilen düğüm sayısını hesapla.
-
-    Kenarlar Dependent->Dependency yönündedir. Bir bağımlılığın ele geçirilmesi,
+    """
+    Her seed için, ters yön (dependents) boyunca erişilebilen düğüm sayısını hesapla.
+    
+    Türkçe açıklama: Kenarlar Dependent->Dependency yönündedir. Bir bağımlılığın ele geçirilmesi,
     orijinal grafikte bu düğüme ulaşabilen (yani dependents) düğümleri etkiler.
     Bu nedenle G'nin tersinde, seed'den erişilebilen düğümler sayılır.
     """
@@ -532,7 +701,11 @@ def cascade_impact_counts(G: nx.DiGraph, seeds: List[str]) -> Dict[str, int]:
 
 
 def save_cascade_impact(impact: Dict[str, int], out_path: Path) -> None:
-    """Kaskad etki sayaçlarını CSV olarak kaydet (seed, impacted_count)."""
+    """
+    Kaskad etki sayaçlarını CSV olarak kaydet.
+    
+    Türkçe açıklama: Sütunlar: package, impacted_count
+    """
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
@@ -542,7 +715,11 @@ def save_cascade_impact(impact: Dict[str, int], out_path: Path) -> None:
 
 
 def save_edge_betweenness_topn(G: nx.DiGraph, top_n: int, out_path: Path) -> None:
-    """Edge betweenness centrality hesapla ve ilk N kenarı CSV olarak kaydet."""
+    """
+    Edge betweenness centrality hesapla ve ilk N kenarı CSV olarak kaydet.
+    
+    Türkçe açıklama: En yüksek köprü kenarlar belirlenir.
+    """
     out_path.parent.mkdir(parents=True, exist_ok=True)
     eb = nx.edge_betweenness_centrality(G, normalized=True)
     ranked = sorted(((u, v, s) for (u, v), s in eb.items()), key=lambda t: t[2], reverse=True)[: max(0, top_n)]
@@ -556,9 +733,10 @@ def save_edge_betweenness_topn(G: nx.DiGraph, top_n: int, out_path: Path) -> Non
 # --- Grafik üretim yardımcıları (Matplotlib) ---
 
 def _ensure_matplotlib():
-    """Matplotlib'i tembel olarak içe aktar ve varsayılan stili ayarla (TR).
-
-    Bu yardımcı, grafik üreten fonksiyonlar tarafından çağrılır ve
+    """
+    Matplotlib'i tembel olarak içe aktar ve varsayılan stili ayarla.
+    
+    Türkçe açıklama: Bu yardımcı, grafik üreten fonksiyonlar tarafından çağrılır ve
     modül seviyesinde import yerine ihtiyaç olduğunda import eder.
     """
     import importlib
@@ -580,7 +758,11 @@ def _ensure_matplotlib():
 
 
 def _save_pair(plt, fig, out_base: Path) -> None:
-    """Bir grafiği hem PNG hem SVG olarak kaydet (TR)."""
+    """
+    Bir grafiği hem PNG hem SVG olarak kaydet.
+    
+    Türkçe açıklama: Layout optimize edilir ve kaydedilir, ardından figure kapatılır.
+    """
     out_base.parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()
     fig.savefig(str(out_base.with_suffix(".png")))
@@ -589,7 +771,11 @@ def _save_pair(plt, fig, out_base: Path) -> None:
 
 
 def plot_degree_histograms(in_deg: Dict[str, int], out_deg: Dict[str, int], out_dir: Path) -> None:
-    """In/Out-degree dağılımlarını log-ölçekte histogram olarak kaydet (TR)."""
+    """
+    In/Out-degree dağılımlarını log-ölçekte histogram olarak kaydet.
+    
+    Türkçe açıklama: İki panel: sol=In-Degree, sağ=Out-Degree
+    """
     plt = _ensure_matplotlib()
     import numpy as np
 
@@ -610,7 +796,11 @@ def plot_degree_histograms(in_deg: Dict[str, int], out_deg: Dict[str, int], out_
 
 
 def plot_scatter_correlations(in_deg: Dict[str, int], out_deg: Dict[str, int], btw: Dict[str, float], out_dir: Path) -> None:
-    """Korelasyon saçılım grafikleri: (in_degree vs betweenness) ve (in_degree vs out_degree) (TR)."""
+    """
+    Korelasyon saçılım grafikleri: (in_degree vs betweenness) ve (in_degree vs out_degree).
+    
+    Türkçe açıklama: İki panel: sol=In-Degree vs Betweenness, sağ=In-Degree vs Out-Degree (log-log)
+    """
     plt = _ensure_matplotlib()
     import numpy as np
 
@@ -645,7 +835,11 @@ def plot_topk_bars(
     out_dir: Path,
     k: int = 10,
 ) -> None:
-    """In/Out/Betweenness ve birleşik risk için ilk k sütun grafiklerini kaydet (TR)."""
+    """
+    In/Out/Betweenness ve birleşik risk için ilk k sütun grafiklerini kaydet.
+    
+    Türkçe açıklama: Dört ayrı yatay bar grafik: In-Degree, Out-Degree, Betweenness, Risk
+    """
     plt = _ensure_matplotlib()
     import numpy as np
 
@@ -672,7 +866,11 @@ def plot_topk_bars(
 
 
 def plot_risk_vs_cascade(risk: Dict[str, float], cascade: Dict[str, int], out_dir: Path) -> None:
-    """Risk skoru ile kaskad etki büyüklüğü saçılım grafiğini kaydet (TR)."""
+    """
+    Risk skoru ile kaskad etki büyüklüğü saçılım grafiğini kaydet.
+    
+    Türkçe açıklama: X ekseni: Risk Skoru, Y ekseni: Ters Yönde Etkilenen Paket Sayısı
+    """
     plt = _ensure_matplotlib()
     import numpy as np
 
@@ -689,7 +887,11 @@ def plot_risk_vs_cascade(risk: Dict[str, float], cascade: Dict[str, int], out_di
 
 
 def plot_top_risk(risk: Dict[str, float], out_dir: Path, k: int = 20) -> None:
-    """Top k risk skorunu yatay çubuk grafik olarak kaydet (TR)."""
+    """
+    Top k risk skorunu yatay çubuk grafik olarak kaydet.
+    
+    Türkçe açıklama: En yüksek riskli k paket gösterilir.
+    """
     plt = _ensure_matplotlib()
     import numpy as np
 
@@ -711,10 +913,11 @@ def plot_network_visualizations(
     out_dir: Path,
     max_nodes: int = 600,
 ) -> None:
-    """Ağ için iki görselleştirme üret: (1) Top N + tüm bağımlılıklar, (2) yalnızca Top N alt-ağı (TR).
-
-    Büyük grafiklerde çizim maliyetini sınırlamak için en büyük bağlı bileşenden ve/veya
-    Top N düğümlerinden örnekleme yapılır. Düğüm boyutu in-degree ile orantılanır.
+    """
+    Ağ için iki görselleştirme üret: (1) Top N + tüm bağımlılıklar, (2) yalnızca Top N alt-ağı.
+    
+    Türkçe açıklama: Büyük grafiklerde çizim maliyetini sınırlamak için en büyük bağlı bileşenden 
+    ve/veya Top N düğümlerinden örnekleme yapılır. Düğüm boyutu in-degree ile orantılanır.
     """
     plt = _ensure_matplotlib()
     import numpy as np

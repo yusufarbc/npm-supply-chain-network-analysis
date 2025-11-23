@@ -24,12 +24,28 @@ def run_pipeline(
     results_dir: str = "results",
     compute_plots: bool = True,
     export_gexf: bool = False,
+    expand_with_dependents: bool = False,
+    max_packages_to_expand: int = 1000,
+    max_dependents_per_package: int = 20,
 ) -> dict:
-    """Run the full analysis pipeline.
+    """
+    Tam analiz pipeline'ını çalıştır.
+    
+    Türkçe açıklama: Top N paket listesinden graf kurar, metrikleri hesaplar,
+    risk skorlarını üretir, CSV/JSON çıktılar oluşturur ve opsiyonel olarak
+    görselleştirmeler yapar. Notebook'lardan tek fonksiyonla çağrılabilir.
 
     Typical usage from a notebook:
         from analysis import run_pipeline
         res = run_pipeline(top_n=1000)
+        
+        # Ağı dependent paketlerle genişletmek için:
+        res = run_pipeline(
+            top_n=10000, 
+            expand_with_dependents=True,
+            max_packages_to_expand=1000,  # İlk 1000 paket için dependent çek
+            max_dependents_per_package=20  # Her paket için max 20 dependent
+        )
 
     Returns a dict with summary info and paths to major outputs.
     """
@@ -46,7 +62,23 @@ def run_pipeline(
     # 2) Build dependency graph (Dependent -> Dependency)
     cachep = Path(cache_path) if cache_path else None
     print("Building dependency graph...")
-    G, top_set = ah.build_dependency_graph(top_list, cache_path=cachep, include_peer_deps=include_peer_deps)
+    
+    # Eğer expand_with_dependents aktifse, sadece ilk N paketi genişlet
+    packages_to_expand = top_list[:max_packages_to_expand] if expand_with_dependents else top_list
+    
+    G, top_set = ah.build_dependency_graph(
+        packages_to_expand if expand_with_dependents else top_list,
+        cache_path=cachep,
+        include_peer_deps=include_peer_deps,
+        expand_with_dependents=expand_with_dependents,
+        max_dependents_per_package=max_dependents_per_package,
+    )
+    
+    # Eğer genişlettikse ama bazı paketler atlandıysa, onları da node olarak ekle
+    if expand_with_dependents and len(top_list) > max_packages_to_expand:
+        print(f"  → Kalan {len(top_list) - max_packages_to_expand} paket node olarak ekleniyor (dependents çekilmeden)...")
+        for pkg in top_list[max_packages_to_expand:]:
+            G.add_node(pkg)
 
     # 3) Compute metrics
     print("Computing metrics (degree, betweenness)...")
@@ -66,8 +98,24 @@ def run_pipeline(
     ah.save_edges(G, edges_p)
     ah.save_metrics(in_deg, out_deg, btw, top_set, metrics_p)
     ah.save_risk_scores(risk, in_deg, out_deg, btw, top_set, risk_p)
-    # save graph stats (JSON) and also CSV equivalent
     ah.save_graph_stats(G, stats_p)
+    
+    # 5.1) GEPHI EXPORT - Ana çıktı: ID bazlı edge CSV
+    print("Generating Gephi-ready files with package IDs...")
+    metrics_dict = {}
+    with metrics_p.open(encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            pkg = row.get("package", "")
+            if pkg:
+                metrics_dict[pkg] = row
+    risks_dict = {}
+    if risk_p.exists():
+        with risk_p.open(encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                pkg = row.get("package", "")
+                if pkg:
+                    risks_dict[pkg] = row
+    id_map = ex.export_gephi_from_graph(G, metrics_dict, risks_dict, res_dir)
     try:
         stats = json.loads((stats_p).read_text(encoding="utf-8"))
         csv_stats_p = res_dir / "graph_stats.csv"
@@ -80,7 +128,8 @@ def run_pipeline(
         pass
 
     # also produce CSV top-k reports (in/out/betweenness for all nodes and top_set)
-    ah.save_report(in_deg, out_deg, btw, top_set, res_dir / "report.md")
+    # Save expanded README-style summary inside results as `readme.md`
+    ah.save_report(in_deg, out_deg, btw, top_set, res_dir / "readme.md")
     try:
         # top 20 across all nodes
         top_in_all = sorted(in_deg.items(), key=lambda kv: kv[1], reverse=True)[:20]
@@ -147,9 +196,13 @@ def run_pipeline(
         except Exception as e:
             print("Plot generation failed:", e)
 
-    # 9) Export for Gephi
-    print("Exporting for Gephi...")
-    id_map = ex.export_for_gephi(results_dir, write_gexf_flag=export_gexf)
+    # 9) Optionally write GEXF if requested
+    if export_gexf:
+        print("Writing GEXF format...")
+        try:
+            ex.write_gexf(res_dir / "graph.gexf", id_map, metrics_dict, [])
+        except Exception as e:
+            print(f"GEXF export failed: {e}")
 
     summary = {
         "nodes": G.number_of_nodes(),
@@ -160,18 +213,13 @@ def run_pipeline(
         "graph_gexf": str(res_dir / "graph.gexf") if export_gexf else None,
         "id_map_sample": dict(list(id_map.items())[:10]),
     }
-    print("Pipeline finished.")
+    print("\n" + "="*60)
+    print("✓ Pipeline tamamlandı!")
+    print("="*60)
+    print(f"Düğüm sayısı: {G.number_of_nodes()}")
+    print(f"Kenar sayısı: {G.number_of_edges()}")
+    print(f"\nGephi için hazır dosyalar:")
+    print(f"  → {res_dir / 'gephi_nodes.csv'}")
+    print(f"  → {res_dir / 'gephi_edges.csv'}")
+    print("="*60)
     return summary
-
-
-if __name__ == "__main__":
-    # simple CLI for convenience
-    import argparse
-
-    p = argparse.ArgumentParser(description="Run full npm network analysis pipeline (from analysis package)")
-    p.add_argument("--top-n", type=int, default=1000)
-    p.add_argument("--results", default="results")
-    p.add_argument("--no-plots", dest="plots", action="store_false")
-    p.add_argument("--gexf", action="store_true")
-    args = p.parse_args()
-    run_pipeline(top_n=args.top_n, results_dir=args.results, compute_plots=args.plots, export_gexf=args.gexf)
