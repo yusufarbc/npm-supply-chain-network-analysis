@@ -2,6 +2,38 @@
 
 Bu klasördeki analiz **yalnızca Jupyter Notebook üzerinden** çalıştırılır. Lütfen `analysis/analysis.ipynb` dosyasını açıp hücreleri sırayla çalıştırın.
 
+## 🎨 Gephi Kullanımı
+
+Analiz sonucunda `results/` dizininde Gephi-uyumlu dosyalar oluşturulur:
+
+### 1. `gephi_nodes.csv` (Düğüm Listesi)
+12 sütun içerir (Id, Label, package, in_degree, out_degree, betweenness, risk_score, is_topN, dependents_count, downloads, rank, is_seed).
+
+### 2. `gephi_edges.csv` (Kenar Listesi)
+3 sütun içerir (Source, Target, Type).
+
+### Gephi'de Açma Adımları
+
+1. **Import Nodes:**
+   - File → Import spreadsheet...
+   - Dosya: `gephi_nodes.csv`
+   - Separator: Comma
+   - Import as: Nodes table
+   - Force nodes to be created as new ones: ✓
+
+2. **Import Edges:**
+   - File → Import spreadsheet...
+   - Dosya: `gephi_edges.csv`
+   - Separator: Comma
+   - Import as: Edges table
+   - Create missing nodes: ✗ (nodes zaten var)
+
+### Görselleştirme Önerileri
+
+- **Layout:** Force Atlas 2 (Scaling: 10.0, Prevent Overlap: ✓)
+- **Node Boyutu:** Ranking → in_degree veya dependents_count
+- **Node Rengi:** Ranking → risk_score (Yeşil-Kırmızı)
+
 ## 🎯 Amaç
 
 Yazılım tedarik zincirinde kritiklik haritalaması: NPM ekosisteminin topolojik riskini **kompleks ağ teorisi** ile analiz etmek:
@@ -16,14 +48,27 @@ Yazılım tedarik zincirinde kritiklik haritalaması: NPM ekosisteminin topoloji
 
 ### Üç Farklı Veri Kaynağı ve Limitleri
 
-#### 1. ecosyste.ms API (Sadece Kademe 0 - İlk Seed List)
-- **URL:** `https://packages.ecosyste.ms/api/v1/registries/npmjs.org/package_names`
+#### 1. ecosyste.ms Leaderboard API (Kademe 0 - İlk Seed List)
+- **URL:** `https://ecosyste.ms/api/v1/registry/npm/leaderboard`
 - **Limit:** Max **2000 paket** → Bu limit **SADECE** başlangıç listesi (Kademe 0) için!
-- **Kullanım:** `top_n` parametresi (max 2000)
-- **Sıralama:** İndirme sayısına göre (downloads DESC)
-- **Örnek:** `top_n=1000` → ecosyste.ms'den 1000 paket çeker (Kademe 0)
+- **Kullanım:** `top_n` ve `leaderboard_mode` parametreleri
+- **Sıralama Modları:**
+  - `downloads`: İndirme sayısına göre (varsayılan)
+  - `dependents`: En çok bağımlı olunan paketler
+  - `trending`: Ani indirme artışı yaşayan paketler
+- **Örnek:** `top_n=1000, leaderboard_mode="dependents"` → En kritik 1000 paket
 
 **ÖNEMLİ:** Bu 2000 limiti tüm graf için değil, sadece Top N seçimi için geçerlidir!
+
+**Leaderboard Modu Karşılaştırması:**
+
+| Mod | Ne Ölçer | Avantaj | Dezavantaj | Kullanım Senaryosu |
+|-----|----------|---------|------------|---------------------|
+| `downloads` | Haftalık indirme hacmi | Yaygın kullanım → Geniş etki | Popülerlik ≠ kritiklik | Genel ekosistem analizi |
+| `dependents` | Kaç paket buna bağımlı | Altyapı kritikliği yüksek | Volatilik düşük | **Kritiklik haritalaması** ⭐ |
+| `trending` | Ani büyüme oranı | Erken sinyal, anomali tespiti | Kısa vadeli volatil | Supply chain izleme |
+
+**Öneri:** Kritiklik analizi için `leaderboard_mode="dependents"` kullanın!
 
 #### 2. NPM Registry (Kademe 1, 2, 3... - Sınırsız Dependencies)
 - **URL:** `https://registry.npmjs.org/{package}`
@@ -78,10 +123,11 @@ Analiz pipeline'ı şu adımlardan oluşur:
 
 ```
 ┌─────────────────────────────────────────────┐
-│  1. Top N Paket Listesi (ecosyste.ms API)  │
-│     • İndirme sayısına göre sıralı          │
+│  1. Top N Paket Listesi (Leaderboard API)  │
+│     • Üç mod: downloads/dependents/trending │
 │     • MAX 2000 paket (Kademe 0 seed list)   │
 │     • Bu limit SADECE ilk liste için!       │
+│     • Önerilen: leaderboard_mode=dependents │
 └──────────────────┬──────────────────────────┘
                    ↓
 ┌─────────────────────────────────────────────┐
@@ -112,6 +158,10 @@ Analiz pipeline'ı şu adımlardan oluşur:
 │  5. Risk Skorlama (Min-Max Normalizasyon)   │
 │     Risk = 0.5×In + 0.2×Out + 0.3×Between   │
 │     • En kritik paketleri tespit et         │
+│     • Leaderboard moduna göre yorumlama:    │
+│       - dependents: Yapısal kritiklik       │
+│       - downloads: Etki yüzeyi              │
+│       - trending: Erken risk sinyali        │
 └──────────────────┬──────────────────────────┘
                    ↓
 ┌─────────────────────────────────────────────┐
@@ -122,17 +172,20 @@ Analiz pipeline'ı şu adımlardan oluşur:
 └─────────────────────────────────────────────┘
 ```
 
-**Beklenen Sonuçlar (depth parametresine göre):**
+**Beklenen Sonuçlar (depth ve leaderboard_mode'a göre):**
 
-| top_n | depth | Düğüm | Kenar | Süre | Açıklama |
-|-------|-------|-------|-------|------|----------|
-| 1000 | 1 | ~3K-5K | ~8K-12K | 2-3 dk | **Önerilen** (temel analiz) |
-| 1000 | 2 | ~8K-15K | ~25K-40K | 5-10 dk | Orta analiz |
-| 1000 | 3 | ~20K-35K | ~80K-120K | 15-30 dk | Derin analiz |
-| 1000 | 7 | ~50K-100K | ~200K+ | 1-2 saat | **Önerilmez** (patlama!) |
-| 2000 | 1 | ~6K-10K | ~15K-25K | 5-8 dk | Max seed (ecosyste.ms limiti) |
+| top_n | mode | depth | Düğüm | Kenar | Süre | Açıklama |
+|-------|------|-------|-------|-------|------|----------|
+| 1000 | dependents | 1 | ~3K-5K | ~8K-12K | 2-3 dk | **⭐ Önerilen** (kritik altyapı) |
+| 1000 | downloads | 1 | ~3K-5K | ~8K-12K | 2-3 dk | Yaygın kullanım analizi |
+| 1000 | trending | 1 | ~2K-4K | ~5K-10K | 2-3 dk | Erken uyarı (volatil) |
+| 1000 | dependents | 2 | ~8K-15K | ~25K-40K | 5-10 dk | Derin kritiklik analizi |
+| 2000 | dependents | 1 | ~6K-10K | ~15K-25K | 5-8 dk | Max seed (ecosyste.ms limiti) |
 
-**Kritik Paketler:** In-degree yüksek olanlar (örn: tslib, lodash, react)
+**Kritik Paketler (mod'a göre):**
+- `dependents`: tslib, @smithy/types, @babel/helper-plugin-utils (yüksek in-degree)
+- `downloads`: react, lodash, chalk (yaygın kullanım)
+- `trending`: Yeni yükselen paketler (volatil, erken tespit)
 
 **DİKKAT:** 
 - ecosyste.ms'in 2000 limiti **sadece Kademe 0** içindir

@@ -18,6 +18,8 @@ import csv
 def run_pipeline(
     top_packages: Optional[Iterable[str]] = None,
     top_n: int = 1000,
+    leaderboard_mode: str = "trending",
+    depth: int = 7,
     cache_path: Optional[str] = None,
     include_peer_deps: bool = False,
     sample_k: Optional[int] = None,
@@ -35,13 +37,23 @@ def run_pipeline(
     risk skorlarını üretir, CSV/JSON çıktılar oluşturur ve opsiyonel olarak
     görselleştirmeler yapar. Notebook'lardan tek fonksiyonla çağrılabilir.
 
+    Yeni Varsayılanlar (2025-11-24):
+        - leaderboard_mode="trending" (en çok trend olan paketler)
+        - depth=7 (7 kademe derinlik, geniş ekosistem analizi)
+        - top_n=1000 (API limiti dahilinde)
+
     Typical usage from a notebook:
         from analysis import run_pipeline
-        res = run_pipeline(top_n=1000)
+        
+        # Varsayılan: Trending + 1000 paket + 7 kademe
+        res = run_pipeline()
+        
+        # Downloads modu ile karşılaştırma
+        res = run_pipeline(top_n=1000, leaderboard_mode="downloads", depth=3)
         
         # Ağı dependent paketlerle genişletmek için:
         res = run_pipeline(
-            top_n=10000, 
+            top_n=2000, 
             expand_with_dependents=True,
             max_packages_to_expand=1000,  # İlk 1000 paket için dependent çek
             max_dependents_per_package=20  # Her paket için max 20 dependent
@@ -52,16 +64,20 @@ def run_pipeline(
     res_dir = Path(results_dir)
     res_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1) Determine top package list
+    # 1) Determine top package list with metadata
+    packages_metadata = None
     if top_packages is None:
-        print(f"Fetching top {top_n} packages (may take a while)...")
-        top_list: List[str] = ah.fetch_top_packages(top_n)
+        print(f"Fetching top {top_n} packages from leaderboard (mode: {leaderboard_mode})...")
+        packages_metadata = ah.fetch_leaderboard_packages(mode=leaderboard_mode, limit=top_n, return_metadata=True)
+        top_list: List[str] = [p["name"] for p in packages_metadata]
+        print(f"  ✅ {len(top_list)} paket alındı (dependents_count node weight olarak kullanılacak)")
     else:
         top_list = list(top_packages)
+        print(f"  ⚠️ Özel paket listesi kullanılıyor, dependents_count metadata yok")
 
-    # 2) Build dependency graph (Dependent -> Dependency)
+    # 2) Build dependency graph (Dependent -> Dependency) with depth=7
     cachep = Path(cache_path) if cache_path else None
-    print("Building dependency graph...")
+    print(f"Building dependency graph (depth={depth}, expand_dependents={expand_with_dependents})...")
     
     # Eğer expand_with_dependents aktifse, sadece ilk N paketi genişlet
     packages_to_expand = top_list[:max_packages_to_expand] if expand_with_dependents else top_list
@@ -72,6 +88,8 @@ def run_pipeline(
         include_peer_deps=include_peer_deps,
         expand_with_dependents=expand_with_dependents,
         max_dependents_per_package=max_dependents_per_package,
+        depth=depth,
+        packages_metadata=packages_metadata,
     )
     
     # Eğer genişlettikse ama bazı paketler atlandıysa, onları da node olarak ekle
@@ -96,7 +114,7 @@ def run_pipeline(
 
     # 5) Save primary outputs
     ah.save_edges(G, edges_p)
-    ah.save_metrics(in_deg, out_deg, btw, top_set, metrics_p)
+    ah.save_metrics(in_deg, out_deg, btw, top_set, metrics_p, G=G)  # Graf'ı da geç (metadata için)
     ah.save_risk_scores(risk, in_deg, out_deg, btw, top_set, risk_p)
     ah.save_graph_stats(G, stats_p)
     

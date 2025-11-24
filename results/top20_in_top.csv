@@ -9,8 +9,8 @@ call-bound,39
 @smithy/util-utf8,35
 @smithy/node-config-provider,34
 @aws-sdk/core,31
-es-errors,31
 @types/node,31
+es-errors,31
 @smithy/util-middleware,29
 @smithy/smithy-client,28
 call-bind,27
@@ -18,4 +18,4 @@ call-bind,27
 chalk,26
 @smithy/util-base64,25
 @jest/types,24
-@smithy/middleware-endpoint,23
+@smithy/url-parser,23

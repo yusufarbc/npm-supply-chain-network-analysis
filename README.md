@@ -36,13 +36,69 @@ Notebook'u açın ve **ilk kod hücresini çalıştırın:**
 # ⚡ TAM PİPELİNE - HER ŞEYİ YAPAR
 from analysis.run_pipeline import run_pipeline
 
+# 🆕 VARSAYILAN: Most Dependents + 7 Kademe + Node Weights
 result = run_pipeline(
-    top_n=1000,              # Kaç paket analiz edilecek
-    results_dir="../results", # Çıktı klasörü
-    compute_plots=True,       # Görselleştirmeler
-    export_gexf=False         # GEXF format (opsiyonel)
+    top_n=1000,                    # Kaç paket analiz edilecek
+    leaderboard_mode="dependents",  # ⚠️ Varsayılan: En kritik altyapı paketleri
+    depth=7,                        # 7 kademe derinlik (geniş ekosistem)
+    results_dir="../results",      # Çıktı klasörü
+    compute_plots=True,             # Görselleştirmeler
+    export_gexf=False               # GEXF format (opsiyonel)
 )
+
+# 📊 Not: dependents_count otomatik node weight olarak eklenir
 ```
+
+### 📊 Paket Seçim Modları (Leaderboard)
+
+Başlangıç (Kademe 0) paket seti üç farklı kriterle çekilebilir:
+
+| Mod | Parametre | Açıklama | Ne Zaman Kullanılır | Özellik |
+|-----|-----------|----------|---------------------|----------|
+| **Most Downloaded** | `downloads` | Haftalık/aylık indirme hacmi yüksek paketler | Genel ekosistem omurgası analizi | Yaygın kullanım |
+| **Most Dependent**  | `dependents` | En çok bağımlı olunan paketler (transitif etki potansiyeli yüksek) | Kritiklik analizi (altyapı paketleri) | ⭐ **Varsayılan**, Yüksek in-degree korelasyonu |
+| **Trending**        | `trending` | Ani indirme artışı yaşayan paketler (volatil) | Erken anomali / olası hedef izleme | Hızlı değişim, risk sinyali |
+
+### ⚖️ Node Weight: dependents_count
+
+Leaderboard API'sinden alınan **`dependents_count`** her düğüme otomatik eklenir:
+
+```python
+# Her paket için ekosistem genelindeki toplam dependent sayısı
+G.nodes['lodash']['dependents_count']  # Örn: 156789
+G.nodes['lodash']['downloads']         # Örn: 45000000
+G.nodes['lodash']['rank']              # Örn: 12
+```
+
+**Fark:**
+- **dependents_count**: Ekosistem geneli (NPM'deki tüm paketler) - API verisi
+- **in_degree**: Sadece bu ağdaki bağımlılıklar (Top N + dependencies) - yerel hesaplama
+- **Ilişki**: `dependents_count >= in_degree` (ekosistem > alt-ağ)
+
+**Kullanım:**
+- Ağırlıklı risk skoru hesaplama
+- Kritiklik haritalam
+
+a (gerçek ekosistem etkisi)
+- Gephi'de node size olarak görselleritirme
+
+**Kullanım Örnekleri:**
+
+```python
+# Varsayılan: En kritik altyapı paketleri (depth=7, dependents_count weight)
+result = run_pipeline(top_n=1000)
+
+# En çok indirilen paketlerle analiz
+result = run_pipeline(top_n=1000, leaderboard_mode="downloads", depth=3)
+
+# Trend paketleri izle (erken uyarı)
+result = run_pipeline(top_n=500, leaderboard_mode="trending", depth=2)
+```
+
+**Risk Yorumları:**
+- **dependents modu:** in-degree (kim bağımlı) yapısal önemle yüksek korelasyon → Çıkarıldığında maksimum ağ bozulması
+- **downloads modu:** Kullanım yaygınlığı → Geniş etki yüzeyi, saldırı başarı oranı yüksek
+- **trending modu:** Hızlı yükselen paketler → Potansiyel supply chain saldırı hedefi, erken tespit için ideal
 
 ### 🔄 İki Farklı Genişletme Modu
 
@@ -148,12 +204,17 @@ depth=7:
 **Öneri:** `depth=1` yeterlidir, `depth=2` analiz için makul, `depth>3` önerilmez (hesaplama patlaması)
 
 **Bu tek hücre tüm pipeline'ı çalıştırır:**
-1. ✅ Top N paket listesini çeker (max 2000 - ecosyste.ms limiti)
+1. ✅ Top N paket listesini çeker (seçilen leaderboard moduna göre, max 2000)
 2. ✅ Bağımlılık grafını oluşturur
 3. ✅ Metrikleri hesaplar
 4. ✅ **Gephi dosyalarını otomatik üretir**
 5. ✅ Görselleştirmeleri yapar
 6. ✅ Raporları oluşturur
+
+**NOT:** Leaderboard modu seçimine göre analiz sonuçları değişir:
+- `downloads`: Yaygın kullanım → Geniş kaskad etkisi
+- `dependents`: Çekirdek altyapı → Çıkarıldığında yüksek ağ bozulması  
+- `trending`: Volatil büyüme → Erken uyarı, anomali avı
 
 ### 📚 Alternatif: Adım Adım
 

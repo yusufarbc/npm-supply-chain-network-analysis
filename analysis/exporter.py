@@ -85,7 +85,7 @@ def write_edges_csv(edges_path: Path, edges_rows, id_map: Dict[str, int]) -> Non
     edges_path.parent.mkdir(parents=True, exist_ok=True)
     with edges_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["source", "target", "weight", "directed"])
+        w.writerow(["source", "target", "directed"])
         for r in edges_rows:
             src = (r.get("source") or r.get("u") or "").strip()
             tgt = (r.get("target") or r.get("v") or "").strip()
@@ -95,7 +95,7 @@ def write_edges_csv(edges_path: Path, edges_rows, id_map: Dict[str, int]) -> Non
             tid = id_map.get(tgt)
             if sid is None or tid is None:
                 continue
-            w.writerow([sid, tid, 1, True])
+            w.writerow([sid, tid, True])
 
 
 def write_gexf(gexf_path: Path, id_map: Dict[str, int], metrics: Dict[str, Dict[str, str]], edges_rows) -> None:
@@ -144,43 +144,70 @@ def export_gephi_from_graph(G, metrics_dict: Dict[str, Dict], risks_dict: Option
     
     Türkçe açıklama: Graf objesinden ID haritası oluşturur ve Gephi CSV'lerini yazar.
     Bu fonksiyon pipeline içinden çağrılır, daha hızlı ve memory-efficient.
+    
+    Çıktı formatı:
+    - gephi_nodes.csv: 12 sütun (Id, Label, package, in_degree, out_degree, betweenness, 
+                       risk_score, is_topN, dependents_count, downloads, rank, is_seed)
+    - gephi_edges.csv: 4 sütun (Source, Target, Type, Weight)
     """
     # Tüm düğümleri topla
     all_nodes = set(G.nodes())
     
-    # Deterministik ID haritası
+    # Deterministik ID haritası (alfabetik sıralı)
     id_map = build_id_map(all_nodes)
     
-    # Nodes CSV - zenginleştirilmiş
+    # İstatistikler için sayaçlar
+    nodes_with_metrics = 0
+    
+    # Nodes CSV - zenginleştirilmiş (node attributes + metrics + risks)
     nodes_path = results_dir / "gephi_nodes.csv"
     nodes_path.parent.mkdir(parents=True, exist_ok=True)
     with nodes_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["Id", "Label", "package", "in_degree", "out_degree", "betweenness", "risk_score", "is_topN"])
+        w.writerow(["Id", "Label", "package", "in_degree", "out_degree", "betweenness", "risk_score", "is_topN", 
+                   "dependents_count", "downloads", "rank", "is_seed"])
         for pkg in sorted(id_map.keys(), key=lambda x: id_map[x]):
             pid = id_map[pkg]
+            
+            # Metrics dict'ten değerler
             m = metrics_dict.get(pkg, {})
             in_d = m.get("in_degree", "0")
             out_d = m.get("out_degree", "0")
             btw = m.get("betweenness", "0.000000")
             is_top = m.get("is_topN", "False")
+            if m:
+                nodes_with_metrics += 1
+            
+            # Risk dict'ten risk skoru
             risk = risks_dict.get(pkg, {}).get("risk_score", "") if risks_dict else ""
-            w.writerow([pid, pkg, pkg, in_d, out_d, btw, risk, is_top])
+            
+            # Graf node attributes'dan metadata çek (güvenli)
+            node_attrs = G.nodes.get(pkg, {})
+            deps_count = node_attrs.get("dependents_count", 0)
+            downloads = node_attrs.get("downloads", 0)
+            rank = node_attrs.get("rank", 0)
+            is_seed = node_attrs.get("is_seed", False)
+            
+            w.writerow([pid, pkg, pkg, in_d, out_d, btw, risk, is_top, deps_count, downloads, rank, is_seed])
     
     # Edges CSV - ID bazlı (ANA ÇIKTI)
     edges_path = results_dir / "gephi_edges.csv"
     with edges_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["Source", "Target", "Type", "Weight"])
+        w.writerow(["Source", "Target", "Type"])
         for src, tgt in G.edges():
             sid = id_map.get(src)
             tid = id_map.get(tgt)
             if sid is not None and tid is not None:
-                w.writerow([sid, tid, "Directed", 1])
+                w.writerow([sid, tid, "Directed"])
     
-    print(f"✓ Gephi dosyaları oluşturuldu:")
-    print(f"  - {nodes_path} ({len(id_map)} düğüm)")
-    print(f"  - {edges_path} ({G.number_of_edges()} kenar)")
+    print(f"✅ Gephi dosyaları oluşturuldu:")
+    print(f"   📊 Nodes: {len(id_map)} düğüm")
+    print(f"      - Metrics olan: {nodes_with_metrics}")
+    print(f"   🔗 Edges: {G.number_of_edges()} kenar")
+    print(f"   📁 Dosyalar:")
+    print(f"      - {nodes_path.name}")
+    print(f"      - {edges_path.name}")
     
     return id_map
 

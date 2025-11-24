@@ -1,13 +1,13 @@
 {
   "before": {
-    "nodes": 1559,
-    "edges": 4076
+    "nodes": 1558,
+    "edges": 4071
   },
   "after": {
-    "nodes": 1539.0,
-    "edges": 3062.0,
-    "components_count": 184.0,
-    "largest_component_size": 1184.0,
+    "nodes": 1538.0,
+    "edges": 3022.0,
+    "components_count": 168.0,
+    "largest_component_size": 1195.0,
     "diameter_lcc": 16.0
   }
 }

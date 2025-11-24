@@ -16,6 +16,8 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 from typing import Dict, List, Set, Tuple, Optional
+import concurrent.futures
+import threading
 
 import networkx as nx
 import requests
@@ -26,9 +28,78 @@ from requests.utils import quote
 ECOSYSTEMS_PACKAGE_NAMES_URL = (
     "https://packages.ecosyste.ms/api/v1/registries/npmjs.org/package_names"
 )
+ECOSYSTEMS_PACKAGES_URL = (
+    "https://packages.ecosyste.ms/api/v1/registries/npmjs.org/packages"
+)
 NPMS_SEARCH_URL = "https://api.npms.io/v2/search"
 NPM_SEARCH_URL = "https://registry.npmjs.org/-/v1/search"
 NPM_REGISTRY_BASE = "https://registry.npmjs.org"
+
+# Leaderboard modları (ecosyste.ms packages API sort parametreleri)
+LEADERBOARD_MODES = {
+    "downloads": "downloads",
+    "dependents": "dependent_repos_count",  # GitHub repos that depend on this package
+    "trending": "downloads"  # trending ayrı endpoint olmadığı için downloads kullanıyoruz
+}
+
+
+def fetch_leaderboard_packages(mode: str = "downloads", limit: int = 1000, timeout: int = 60, return_metadata: bool = True) -> List[Dict[str, any]]:
+    """
+    ecosyste.ms NPM packages API'sinden paket listesini çek (metadata ile).
+    
+    Args:
+        mode: Leaderboard modu - "downloads" (en çok indirilen), 
+              "dependents" (en çok GitHub repo tarafından bağımlı olunan), "trending" (downloads fallback)
+        limit: Maksimum paket sayısı (pagination ile birleştirilebilir)
+        timeout: HTTP timeout süresi (saniye)
+        return_metadata: True ise tam metadata, False ise sadece isimler
+    
+    Returns:
+        Paket metadata listesi: [{"name": str, "dependents_count": int, "downloads": int, "rank": int}, ...]
+        
+    Türkçe açıklama:
+        - downloads: Haftalık/aylık indirme hacmi yüksek paketler (genel ekosistem omurgası)
+        - dependents: En çok GitHub reposu tarafından bağımlı olunan paketler (altyapı kritikliği)
+        - trending: Downloads ile aynı (ayrı endpoint yok)
+        - dependents_count: Bu pakete GitHub'da kaç repo bağımlı (node weight olarak kullanılır)
+    """
+    if mode not in LEADERBOARD_MODES:
+        raise ValueError(f"Geçersiz leaderboard modu: {mode}. Geçerli modlar: {list(LEADERBOARD_MODES.keys())}")
+    
+    sort_field = LEADERBOARD_MODES[mode]
+    packages = []
+    
+    # Pagination ile istenen sayıya ulaş (max 100/page)
+    page = 1
+    per_page = min(100, limit)
+    
+    while len(packages) < limit:
+        params = {"sort": sort_field, "order": "desc", "per_page": per_page, "page": page}
+        resp = requests.get(ECOSYSTEMS_PACKAGES_URL, params=params, timeout=timeout)
+        resp.raise_for_status()
+        data = resp.json()
+        
+        if not isinstance(data, list) or len(data) == 0:
+            break
+        
+        for item in data:
+            if isinstance(item, dict) and item.get("name"):
+                packages.append({
+                    "name": item.get("name"),
+                    "dependents_count": item.get("dependent_repos_count", 0),
+                    "downloads": item.get("downloads", 0),
+                    "rank": page * per_page + len(packages)  # Synthetic rank
+                })
+                
+                if len(packages) >= limit:
+                    break
+        
+        page += 1
+        if len(data) < per_page:  # Son sayfa
+            break
+    
+    result = packages[:limit]
+    return result if return_metadata else [p["name"] for p in result]
 
 
 def _fetch_top_packages_ecosystems(limit: int) -> List[str]:
@@ -163,13 +234,32 @@ def _fetch_top_packages_npm_search_aggregate(limit: int) -> List[str]:
     return names[:limit]
 
 
-def fetch_top_packages(limit: int = 100) -> List[str]:
+def fetch_top_packages(limit: int = 100, mode: str = "downloads") -> List[str]:
     """
     En çok indirilen Top N paket adlarını getir.
     
-    Türkçe açıklama: Öncelik sırasıyla: ecosyste.ms -> npm search -> npms.io
-    Başarısız olan yöntem için bir sonrakine geçilir.
+    Args:
+        limit: Paket sayısı limiti
+        mode: Leaderboard modu - "downloads", "dependents" veya "trending"
+    
+    Türkçe açıklama: 
+        Öncelikle ecosyste.ms leaderboard API kullanılır (mod destekli).
+        Başarısız olursa eski yöntemler (npm search, npms.io) denenir.
+        
+    Not: Yeni kod için fetch_leaderboard_packages() kullanımı önerilir.
     """
+    # Önce yeni leaderboard API'yi dene (sadece isimler)
+    try:
+        names = fetch_leaderboard_packages(mode=mode, limit=limit, return_metadata=False)
+        if names:
+            return names
+    except Exception:
+        pass
+    
+    # Eski yöntemlerle geri düş (sadece downloads modu için)
+    if mode != "downloads":
+        return []
+        
     try:
         # 1000 ve üzeri için sayfalı toplama daha güvenilir
         if limit >= 1000:
@@ -326,11 +416,12 @@ def _save_cache(path: Path, cache: Dict[str, Dict[str, str]]) -> None:
 
 def build_dependency_graph(
     top_packages: List[str],
+    packages_metadata: Optional[List[Dict[str, any]]] = None,
     cache_path: Optional[Path] = None,
     include_peer_deps: bool = False,
     expand_with_dependents: bool = False,
     max_dependents_per_package: int = 50,
-    depth: int = 3,
+    depth: int = 7,
 ) -> Tuple[nx.DiGraph, Set[str]]:
     """
     Top N listesi için yönlü bir bağımlılık ağı (Dependent -> Dependency) kur ve döndür.
@@ -341,57 +432,111 @@ def build_dependency_graph(
     Çok kademeli dependency analizi:
     - depth=1: Sadece Top N'in dependencies'i
     - depth=2: Top N + 1. kademe dependencies'in dependencies'i
-    - depth=3: Top N + 1. kademe + 2. kademe dependencies'in dependencies'i (varsayılan)
+    - depth=7: Top N + ... + 7. kademe dependencies (varsayılan, 2025-11-24)
     
-    Örnek (depth=3):
-    Top 1000 → Dependencies (1. kademe) → Dependencies (2. kademe) → Dependencies (3. kademe)
+    Örnek (depth=7):
+    Top 1000 → Dependencies (1. kademe) → ... → Dependencies (7. kademe)
+    
+    Args:
+        top_packages: Seed paket listesi
+        packages_metadata: Leaderboard'dan gelen metadata (dependents_count, downloads, rank)
+        depth: Derinlik seviyesi (varsayılan: 7)
     """
     G = nx.DiGraph()
     top_set: Set[str] = set(top_packages)
+    
+    # Metadata'dan name -> metadata dictionary oluştur
+    metadata_map = {}
+    if packages_metadata:
+        metadata_map = {pkg['name']: pkg for pkg in packages_metadata}
+    
+    # Top N paketlerini metadata ile ekle
     for pkg in top_packages:
-        G.add_node(pkg)
+        if pkg in metadata_map:
+            meta = metadata_map[pkg]
+            G.add_node(pkg,
+                      dependents_count=meta.get('dependents_count', 0),
+                      downloads=meta.get('downloads', 0),
+                      rank=meta.get('rank', 0),
+                      is_seed=True)
+        else:
+            G.add_node(pkg, dependents_count=0, downloads=0, rank=0, is_seed=True)
     if cache_path is None:
         cache_path = Path("results/cache_deps.json")
     cache = _load_cache(cache_path)
     
+    # Thread-safe lock
+    lock = threading.Lock()
+    
+    def process_pkg(pkg, session):
+        if pkg in cache:
+            return pkg, cache[pkg], True
+        
+        deps = {}
+        for _ in range(3):
+            deps = fetch_dependencies(pkg, session=session, include_peer=include_peer_deps)
+            if deps:
+                break
+        return pkg, deps, False
+
     with requests.Session() as session:
-        # Başlangıç: Top N paketleri
+        # Başlangıç: Top N paketleri (unique set kullan ama orijinal sayıyı göster)
         current_level = set(top_packages)
+        seed_count = len(top_packages)  # Orijinal sayı (duplicate dahil)
+        unique_count = len(current_level)  # Unique sayı
         all_processed = set()
         
         for level in range(1, depth + 1):
-            print(f"\n🔍 Kademe {level}: {len(current_level)} paketin dependencies'i çekiliyor...")
+            if level == 1:
+                # İlk kademe için orijinal seed count'u göster
+                print(f"\n🔍 Kademe {level}: {seed_count} paketin dependencies'i çekiliyor...")
+                if unique_count != seed_count:
+                    print(f"  ℹ️ {seed_count - unique_count} duplicate paket kaldırıldı, {unique_count} unique paket işlenecek")
+            else:
+                print(f"\n🔍 Kademe {level}: {len(current_level)} paketin dependencies'i çekiliyor...")
             next_level = set()
             
-            for i, pkg in enumerate(current_level, 1):
-                if i % 100 == 0:
-                    print(f"  → {i}/{len(current_level)} paket işlendi...")
-                
-                # Zaten işlendiyse atla
-                if pkg in all_processed:
-                    continue
+            packages_to_fetch = [pkg for pkg in current_level if pkg not in all_processed]
+            for pkg in packages_to_fetch:
                 all_processed.add(pkg)
-                
-                # Cache'den veya API'den dependencies çek
-                if pkg in cache:
-                    deps: Dict[str, str] = cache.get(pkg) or {}
-                else:
-                    deps = {}
-                    for _ in range(3):
-                        deps = fetch_dependencies(pkg, session=session, include_peer=include_peer_deps)
-                        if deps:
-                            break
-                    cache[pkg] = deps
-                
-                # Kenarları ekle ve bir sonraki seviye için topla
-                for dep in deps.keys():
-                    G.add_edge(pkg, dep)  # Package -> Dependency
-                    
-                    # Bir sonraki kademe için dependencies'i topla
-                    if level < depth and dep not in all_processed:
-                        next_level.add(dep)
             
-            print(f"  ✅ Kademe {level} tamamlandı: {G.number_of_nodes()} düğüm, {G.number_of_edges()} kenar")
+            if not packages_to_fetch:
+                print("  ⚠️ Bu kademede yeni paket yok, döngü sonlandırılıyor.")
+                break
+
+            # Parallel execution
+            with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+                future_to_pkg = {executor.submit(process_pkg, pkg, session): pkg for pkg in packages_to_fetch}
+                
+                completed_count = 0
+                total_count = len(packages_to_fetch)
+                
+                for future in concurrent.futures.as_completed(future_to_pkg):
+                    pkg = future_to_pkg[future]
+                    try:
+                        p, deps, from_cache = future.result()
+                        
+                        with lock:
+                            if not from_cache:
+                                cache[p] = deps
+                            
+                            for dep_name in deps.keys():
+                                G.add_edge(p, dep_name)
+                                next_level.add(dep_name)
+                                
+                                # Yeni düğüm ise default metadata ile ekle
+                                if dep_name not in G.nodes:
+                                    G.add_node(dep_name, dependents_count=0, downloads=0, rank=0, is_seed=False)
+                        
+                        completed_count += 1
+                        if completed_count % 500 == 0:
+                             print(f"  → {completed_count}/{total_count} paket işlendi...")
+                             
+                    except Exception as exc:
+                        print(f"  ❌ {pkg} işlenirken hata: {exc}")
+            
+            _save_cache(cache_path, cache)
+            print(f"  ✅ Kademe {level} OK → {G.number_of_nodes()} node, {G.number_of_edges()} edge")
             
             # Bir sonraki kademeye geç
             current_level = next_level
@@ -546,24 +691,37 @@ def save_metrics(
     btw: Dict[str, float],
     top_set: Set[str],
     out_path: Path,
+    G: Optional[nx.DiGraph] = None,
 ) -> None:
     """
     Düğüm metriklerini CSV olarak kaydet.
     
-    Türkçe açıklama: Sütunlar: package, in_degree, out_degree, betweenness, is_topN
+    Türkçe açıklama: Sütunlar: package, in_degree, out_degree, betweenness, is_topN, dependents_count, downloads, rank
+    - dependents_count: Ekosistem genelindeki toplam dependent sayısı (leaderboard metadata)
+    - downloads: Toplam download sayısı (leaderboard metadata)
+    - rank: Leaderboard sıralaması (leaderboard metadata)
     """
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["package", "in_degree", "out_degree", "betweenness", "is_topN"])
+        w.writerow(["package", "in_degree", "out_degree", "betweenness", "is_topN", "dependents_count", "downloads", "rank"])
         all_nodes = set(in_deg.keys()) | set(out_deg.keys()) | set(btw.keys())
         for n in sorted(all_nodes):
+            # Node attributes'tan metadata çek (güvenli)
+            node_data = G.nodes.get(n, {}) if G else {}
+            dep_count = node_data.get("dependents_count", 0)
+            downloads = node_data.get("downloads", 0)
+            rank = node_data.get("rank", 0)
+            
             w.writerow([
                 n,
                 in_deg.get(n, 0),
                 out_deg.get(n, 0),
                 f"{btw.get(n, 0.0):.6f}",
                 str(n in top_set),
+                dep_count,
+                downloads,
+                rank,
             ])
 
 
