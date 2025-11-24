@@ -3,7 +3,7 @@
   "edges": 3058,
   "avg_in_degree": 2.0305444887118194,
   "avg_out_degree": 2.0305444887118194,
-  "avg_betweenness": 1.161907118116915e-05,
+  "avg_betweenness": 1.0470417756414785e-05,
   "density": 0.001349198995821807,
   "is_connected": false
 }

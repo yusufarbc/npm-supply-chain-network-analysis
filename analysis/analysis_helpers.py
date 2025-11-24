@@ -18,10 +18,11 @@ from pathlib import Path
 from typing import Dict, List, Set, Tuple, Optional
 import concurrent.futures
 import threading
+import time
 
 import networkx as nx
 import requests
-from requests.utils import quote
+from urllib.parse import quote
 
 
 # NPM ve üçüncü taraf uç noktaları
@@ -567,12 +568,12 @@ def build_dependency_graph(
                                 cache[p] = deps
                             
                             for dep_name in deps.keys():
-                                G.add_edge(p, dep_name)
-                                next_level.add(dep_name)
-                                
                                 # Yeni düğüm ise default metadata ile ekle
                                 if dep_name not in G.nodes:
                                     G.add_node(dep_name, dependents_count=0, downloads=0, rank=0, is_seed=False)
+                                
+                                G.add_edge(p, dep_name)
+                                next_level.add(dep_name)
                         
                         completed_count += 1
                         if completed_count % 500 == 0:
@@ -1168,16 +1169,27 @@ def fetch_package_metadata(package: str, session: Optional[requests.Session] = N
     encoded_name = quote(package, safe="")
     url = f"https://packages.ecosyste.ms/api/v1/registries/npmjs.org/packages/{encoded_name}"
     http = session if session is not None else requests
-    try:
-        resp = http.get(url, timeout=30)
-        if resp.status_code == 200:
-            data = resp.json()
-            return {
-                "dependents_count": data.get("dependent_repos_count", 0),
-                "downloads": data.get("downloads", 0),
-            }
-    except Exception:
-        pass
+    
+    for attempt in range(3):
+        try:
+            resp = http.get(url, timeout=30)
+            if resp.status_code == 200:
+                data = resp.json()
+                return {
+                    "dependents_count": data.get("dependent_repos_count", 0),
+                    "downloads": data.get("downloads", 0),
+                }
+            elif resp.status_code == 429:
+                # Rate limit hit, wait and retry
+                time.sleep(2 * (attempt + 1))
+                continue
+            elif resp.status_code == 404:
+                return {}
+        except Exception:
+            pass
+        
+        time.sleep(1)
+            
     return {}
 
 
@@ -1199,6 +1211,7 @@ def enrich_graph_metadata(G: nx.DiGraph, max_workers: int = 20) -> None:
     print("   (Bu işlem API hızına bağlı olarak zaman alabilir...)")
     
     count = 0
+    success_count = 0
     total = len(nodes_to_update)
     lock = threading.Lock()
     
@@ -1217,11 +1230,12 @@ def enrich_graph_metadata(G: nx.DiGraph, max_workers: int = 20) -> None:
                                 G.nodes[pkg]["dependents_count"] = meta["dependents_count"]
                             if "downloads" in meta:
                                 G.nodes[pkg]["downloads"] = meta["downloads"]
+                        success_count += 1
                 except Exception:
                     pass
                 
                 count += 1
                 if count % 100 == 0:
-                    print(f"  → {count}/{total} metadata güncellendi...")
+                    print(f"  → {count}/{total} metadata güncellendi... (Başarılı: {success_count})")
                     
-    print(f"✅ Metadata zenginleştirme tamamlandı.")
+    print(f"✅ Metadata zenginleştirme tamamlandı. ({success_count}/{total} başarılı)")

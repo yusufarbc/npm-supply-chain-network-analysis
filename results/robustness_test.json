@@ -5,9 +5,9 @@
   },
   "after": {
     "nodes": 1486.0,
-    "edges": 2246.0,
-    "components_count": 200.0,
-    "largest_component_size": 1236.0,
+    "edges": 2298.0,
+    "components_count": 205.0,
+    "largest_component_size": 1232.0,
     "diameter_lcc": 14.0
   }
 }
