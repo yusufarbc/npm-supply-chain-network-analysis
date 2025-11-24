@@ -39,8 +39,51 @@ NPM_REGISTRY_BASE = "https://registry.npmjs.org"
 LEADERBOARD_MODES = {
     "downloads": "downloads",
     "dependents": "dependent_repos_count",  # GitHub repos that depend on this package
-    "trending": "downloads"  # trending ayrı endpoint olmadığı için downloads kullanıyoruz
+    "trending": "trending"  # npms.io üzerinden çekilir
 }
+
+
+def fetch_trending_packages_npms(limit: int = 1000, timeout: int = 60) -> List[Dict[str, any]]:
+    """
+    npms.io API kullanarak trending/popüler paketleri çeker.
+    """
+    url = NPMS_SEARCH_URL
+    packages = []
+    step = 250  # npms.io max size
+    
+    for start in range(0, limit, step):
+        current_limit = min(step, limit - len(packages))
+        params = {
+            "q": "not:deprecated",
+            "size": current_limit,
+            "from": start
+        }
+        try:
+            resp = requests.get(url, params=params, timeout=timeout)
+            resp.raise_for_status()
+            data = resp.json()
+            
+            results = data.get("results", [])
+            if not results:
+                break
+                
+            for item in results:
+                pkg = item["package"]
+                score = item.get("score", {})
+                packages.append({
+                    "name": pkg["name"],
+                    "dependents_count": 0, # npms.io bu veriyi sağlamaz
+                    "downloads": 0,        # npms.io bu veriyi sağlamaz
+                    "rank": len(packages) + 1,
+                    "score": score.get("final", 0)
+                })
+                if len(packages) >= limit:
+                    break
+        except Exception as e:
+            print(f"Error fetching from npms.io: {e}")
+            break
+            
+    return packages
 
 
 def fetch_leaderboard_packages(mode: str = "downloads", limit: int = 1000, timeout: int = 60, return_metadata: bool = True) -> List[Dict[str, any]]:
@@ -49,7 +92,7 @@ def fetch_leaderboard_packages(mode: str = "downloads", limit: int = 1000, timeo
     
     Args:
         mode: Leaderboard modu - "downloads" (en çok indirilen), 
-              "dependents" (en çok GitHub repo tarafından bağımlı olunan), "trending" (downloads fallback)
+              "dependents" (en çok GitHub repo tarafından bağımlı olunan), "trending" (npms.io popülerlik)
         limit: Maksimum paket sayısı (pagination ile birleştirilebilir)
         timeout: HTTP timeout süresi (saniye)
         return_metadata: True ise tam metadata, False ise sadece isimler
@@ -60,12 +103,15 @@ def fetch_leaderboard_packages(mode: str = "downloads", limit: int = 1000, timeo
     Türkçe açıklama:
         - downloads: Haftalık/aylık indirme hacmi yüksek paketler (genel ekosistem omurgası)
         - dependents: En çok GitHub reposu tarafından bağımlı olunan paketler (altyapı kritikliği)
-        - trending: Downloads ile aynı (ayrı endpoint yok)
+        - trending: npms.io popülerlik skoru (kalite, popülerlik, bakım)
         - dependents_count: Bu pakete GitHub'da kaç repo bağımlı (node weight olarak kullanılır)
     """
     if mode not in LEADERBOARD_MODES:
         raise ValueError(f"Geçersiz leaderboard modu: {mode}. Geçerli modlar: {list(LEADERBOARD_MODES.keys())}")
     
+    if mode == "trending":
+        return fetch_trending_packages_npms(limit, timeout)
+
     sort_field = LEADERBOARD_MODES[mode]
     packages = []
     
@@ -1112,3 +1158,70 @@ def plot_network_visualizations(
 
     _draw(H_full, "Top N + Bağımlılıklar", "network_full_topN")
     _draw(H_top, "Sadece Top N Alt-Ağ", "network_topN_only")
+
+
+def fetch_package_metadata(package: str, session: Optional[requests.Session] = None) -> Dict[str, any]:
+    """
+    ecosyste.ms API üzerinden tek bir paketin metadata'sını çeker.
+    """
+    # URL encode the package name to handle scoped packages correctly
+    encoded_name = quote(package, safe="")
+    url = f"https://packages.ecosyste.ms/api/v1/registries/npmjs.org/packages/{encoded_name}"
+    http = session if session is not None else requests
+    try:
+        resp = http.get(url, timeout=30)
+        if resp.status_code == 200:
+            data = resp.json()
+            return {
+                "dependents_count": data.get("dependent_repos_count", 0),
+                "downloads": data.get("downloads", 0),
+            }
+    except Exception:
+        pass
+    return {}
+
+
+def enrich_graph_metadata(G: nx.DiGraph, max_workers: int = 20) -> None:
+    """
+    Graftaki eksik metadata'ya sahip (is_seed=False) düğümlerin verilerini tamamlar.
+    
+    Türkçe açıklama: Top N listesinde olmayan ama analiz sırasında keşfedilen
+    paketlerin dependents ve downloads bilgilerini API'den çeker.
+    """
+    # Sadece is_seed=False olan (sonradan bulunan) paketleri güncelle
+    nodes_to_update = [n for n, attr in G.nodes(data=True) if not attr.get("is_seed", False)]
+    
+    if not nodes_to_update:
+        print("ℹ️ Güncellenecek eksik metadata bulunamadı.")
+        return
+
+    print(f"🔄 Metadata zenginleştirme: {len(nodes_to_update)} paket için veri çekilecek...")
+    print("   (Bu işlem API hızına bağlı olarak zaman alabilir...)")
+    
+    count = 0
+    total = len(nodes_to_update)
+    lock = threading.Lock()
+    
+    with requests.Session() as session:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_pkg = {executor.submit(fetch_package_metadata, pkg, session): pkg for pkg in nodes_to_update}
+            
+            for future in concurrent.futures.as_completed(future_to_pkg):
+                pkg = future_to_pkg[future]
+                try:
+                    meta = future.result()
+                    if meta:
+                        with lock:
+                            # Mevcut veriyi koru, sadece API'den gelenleri güncelle
+                            if "dependents_count" in meta:
+                                G.nodes[pkg]["dependents_count"] = meta["dependents_count"]
+                            if "downloads" in meta:
+                                G.nodes[pkg]["downloads"] = meta["downloads"]
+                except Exception:
+                    pass
+                
+                count += 1
+                if count % 100 == 0:
+                    print(f"  → {count}/{total} metadata güncellendi...")
+                    
+    print(f"✅ Metadata zenginleştirme tamamlandı.")

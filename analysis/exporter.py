@@ -63,17 +63,21 @@ def write_nodes(nodes_path: Path, id_map: Dict[str, int], metrics: Dict[str, Dic
     nodes_path.parent.mkdir(parents=True, exist_ok=True)
     with nodes_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["id", "label", "package", "in_degree", "out_degree", "betweenness", "risk_score", "is_topN"])
+        w.writerow(["id", "label", "package", "in_degree", "out_degree", "betweenness", "risk_score", "is_topN", "dependents_count", "downloads", "rank"])
         for pkg, pid in sorted(id_map.items(), key=lambda kv: kv[1]):
             m = metrics.get(pkg, {})
             in_d = m.get("in_degree", "0")
             out_d = m.get("out_degree", "0")
             btw = m.get("betweenness", "0.000000")
             is_top = m.get("is_topN", m.get("is_top100", "False"))
+            dep_count = m.get("dependents_count", "0")
+            downloads = m.get("downloads", "0")
+            rank = m.get("rank", "0")
+            
             risk = ""
             if risks and pkg in risks:
                 risk = risks[pkg].get("risk_score", "")
-            w.writerow([pid, pkg, pkg, in_d, out_d, btw, risk, is_top])
+            w.writerow([pid, pkg, pkg, in_d, out_d, btw, risk, is_top, dep_count, downloads, rank])
 
 
 def write_edges_csv(edges_path: Path, edges_rows, id_map: Dict[str, int]) -> None:

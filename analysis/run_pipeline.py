@@ -18,7 +18,7 @@ import csv
 def run_pipeline(
     top_packages: Optional[Iterable[str]] = None,
     top_n: int = 1000,
-    leaderboard_mode: str = "trending",
+    leaderboard_mode: str = "dependents",
     depth: int = 7,
     cache_path: Optional[str] = None,
     include_peer_deps: bool = False,

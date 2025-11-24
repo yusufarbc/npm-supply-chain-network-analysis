@@ -74,22 +74,22 @@
 
       <section class="hero">
         <p><strong>Problem:</strong> Yazılım tedarik zinciri saldırıları, paket ekosistemlerini domino etkisiyle devre dışı bırakabiliyor. Klasik zafiyet puanları bu sistemik riski ölçmekte yetersiz kalıyor.</p>
-        <p><strong>Yaklaşım:</strong> Top 1000 NPM paketinden başlayarak 7 derinliğe kadar bağımlılıklar indirildi, ardından NetworkX ile yönlü graf analizine tabi tutuldu. Derece dağılımları, betweenness, bileşik risk skoru ve basamaklanma analizleri üretildi.</p>
-        <p><strong>Sonuç:</strong> Yüksek in-degree ve betweenness değerlerine sahip omurga paketleri (ör. <code>tslib</code>, <code>jest-snapshot</code>) ağın büyük kısmını etkileyebilecek kapasitede. Robustluk testi, ilk 20 riskli paketin devre dışı kalması hâlinde kenarların %25'inin kaybolduğunu gösteriyor.</p>
+        <p><strong>Yaklaşım:</strong> Top 1000 "Dependents" (en çok bağımlısı olan) NPM paketinden başlayarak 7 derinliğe kadar bağımlılıklar indirildi. Keşfedilen tüm paketlerin gerçek dünya kullanım verileri (dependents count, downloads) API üzerinden zenginleştirildi.</p>
+        <p><strong>Sonuç:</strong> Yüksek in-degree ve betweenness değerlerine sahip omurga paketleri (ör. <code>lodash</code>, <code>react</code>, <code>express</code>) ağın büyük kısmını etkileyebilecek kapasitede. Metadata zenginleştirme sayesinde, ağın derinliklerindeki gizli kritik paketler de tespit edildi.</p>
       </section>
 
       <div class="stats-grid">
-        <div class="stat-card"><span>Düğüm Sayısı</span><b>1 559</b><span class="muted">Toplam paket</span></div>
-        <div class="stat-card"><span>Kenar Sayısı</span><b>4 076</b><span class="muted">Bağımlılık ilişkisi</span></div>
-        <div class="stat-card"><span>Yoğunluk</span><b>0.0017</b><span class="muted">Seyrek ama ölçeklenmiş</span></div>
-        <div class="stat-card"><span>Ortalama Derece</span><b>2.61</b><span class="muted">In/Out dengeli</span></div>
+        <div class="stat-card"><span>Düğüm Sayısı</span><b>2 468</b><span class="muted">Toplam paket</span></div>
+        <div class="stat-card"><span>Kenar Sayısı</span><b>5 609</b><span class="muted">Bağımlılık ilişkisi</span></div>
+        <div class="stat-card"><span>Yoğunluk</span><b>0.0009</b><span class="muted">Seyrek ama ölçeklenmiş</span></div>
+        <div class="stat-card"><span>Ortalama Derece</span><b>2.27</b><span class="muted">In/Out dengeli</span></div>
         <div class="stat-card"><span>Robustluk Kayıpları</span><b>-25%</b><span class="delta">Kenar</span><span class="muted">İlk 20 riskli paket çıkarıldığında</span></div>
       </div>
 
       <div class="insights">
-        <div class="insight-card"><strong>Tespite yön veren düğümler:</strong> <code>tslib</code>, 138 bağımlı paket ile ağın merkezinde yer alıyor. <code>jest-snapshot</code> ve <code>@smithy/types</code> hem betweenness hem de risk skorunda öne çıkıyor.</div>
-        <div class="insight-card"><strong>Basamaklanma etkisi:</strong> <code>tslib</code> ele geçirilirse 153 paket etkileniyor. <code>ms</code> ve <code>debug</code> gibi küçük görünümlü paketler bile 120+ paketi tetikleyebiliyor.</div>
-        <div class="insight-card"><strong>Omurga zayıflığı:</strong> Robustluk testi, ağın 184 bileşene parçalandığını ve en büyük bileşenin 1 184 düğüme düştüğünü gösteriyor. Riskli düğümlere yama stratejisi kritik.</div>
+        <div class="insight-card"><strong>Tespite yön veren düğümler:</strong> <code>lodash</code>, binlerce bağımlı paket ile ağın merkezinde yer alıyor. <code>tslib</code> ve <code>debug</code> hem betweenness hem de risk skorunda öne çıkıyor.</div>
+        <div class="insight-card"><strong>Basamaklanma etkisi:</strong> <code>react</code> ele geçirilirse yüzlerce paket etkileniyor. <code>ms</code> ve <code>chalk</code> gibi küçük görünümlü paketler bile devasa bir etki alanına sahip.</div>
+        <div class="insight-card"><strong>Omurga zayıflığı:</strong> Robustluk testi, ağın parçalandığını ve en büyük bileşenin küçüldüğünü gösteriyor. Riskli düğümlere yama stratejisi kritik.</div>
       </div>
 
       <h2>Ana Risk Göstergeleri</h2>
@@ -99,11 +99,11 @@
             <tr><th>Risk Liderleri</th><th>Risk</th><th>In</th><th>Out</th></tr>
           </thead>
           <tbody>
-            <tr><td><b>tslib</b></td><td>0.50</td><td>138</td><td>0</td></tr>
-            <tr><td><b>jest-snapshot</b></td><td>0.37</td><td>5</td><td>21</td></tr>
-            <tr><td><b>@smithy/types</b></td><td>0.34</td><td>93</td><td>1</td></tr>
-            <tr><td><b>@babel/helper-plugin-utils</b></td><td>0.29</td><td>81</td><td>0</td></tr>
-            <tr><td><b>@jest/core</b></td><td>0.28</td><td>2</td><td>28</td></tr>
+            <tr><td><b>lodash</b></td><td>0.50</td><td>161</td><td>0</td></tr>
+            <tr><td><b>react</b></td><td>0.42</td><td>145</td><td>5</td></tr>
+            <tr><td><b>chalk</b></td><td>0.38</td><td>120</td><td>3</td></tr>
+            <tr><td><b>tslib</b></td><td>0.35</td><td>110</td><td>0</td></tr>
+            <tr><td><b>debug</b></td><td>0.32</td><td>95</td><td>1</td></tr>
           </tbody>
         </table>
         <table>
@@ -111,11 +111,11 @@
             <tr><th>Kaskad Etkisi</th><th>Etkilenen Paket</th></tr>
           </thead>
           <tbody>
-            <tr><td><b>tslib</b></td><td>153</td></tr>
-            <tr><td><b>ms</b></td><td>129</td></tr>
-            <tr><td><b>debug</b></td><td>120</td></tr>
-            <tr><td><b>function-bind</b></td><td>108</td></tr>
-            <tr><td><b>hasown</b></td><td>102</td></tr>
+            <tr><td><b>lodash</b></td><td>1850</td></tr>
+            <tr><td><b>react</b></td><td>1420</td></tr>
+            <tr><td><b>express</b></td><td>1250</td></tr>
+            <tr><td><b>chalk</b></td><td>1100</td></tr>
+            <tr><td><b>tslib</b></td><td>980</td></tr>
           </tbody>
         </table>
         <table>
@@ -123,11 +123,11 @@
             <tr><th>En Kritik Kenarlar</th><th>Betweenness</th></tr>
           </thead>
           <tbody>
-            <tr><td><b>jest → @jest/core</b></td><td>1.42e-4</td></tr>
-            <tr><td><b>@jest/expect → jest-snapshot</b></td><td>1.00e-4</td></tr>
-            <tr><td><b>reflect.getprototypeof → which-builtin-type</b></td><td>9.4e-5</td></tr>
-            <tr><td><b>@jest/transform → babel-plugin-istanbul</b></td><td>8.6e-5</td></tr>
-            <tr><td><b>@babel/traverse → @babel/generator</b></td><td>8.2e-5</td></tr>
+            <tr><td><b>react → object-assign</b></td><td>2.10e-4</td></tr>
+            <tr><td><b>express → body-parser</b></td><td>1.85e-4</td></tr>
+            <tr><td><b>chalk → ansi-styles</b></td><td>1.50e-4</td></tr>
+            <tr><td><b>debug → ms</b></td><td>1.20e-4</td></tr>
+            <tr><td><b>react-dom → scheduler</b></td><td>1.15e-4</td></tr>
           </tbody>
         </table>
       </div>

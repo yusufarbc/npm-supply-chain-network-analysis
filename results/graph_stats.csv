@@ -1,8 +1,8 @@
 metric,value
-nodes,1558
-edges,4071
-avg_in_degree,2.6129653401797177
-avg_out_degree,2.6129653401797177
-avg_betweenness,5.2214643875490565e-06
-density,0.001678205099665843
+nodes,1506
+edges,3058
+avg_in_degree,2.0305444887118194
+avg_out_degree,2.0305444887118194
+avg_betweenness,1.161907118116915e-05
+density,0.001349198995821807
 is_connected,False
