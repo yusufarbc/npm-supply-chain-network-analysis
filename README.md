@@ -1,3 +1,6 @@
+# npm-supply-chain-network-analysis
+Directed network analysis of NPM package dependencies using centrality metrics to assess structural risks. The project aims to identify critical packages that pose systemic threats in potential supply chain attacks, moving beyond traditional vulnerability scoring. Includes Jupyter notebooks, visualizations, and Gephi-ready datasets.
+
 # Yazılım Tedarik Zincirinde Kritiklik Haritalaması: NPM Ekosisteminde Topolojik Risk Analizi
 
 Bu proje, NPM ekosistemindeki paketleri yönlü bir ağ olarak modelleyip merkeziyet metrikleriyle yapısal riski ölçer. Amaç, klasik zafiyet skorlarının ötesine geçerek bir paketin ağ içindeki konumundan doğan sistemik riski görünür kılmaktır.
