@@ -3,338 +3,552 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NPM Tedarik Zinciri Risk Panosu</title>
+    <title>NPM Tedarik Zinciri Risk Analizi Panosu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
       :root {
-        --bg:#050b1a;
-        --panel:#0b1224;
-        --panel-2:#0f172a;
-        --panel-3:#111b31;
-        --text:#f9fafb;
-        --muted:#9ca3af;
-        --accent:#a855f7;
-        --accent-2:#22c55e;
-        --accent-3:#38bdf8;
-        --border:#1f2a40;
+        --bg: #0f172a;
+        --surface: #1e293b;
+        --surface-hover: #334155;
+        --border: #334155;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --accent: #38bdf8;
+        --accent-hover: #0ea5e9;
+        --success: #22c55e;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       }
-      *{box-sizing:border-box}
-      html,body{margin:0;padding:0;background:radial-gradient(circle at 20% 20%,rgba(56,189,248,0.08),transparent 60%),radial-gradient(circle at 70% 65%,rgba(168,85,247,0.15),transparent 55%),var(--bg);color:var(--text);font:16px/1.6 "Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-      a{color:#93c5fd;text-decoration:none} a:hover{text-decoration:underline}
-      .wrap{max-width:1200px;margin:0 auto;padding:42px 24px 80px}
-      header{margin-bottom:28px}
-      h1{font-size:32px;margin:10px 0 12px;letter-spacing:.3px}
-      h2{font-size:24px;margin:40px 0 18px;letter-spacing:.2px}
-      h3{font-size:18px;margin:24px 0 12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
-      .tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);background:rgba(15,23,42,0.7);border:1px solid var(--border);border-radius:999px;padding:4px 12px;margin-right:8px;text-transform:uppercase;letter-spacing:.4px}
-      .tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
-      .lead{margin:0;color:var(--muted);font-size:17px;max-width:760px}
-      .hero{margin-top:24px;display:grid;gap:16px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(34,197,94,0.16));border:1px solid rgba(84,108,155,0.55);border-radius:20px;padding:24px 26px}
-      .hero strong{color:#fff}
-      .stats-grid{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
-      .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
-      .stat-card span{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-      .stat-card b{font-size:26px;font-weight:700;color:#fff}
-      .delta{font-size:13px;color:var(--accent-2)}
-      .insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:18px}
-      .insight-card{background:var(--panel-2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;color:var(--muted);position:relative}
-      .insight-card::after{content:"";position:absolute;inset:0;border-radius:14px;pointer-events:none;border:1px solid rgba(168,85,247,0.15)}
-      .insight-card strong{color:#fff}
-      .tables{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
-      table{width:100%;border-collapse:collapse;font-size:14px;background:var(--panel-2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-      th,td{padding:10px 14px;text-align:left}
-      th{background:rgba(59,130,246,0.12);color:#bfdbfe;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
-      td{border-top:1px solid rgba(59,130,246,0.12);color:var(--muted)}
-      td b{color:#e2e8f0}
-      .chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
-      .chart-card{background:var(--panel-2);border:1px solid var(--border);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
-      .chart-card h4{margin:0;padding:14px 18px;font-size:16px;border-bottom:1px solid rgba(148,163,184,0.16);color:#f8fafc}
-      .chart-card figure{margin:0;background:var(--panel-3);padding:12px}
-      .chart-card img,.chart-card picture{display:block;width:100%;height:auto;border-radius:12px}
-      .chart-card footer{padding:12px 18px;border-top:1px solid rgba(148,163,184,0.12);display:flex;flex-wrap:wrap;gap:10px}
-      .chip{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;background:#0f172a;border:1px solid rgba(59,130,246,0.35);color:#e2e8f0;font-size:12px}
-      .chip b{color:var(--accent-2);font-weight:600}
-      .muted{color:var(--muted)}
-      .list{background:var(--panel-2);border:1px solid var(--border);border-radius:16px;padding:18px}
-      .list ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
-      .list li{display:flex;justify-content:space-between;gap:12px;color:var(--muted)}
-      .list code{color:#bfdbfe}
-      footer{margin-top:60px;border-top:1px solid rgba(59,130,246,0.15);padding-top:18px;color:var(--muted);font-size:13px}
-      @media (max-width:720px){h1{font-size:27px}.hero{padding:20px}.stat-card b{font-size:22px}}
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg);
+        color: var(--text-primary);
+        font-family: 'Inter', sans-serif;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      a:hover {
+        color: var(--accent-hover);
+        text-decoration: underline;
+      }
+
+      .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 40px 24px;
+      }
+
+      /* Header */
+      header {
+        margin-bottom: 48px;
+        text-align: center;
+      }
+
+      .badge-group {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        background: rgba(56, 189, 248, 0.1);
+        color: var(--accent);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        padding: 4px 12px;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0 0 16px 0;
+        background: linear-gradient(to right, #fff, #94a3b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .lead {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      /* Sections */
+      section {
+        margin-bottom: 64px;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 24px;
+        color: var(--text-primary);
+        border-left: 4px solid var(--accent);
+        padding-left: 16px;
+      }
+
+      /* Hero / Context */
+      .context-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+      }
+
+      .context-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: var(--card-shadow);
+      }
+
+      .context-card h3 {
+        margin-top: 0;
+        font-size: 1.1rem;
+        color: var(--accent);
+      }
+
+      .context-card p {
+        margin-bottom: 0;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+      }
+
+      /* Stats */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+      }
+
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        transition: transform 0.2s;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--accent);
+      }
+
+      .stat-value {
+        display: block;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1.2;
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 8px;
+        display: block;
+      }
+
+      .stat-desc {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        margin-top: 4px;
+        display: block;
+        opacity: 0.8;
+      }
+
+      /* Visualizations */
+      .viz-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 32px;
+      }
+
+      .viz-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .viz-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(15, 23, 42, 0.5);
+      }
+
+      .viz-header h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      .viz-body {
+        padding: 24px;
+        background: #0b1120; /* Darker background for charts */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 300px;
+      }
+
+      .viz-body img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        transition: transform 0.3s ease;
+      }
+      
+      .viz-body img:hover {
+          transform: scale(1.02);
+      }
+
+      .viz-footer {
+        padding: 16px 24px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(15, 23, 42, 0.5);
+      }
+
+      .viz-desc {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-right: 16px;
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #0f172a;
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-hover);
+        text-decoration: none;
+      }
+
+      .btn-outline {
+        background: transparent;
+        border-color: var(--border);
+        color: var(--text-secondary);
+      }
+
+      .btn-outline:hover {
+        border-color: var(--text-secondary);
+        color: var(--text-primary);
+        text-decoration: none;
+      }
+
+      /* Downloads Table */
+      .table-container {
+        overflow-x: auto;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+
+      th, td {
+        padding: 16px 24px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+
+      th {
+        background: rgba(15, 23, 42, 0.5);
+        color: var(--text-secondary);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tr:hover td {
+        background: var(--surface-hover);
+      }
+
+      .file-icon {
+        margin-right: 8px;
+        opacity: 0.7;
+      }
+
+      /* Footer */
+      footer {
+        margin-top: 80px;
+        padding-top: 40px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+      }
+
+      @media (max-width: 768px) {
+        h1 { font-size: 2rem; }
+        .viz-grid { grid-template-columns: 1fr; }
+      }
     </style>
   </head>
   <body>
-    <div class="wrap">
+    <div class="container">
       <header>
-        <span class="tag">Yazılım Tedarik Zinciri</span>
-        <span class="tag">Topolojik Risk</span>
-        <span class="tag">Kompleks Ağ Analizi</span>
-        <h1>NPM Ekosisteminde Yapısal Risk: Tedarik Zinciri Kritiklik Panosu</h1>
-        <p class="lead">7 kademe derinlikte toplanan bağımlılık verisiyle oluşturulan yönlü ağ, merkeziyet metrikleri ve basamaklanma analizi ile değerlendirildi. Aşağıdaki pano, analiz not defterinin en güncel çıktılarının özetini sunar.</p>
+        <div class="badge-group">
+          <span class="badge">NPM Ekosistemi</span>
+          <span class="badge">Ağ Analizi</span>
+          <span class="badge">Siber Güvenlik</span>
+        </div>
+        <h1>NPM Tedarik Zinciri Risk Analizi</h1>
+        <p class="lead">
+          Bu proje, NPM paket ekosistemindeki yapısal riskleri ve kritik bağımlılıkları topolojik ağ analizi yöntemleriyle haritalandırır. 
+          Aşağıdaki pano, analiz sonuçlarını, görselleştirmeleri ve ham veri setlerini sunmaktadır.
+        </p>
       </header>
 
-      <section class="hero">
-        <p><strong>Problem:</strong> Yazılım tedarik zinciri saldırıları, paket ekosistemlerini domino etkisiyle devre dışı bırakabiliyor. Klasik zafiyet puanları bu sistemik riski ölçmekte yetersiz kalıyor.</p>
-        <p><strong>Yaklaşım:</strong> Top 1000 "Dependents" (en çok bağımlısı olan) NPM paketinden başlayarak 7 derinliğe kadar bağımlılıklar indirildi. Keşfedilen tüm paketlerin gerçek dünya kullanım verileri (dependents count, downloads) API üzerinden zenginleştirildi.</p>
-        <p><strong>Sonuç:</strong> Yüksek in-degree ve betweenness değerlerine sahip omurga paketleri (ör. <code>lodash</code>, <code>react</code>, <code>express</code>) ağın büyük kısmını etkileyebilecek kapasitede. Metadata zenginleştirme sayesinde, ağın derinliklerindeki gizli kritik paketler de tespit edildi.</p>
+      <section>
+        <h2>Proje Özeti</h2>
+        <div class="context-grid">
+          <div class="context-card">
+            <h3>🎯 Problem</h3>
+            <p>
+              Modern yazılım geliştirme süreçleri, binlerce açık kaynak pakete bağımlıdır. Tek bir paketteki güvenlik zafiyeti (örn. kötü niyetli kod enjeksiyonu), bağımlılık zinciri üzerinden hızla yayılarak binlerce projeyi etkileyebilir. Geleneksel güvenlik taramaları genellikle bu "sistemik" riski gözden kaçırır.
+            </p>
+          </div>
+          <div class="context-card">
+            <h3>🔬 Metodoloji</h3>
+            <p>
+              En çok bağımlısı olan (most dependents) ilk 1000 NPM paketi başlangıç noktası alınarak, 7 derinlik seviyesine kadar bağımlılık ağı (dependency graph) çıkarılmıştır. Elde edilen yönlü graf üzerinde <strong>In-Degree</strong>, <strong>Out-Degree</strong> ve <strong>Betweenness Centrality</strong> metrikleri hesaplanarak "Bileşik Risk Skoru" (BRS) geliştirilmiştir.
+            </p>
+          </div>
+          <div class="context-card">
+            <h3>💡 Temel Bulgular</h3>
+            <p>
+              Analizler, ekosistemin "küçük dünya" (small-world) özelliği gösterdiğini ve az sayıda "omurga" paketin (örn. <code>lodash</code>, <code>tslib</code>) ağın bütünlüğünü sağladığını ortaya koymuştur. Bu kritik düğümlerin hedef alınması, ağın parçalanmasına ve geniş çaplı kesintilere yol açabilir.
+            </p>
+          </div>
+        </div>
       </section>
 
-      <div class="stats-grid">
-        <div class="stat-card"><span>Düğüm Sayısı</span><b>2 468</b><span class="muted">Toplam paket</span></div>
-        <div class="stat-card"><span>Kenar Sayısı</span><b>5 609</b><span class="muted">Bağımlılık ilişkisi</span></div>
-        <div class="stat-card"><span>Yoğunluk</span><b>0.0009</b><span class="muted">Seyrek ama ölçeklenmiş</span></div>
-        <div class="stat-card"><span>Ortalama Derece</span><b>2.27</b><span class="muted">In/Out dengeli</span></div>
-        <div class="stat-card"><span>Robustluk Kayıpları</span><b>-25%</b><span class="delta">Kenar</span><span class="muted">İlk 20 riskli paket çıkarıldığında</span></div>
-      </div>
+      <section>
+        <h2>Ağ İstatistikleri</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value">1,506</span>
+            <span class="stat-label">Düğüm (Paket)</span>
+            <span class="stat-desc">Analiz edilen tekil paket sayısı</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">3,058</span>
+            <span class="stat-label">Kenar (Bağımlılık)</span>
+            <span class="stat-desc">Paketler arası doğrudan ilişkiler</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">2.03</span>
+            <span class="stat-label">Ortalama Derece</span>
+            <span class="stat-desc">Paket başına ortalama bağlantı</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">0.0013</span>
+            <span class="stat-label">Ağ Yoğunluğu</span>
+            <span class="stat-desc">Seyrek ama yüksek kümelenme</span>
+          </div>
+        </div>
+      </section>
 
-      <div class="insights">
-        <div class="insight-card"><strong>Tespite yön veren düğümler:</strong> <code>lodash</code>, binlerce bağımlı paket ile ağın merkezinde yer alıyor. <code>tslib</code> ve <code>debug</code> hem betweenness hem de risk skorunda öne çıkıyor.</div>
-        <div class="insight-card"><strong>Basamaklanma etkisi:</strong> <code>react</code> ele geçirilirse yüzlerce paket etkileniyor. <code>ms</code> ve <code>chalk</code> gibi küçük görünümlü paketler bile devasa bir etki alanına sahip.</div>
-        <div class="insight-card"><strong>Omurga zayıflığı:</strong> Robustluk testi, ağın parçalandığını ve en büyük bileşenin küçüldüğünü gösteriyor. Riskli düğümlere yama stratejisi kritik.</div>
-      </div>
+      <section>
+        <h2>Görselleştirmeler ve Analizler</h2>
+        <div class="viz-grid">
+          <!-- Network Visualization -->
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>🌐 NPM Bağımlılık Ağı Topolojisi</h3>
+            </div>
+            <div class="viz-body">
+              <a href="results/plots/network_full_topN.png" target="_blank">
+                <img src="results/plots/network_full_topN.png" alt="NPM Network Graph" loading="lazy">
+              </a>
+            </div>
+            <div class="viz-footer">
+              <span class="viz-desc">En kritik 1000 paketin oluşturduğu ağ yapısı. Yoğun kümeler, sıkı bağlı alt ekosistemleri gösterir.</span>
+              <div class="btn-group">
+                <a href="results/plots/network_full_topN.png" download class="btn btn-primary">PNG İndir</a>
+                <a href="results/plots/network_full_topN.svg" download class="btn btn-outline">SVG İndir</a>
+              </div>
+            </div>
+          </div>
 
-      <h2>Ana Risk Göstergeleri</h2>
-      <div class="tables">
-        <table>
-          <thead>
-            <tr><th>Risk Liderleri</th><th>Risk</th><th>In</th><th>Out</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><b>lodash</b></td><td>0.50</td><td>161</td><td>0</td></tr>
-            <tr><td><b>react</b></td><td>0.42</td><td>145</td><td>5</td></tr>
-            <tr><td><b>chalk</b></td><td>0.38</td><td>120</td><td>3</td></tr>
-            <tr><td><b>tslib</b></td><td>0.35</td><td>110</td><td>0</td></tr>
-            <tr><td><b>debug</b></td><td>0.32</td><td>95</td><td>1</td></tr>
-          </tbody>
-        </table>
-        <table>
-          <thead>
-            <tr><th>Kaskad Etkisi</th><th>Etkilenen Paket</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><b>lodash</b></td><td>1850</td></tr>
-            <tr><td><b>react</b></td><td>1420</td></tr>
-            <tr><td><b>express</b></td><td>1250</td></tr>
-            <tr><td><b>chalk</b></td><td>1100</td></tr>
-            <tr><td><b>tslib</b></td><td>980</td></tr>
-          </tbody>
-        </table>
-        <table>
-          <thead>
-            <tr><th>En Kritik Kenarlar</th><th>Betweenness</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><b>react → object-assign</b></td><td>2.10e-4</td></tr>
-            <tr><td><b>express → body-parser</b></td><td>1.85e-4</td></tr>
-            <tr><td><b>chalk → ansi-styles</b></td><td>1.50e-4</td></tr>
-            <tr><td><b>debug → ms</b></td><td>1.20e-4</td></tr>
-            <tr><td><b>react-dom → scheduler</b></td><td>1.15e-4</td></tr>
-          </tbody>
-        </table>
-      </div>
+          <!-- Risk Scores -->
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>⚠️ En Yüksek Risk Skorlu 20 Paket</h3>
+            </div>
+            <div class="viz-body">
+              <a href="results/plots/top20_risk_scores.png" target="_blank">
+                <img src="results/plots/top20_risk_scores.png" alt="Top 20 Risk Scores" loading="lazy">
+              </a>
+            </div>
+            <div class="viz-footer">
+              <span class="viz-desc">Bileşik Risk Skoru (BRS) en yüksek paketler. Bu paketler hem popüler hem de stratejik konuma sahiptir.</span>
+              <div class="btn-group">
+                <a href="results/plots/top20_risk_scores.png" download class="btn btn-primary">PNG İndir</a>
+                <a href="results/plots/top20_risk_scores.svg" download class="btn btn-outline">SVG İndir</a>
+              </div>
+            </div>
+          </div>
 
-      <h2>Risk & Basamaklanma Görselleri</h2>
-      <div class="chart-grid">
-        <div class="chart-card">
-          <h4>Top 20 Risk Skoru</h4>
-          <figure>
-            <picture>
-              <source type="image/svg+xml" srcset="results/plots/top20_risk_scores.svg" />
-              <img src="results/plots/top20_risk_scores.png" alt="Top 20 risk skoru grafiği" loading="lazy" />
-            </picture>
-          </figure>
-          <footer>
-            <a class="chip" href="results/plots/top20_risk_scores.svg" download><b>SVG</b> indir</a>
-            <a class="chip" href="results/plots/top20_risk_scores.png" download><b>PNG</b> indir</a>
-            <a class="chip" href="results/risk_scores.csv" download><b>CSV</b> tam liste</a>
-            <a class="chip" href="results/metrics.csv" download><b>CSV</b> düğüm metrikleri</a>
-          </footer>
-        </div>
-        <div class="chart-card">
-          <h4>Basamaklanma Etkisi</h4>
-          <figure>
-            <img src="results/plots/top20_cascade_impact.png" alt="Top 20 basamaklanma etkisi grafiği" loading="lazy" />
-          </figure>
-          <footer>
-            <a class="chip" href="results/plots/top20_cascade_impact.png" download><b>PNG</b> indir</a>
-            <a class="chip" href="results/cascade_impact.csv" download><b>CSV</b> tam liste</a>
-          </footer>
-        </div>
-        <div class="chart-card">
-          <h4>Risk vs Basamaklanma Saçılımı</h4>
-          <figure>
-            <picture>
-              <source type="image/svg+xml" srcset="results/plots/risk_vs_cascade.svg" />
-              <img src="results/plots/risk_vs_cascade.png" alt="Risk ve basamaklanma ilişkisi saçılım grafiği" loading="lazy" />
-            </picture>
-          </figure>
-          <footer>
-            <a class="chip" href="results/plots/risk_vs_cascade.svg" download><b>SVG</b> indir</a>
-            <a class="chip" href="results/plots/risk_vs_cascade.png" download><b>PNG</b> indir</a>
-            <a class="chip" href="results/graph_stats.csv" download><b>CSV</b> graf istatistikleri</a>
-          </footer>
-        </div>
-      </div>
+          <!-- Cascade Impact -->
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>📉 Kaskad Etki Analizi (Robustluk)</h3>
+            </div>
+            <div class="viz-body">
+              <a href="results/plots/top20_cascade_impact.png" target="_blank">
+                <img src="results/plots/top20_cascade_impact.png" alt="Cascade Impact Analysis" loading="lazy">
+              </a>
+            </div>
+            <div class="viz-footer">
+              <span class="viz-desc">Kritik paketlerin ağdan çıkarılmasının "En Büyük Bağlı Bileşen" (LCC) üzerindeki yıkıcı etkisi.</span>
+              <div class="btn-group">
+                <a href="results/plots/top20_cascade_impact.png" download class="btn btn-primary">PNG İndir</a>
+              </div>
+            </div>
+          </div>
 
-      <h2>Derece Dağılımları & Korelasyonlar</h2>
-      <div class="chart-grid">
-        <div class="chart-card">
-          <h4>Derece Histogramları</h4>
-          <figure>
-            <picture>
-              <source type="image/svg+xml" srcset="results/plots/degree_histograms.svg" />
-              <img src="results/plots/degree_histograms.png" alt="In-degree ve out-degree histogramları" loading="lazy" />
-            </picture>
-          </figure>
-          <footer>
-            <a class="chip" href="results/plots/degree_histograms.svg" download><b>SVG</b> indir</a>
-            <a class="chip" href="results/plots/degree_histograms.png" download><b>PNG</b> indir</a>
-          </footer>
+          <!-- Correlations -->
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>📊 Metrik Korelasyonları</h3>
+            </div>
+            <div class="viz-body">
+              <a href="results/plots/scatter_correlations.png" target="_blank">
+                <img src="results/plots/scatter_correlations.png" alt="Metric Correlations" loading="lazy">
+              </a>
+            </div>
+            <div class="viz-footer">
+              <span class="viz-desc">In-degree, Out-degree ve Betweenness arasındaki ilişkiler. Popülerlik her zaman stratejik önem anlamına gelmez.</span>
+              <div class="btn-group">
+                <a href="results/plots/scatter_correlations.png" download class="btn btn-primary">PNG İndir</a>
+                <a href="results/plots/scatter_correlations.svg" download class="btn btn-outline">SVG İndir</a>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="chart-card">
-          <h4>Derece Dağılımı (Log-Log)</h4>
-          <figure>
-            <picture>
-              <source type="image/svg+xml" srcset="results/plots/degree_distributions.svg" />
-              <img src="results/plots/degree_distributions.png" alt="In-degree ve out-degree log-log dağılımı" loading="lazy" />
-            </picture>
-          </figure>
-          <footer>
-            <a class="chip" href="results/plots/degree_distributions.svg" download><b>SVG</b> indir</a>
-            <a class="chip" href="results/plots/degree_distributions.png" download><b>PNG</b> indir</a>
-          </footer>
-        </div>
-        <div class="chart-card">
-          <h4>Meṫrik Korelasyonları</h4>
-          <figure>
-            <picture>
-              <source type="image/svg+xml" srcset="results/plots/metric_correlations.svg" />
-              <img src="results/plots/metric_correlations.png" alt="Merkeziyet metrik korelasyon ısı haritası" loading="lazy" />
-            </picture>
-          </figure>
-          <footer>
-            <a class="chip" href="results/plots/metric_correlations.svg" download><b>SVG</b> indir</a>
-            <a class="chip" href="results/plots/metric_correlations.png" download><b>PNG</b> indir</a>
-          </footer>
-        </div>
-        <div class="chart-card">
-          <h4>Saçılım Korelasyonları</h4>
-          <figure>
-            <picture>
-              <source type="image/svg+xml" srcset="results/plots/scatter_correlations.svg" />
-              <img src="results/plots/scatter_correlations.png" alt="Derece ve betweenness saçılım korelasyonları" loading="lazy" />
-            </picture>
-          </figure>
-          <footer>
-            <a class="chip" href="results/plots/scatter_correlations.svg" download><b>SVG</b> indir</a>
-            <a class="chip" href="results/plots/scatter_correlations.png" download><b>PNG</b> indir</a>
-          </footer>
-        </div>
-      </div>
+      </section>
 
-      <h2>Ağ Görselleştirmeleri</h2>
-      <div class="chart-grid">
-        <div class="chart-card">
-          <h4>Top N + Bağımlılıklar</h4>
-          <figure>
-            <picture>
-              <source type="image/svg+xml" srcset="results/plots/network_full_topN.svg" />
-              <img src="results/plots/network_full_topN.png" alt="Top N ve bağımlılıklarının ağ görselleştirmesi" loading="lazy" />
-            </picture>
-          </figure>
-          <footer>
-            <a class="chip" href="results/plots/network_full_topN.svg" download><b>SVG</b> indir</a>
-            <a class="chip" href="results/plots/network_full_topN.png" download><b>PNG</b> indir</a>
-            <a class="chip" href="results/edges.csv" download><b>CSV</b> kenar listesi</a>
-            <a class="chip" href="results/gephi_nodes.csv" download><b>CSV</b> Gephi düğümleri</a>
-            <a class="chip" href="results/gephi_edges.csv" download><b>CSV</b> Gephi kenarları</a>
-          </footer>
+      <section>
+        <h2>Veri Setleri ve Raporlar</h2>
+        <p class="lead" style="margin-bottom: 24px; font-size: 1rem;">
+          Analiz sürecinde üretilen ham veriler, hesaplanan metrikler ve Gephi uyumlu ağ dosyaları aşağıdan indirilebilir.
+        </p>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Dosya Adı</th>
+                <th>Açıklama</th>
+                <th>Format</th>
+                <th>İşlem</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>risk_scores.csv</strong></td>
+                <td>Tüm paketler için hesaplanan Bileşik Risk Skorları (BRS) ve sıralamalar.</td>
+                <td>CSV</td>
+                <td><a href="results/risk_scores.csv" download>İndir</a></td>
+              </tr>
+              <tr>
+                <td><strong>metrics.csv</strong></td>
+                <td>Her bir paket için ham In-Degree, Out-Degree ve Betweenness değerleri.</td>
+                <td>CSV</td>
+                <td><a href="results/metrics.csv" download>İndir</a></td>
+              </tr>
+              <tr>
+                <td><strong>graph_stats.json</strong></td>
+                <td>Ağın genel topolojik istatistikleri (yoğunluk, çap, kümelenme katsayısı vb.).</td>
+                <td>JSON</td>
+                <td><a href="results/graph_stats.json" download>İndir</a></td>
+              </tr>
+              <tr>
+                <td><strong>gephi_nodes.csv</strong></td>
+                <td>Gephi vb. araçlarda görselleştirme için düğüm listesi ve nitelikleri.</td>
+                <td>CSV</td>
+                <td><a href="results/gephi_nodes.csv" download>İndir</a></td>
+              </tr>
+              <tr>
+                <td><strong>gephi_edges.csv</strong></td>
+                <td>Gephi vb. araçlarda görselleştirme için kenar (bağımlılık) listesi.</td>
+                <td>CSV</td>
+                <td><a href="results/gephi_edges.csv" download>İndir</a></td>
+              </tr>
+              <tr>
+                <td><strong>cascade_impact.csv</strong></td>
+                <td>Simülasyon sonuçları: Düğüm silme işlemlerinin ağ bütünlüğüne etkisi.</td>
+                <td>CSV</td>
+                <td><a href="results/cascade_impact.csv" download>İndir</a></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="chart-card">
-          <h4>Top N Alt-Ağ</h4>
-          <figure>
-            <picture>
-              <source type="image/svg+xml" srcset="results/plots/network_topN_only.svg" />
-              <img src="results/plots/network_topN_only.png" alt="Top N paketlerinin alt-ağ görselleştirmesi" loading="lazy" />
-            </picture>
-          </figure>
-          <footer>
-            <a class="chip" href="results/plots/network_topN_only.svg" download><b>SVG</b> indir</a>
-            <a class="chip" href="results/plots/network_topN_only.png" download><b>PNG</b> indir</a>
-          </footer>
-        </div>
-      </div>
-
-      <h2>Merkeziyet Liderleri</h2>
-      <div class="chart-grid">
-        <div class="chart-card">
-          <h4>İlk 10 In-Degree</h4>
-          <figure><img src="results/plots/top10_in_degree.png" alt="İlk 10 in-degree grafiği" loading="lazy" /></figure>
-          <footer>
-            <a class="chip" href="results/plots/top10_in_degree.svg" download><b>SVG</b> indir</a>
-            <a class="chip" href="results/plots/top10_in_degree.png" download><b>PNG</b> indir</a>
-            <a class="chip" href="results/top20_in_degree.csv" download><b>CSV</b> top 20</a>
-            <a class="chip" href="results/top20_in_top.csv" download><b>CSV</b> top paketler</a>
-          </footer>
-        </div>
-        <div class="chart-card">
-          <h4>İlk 10 Out-Degree</h4>
-          <figure><img src="results/plots/top10_out_degree.png" alt="İlk 10 out-degree grafiği" loading="lazy" /></figure>
-          <footer>
-            <a class="chip" href="results/plots/top10_out_degree.svg" download><b>SVG</b> indir</a>
-            <a class="chip" href="results/plots/top10_out_degree.png" download><b>PNG</b> indir</a>
-            <a class="chip" href="results/top20_out_degree.csv" download><b>CSV</b> top 20</a>
-            <a class="chip" href="results/top20_out_top.csv" download><b>CSV</b> top paketler</a>
-          </footer>
-        </div>
-        <div class="chart-card">
-          <h4>İlk 10 Betweenness</h4>
-          <figure><img src="results/plots/top10_betweenness.png" alt="İlk 10 betweenness grafiği" loading="lazy" /></figure>
-          <footer>
-            <a class="chip" href="results/plots/top10_betweenness.svg" download><b>SVG</b> indir</a>
-            <a class="chip" href="results/plots/top10_betweenness.png" download><b>PNG</b> indir</a>
-            <a class="chip" href="results/top20_betweenness.csv" download><b>CSV</b> top 20</a>
-            <a class="chip" href="results/top20_btw_top.csv" download><b>CSV</b> top paketler</a>
-            <a class="chip" href="results/edge_betweenness_top10.csv" download><b>CSV</b> kritik kenarlar</a>
-          </footer>
-        </div>
-        <div class="chart-card">
-          <h4>Bileşik Liderler (Risk)</h4>
-          <figure><img src="results/plots/top10_leaders.png" alt="Bileşik liderler grafiği" loading="lazy" /></figure>
-          <footer>
-            <a class="chip" href="results/plots/top10_leaders.svg" download><b>SVG</b> indir</a>
-            <a class="chip" href="results/plots/top10_leaders.png" download><b>PNG</b> indir</a>
-          </footer>
-        </div>
-      </div>
-
-      <h2>Robustluk Stres Testi</h2>
-      <div class="insights">
-        <div class="insight-card"><strong>Başlangıç:</strong> 1 559 düğüm, 4 076 kenar, tek devasa bileşen.</div>
-        <div class="insight-card"><strong>Müdahale:</strong> En riskli 20 paket çıkarıldı (ör. <code>tslib</code>, <code>jest-snapshot</code>, <code>@smithy/types</code>).</div>
-        <div class="insight-card"><strong>Sonuç:</strong> Düğümler 1 539’a, kenarlar 3 062’ye düşüyor; ağ 184 bileşene ayrılıyor, en büyük bileşen 1 184 düğüme iniyor, çap 16.</div>
-      </div>
-
-      <h2>Veri Setleri ve Raporlar</h2>
-      <div class="list">
-        <ul>
-          <li><code>results/robustness_test.json</code> <span class="muted">Riskli düğüm çıkarma deneyinin özet istatistikleri</span></li>
-          <li><code>results/graph_stats.json</code> <span class="muted">Grafın temel metriklerinin JSON versiyonu</span></li>
-          <li><code>results/risk_scores_top20.tex</code> <span class="muted">Tüm metrik tablolarının LaTeX çıktıları (<code>table_*.tex</code>)</span></li>
-          <li><code>results/README.md</code> <span class="muted">Tüm çıktıların ayrıntılı açıklaması</span></li>
-        </ul>
-      </div>
-
-      <h3>Hızlı Linkler</h3>
-      <div class="list">
-        <ul>
-          <li><a href="analysis/analysis.ipynb">Analiz Not Defteri</a> <span class="muted">— Tüm adımları Jupyter üzerinden çalıştırın</span></li>
-          <li><a href="academic/Topolojik_Risk_Analizi.tex">Akademik Taslak (LaTeX)</a> <span class="muted">— Makale üretimi</span></li>
-          <li><a href="academic/complex-networks.md">Teorik Arka Plan</a> <span class="muted">— Kompleks ağ literatürü özeti</span></li>
-        </ul>
-      </div>
+      </section>
 
       <footer>
-        Bu pano <code>analysis/analysis.ipynb</code> dosyasının en güncel koşumunun ürünlerini gösterir. Tüm görseller <code>results/plots/</code> altında, veri tabloları <code>results/</code> klasöründe yer alır. Çalışmayı yeniden üretmek için notebook'u baştan sona çalıştırmanız yeterlidir.
+        <p>Bu çalışma, akademik araştırma amaçlı olarak <strong>Yusuf Talha Arabacı</strong> tarafından hazırlanmıştır.</p>
+        <p style="opacity: 0.6; font-size: 0.75rem;">Son Güncelleme: Kasım 2025</p>
       </footer>
     </div>
   </body>
