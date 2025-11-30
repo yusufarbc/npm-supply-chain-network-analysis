@@ -49,7 +49,7 @@
       }
 
       .container {
-        max-width: 1280px;
+        max-width: 1400px;
         margin: 0 auto;
         padding: 40px 24px;
       }
@@ -110,33 +110,6 @@
         padding-left: 16px;
       }
 
-      /* Hero / Context */
-      .context-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 24px;
-      }
-
-      .context-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 24px;
-        box-shadow: var(--card-shadow);
-      }
-
-      .context-card h3 {
-        margin-top: 0;
-        font-size: 1.1rem;
-        color: var(--accent);
-      }
-
-      .context-card p {
-        margin-bottom: 0;
-        color: var(--text-secondary);
-        font-size: 0.95rem;
-      }
-
       /* Stats */
       .stats-grid {
         display: grid;
@@ -175,19 +148,11 @@
         display: block;
       }
 
-      .stat-desc {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-        margin-top: 4px;
-        display: block;
-        opacity: 0.8;
-      }
-
       /* Visualizations */
       .viz-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-        gap: 32px;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 24px;
       }
 
       .viz-card {
@@ -213,11 +178,12 @@
 
       .viz-body {
         padding: 24px;
-        background: #0b1120; /* Darker background for charts */
+        background: #0b1120;
         display: flex;
         align-items: center;
         justify-content: center;
         min-height: 300px;
+        flex-grow: 1;
       }
 
       .viz-body img {
@@ -239,12 +205,16 @@
         justify-content: space-between;
         align-items: center;
         background: rgba(15, 23, 42, 0.5);
+        flex-wrap: wrap;
+        gap: 10px;
       }
 
       .viz-desc {
         font-size: 0.85rem;
         color: var(--text-secondary);
         margin-right: 16px;
+        flex: 1;
+        min-width: 200px;
       }
 
       .btn-group {
@@ -262,6 +232,7 @@
         text-decoration: none;
         transition: all 0.2s;
         border: 1px solid transparent;
+        white-space: nowrap;
       }
 
       .btn-primary {
@@ -301,7 +272,7 @@
       }
 
       th, td {
-        padding: 16px 24px;
+        padding: 12px 20px;
         text-align: left;
         border-bottom: 1px solid var(--border);
       }
@@ -321,11 +292,6 @@
 
       tr:hover td {
         background: var(--surface-hover);
-      }
-
-      .file-icon {
-        margin-right: 8px;
-        opacity: 0.7;
       }
 
       /* Footer */
@@ -355,33 +321,9 @@
         <h1>NPM Tedarik Zinciri Risk Analizi</h1>
         <p class="lead">
           Bu proje, NPM paket ekosistemindeki yapısal riskleri ve kritik bağımlılıkları topolojik ağ analizi yöntemleriyle haritalandırır. 
-          Aşağıdaki pano, analiz sonuçlarını, görselleştirmeleri ve ham veri setlerini sunmaktadır.
+          Aşağıdaki pano, tüm analiz grafiklerini ve ham veri setlerini içermektedir.
         </p>
       </header>
-
-      <section>
-        <h2>Proje Özeti</h2>
-        <div class="context-grid">
-          <div class="context-card">
-            <h3>🎯 Problem</h3>
-            <p>
-              Modern yazılım geliştirme süreçleri, binlerce açık kaynak pakete bağımlıdır. Tek bir paketteki güvenlik zafiyeti (örn. kötü niyetli kod enjeksiyonu), bağımlılık zinciri üzerinden hızla yayılarak binlerce projeyi etkileyebilir. Geleneksel güvenlik taramaları genellikle bu "sistemik" riski gözden kaçırır.
-            </p>
-          </div>
-          <div class="context-card">
-            <h3>🔬 Metodoloji</h3>
-            <p>
-              En çok bağımlısı olan (most dependents) ilk 1000 NPM paketi başlangıç noktası alınarak, 7 derinlik seviyesine kadar bağımlılık ağı (dependency graph) çıkarılmıştır. Elde edilen yönlü graf üzerinde <strong>In-Degree</strong>, <strong>Out-Degree</strong> ve <strong>Betweenness Centrality</strong> metrikleri hesaplanarak "Bileşik Risk Skoru" (BRS) geliştirilmiştir.
-            </p>
-          </div>
-          <div class="context-card">
-            <h3>💡 Temel Bulgular</h3>
-            <p>
-              Analizler, ekosistemin "küçük dünya" (small-world) özelliği gösterdiğini ve az sayıda "omurga" paketin (örn. <code>lodash</code>, <code>tslib</code>) ağın bütünlüğünü sağladığını ortaya koymuştur. Bu kritik düğümlerin hedef alınması, ağın parçalanmasına ve geniş çaplı kesintilere yol açabilir.
-            </p>
-          </div>
-        </div>
-      </section>
 
       <section>
         <h2>Ağ İstatistikleri</h2>
@@ -389,63 +331,121 @@
           <div class="stat-card">
             <span class="stat-value">1,506</span>
             <span class="stat-label">Düğüm (Paket)</span>
-            <span class="stat-desc">Analiz edilen tekil paket sayısı</span>
           </div>
           <div class="stat-card">
             <span class="stat-value">3,058</span>
             <span class="stat-label">Kenar (Bağımlılık)</span>
-            <span class="stat-desc">Paketler arası doğrudan ilişkiler</span>
           </div>
           <div class="stat-card">
             <span class="stat-value">2.03</span>
             <span class="stat-label">Ortalama Derece</span>
-            <span class="stat-desc">Paket başına ortalama bağlantı</span>
           </div>
           <div class="stat-card">
             <span class="stat-value">0.0013</span>
             <span class="stat-label">Ağ Yoğunluğu</span>
-            <span class="stat-desc">Seyrek ama yüksek kümelenme</span>
           </div>
         </div>
       </section>
 
       <section>
-        <h2>Görselleştirmeler ve Analizler</h2>
+        <h2>1. Ağ Yapısı ve Topoloji</h2>
         <div class="viz-grid">
-          <!-- Network Visualization -->
+          <!-- Network Full -->
           <div class="viz-card">
             <div class="viz-header">
-              <h3>🌐 NPM Bağımlılık Ağı Topolojisi</h3>
+              <h3>🌐 Tam Ağ Yapısı (Top 1000 + Bağımlılıklar)</h3>
             </div>
             <div class="viz-body">
               <a href="results/plots/network_full_topN.png" target="_blank">
-                <img src="results/plots/network_full_topN.png" alt="NPM Network Graph" loading="lazy">
+                <img src="results/plots/network_full_topN.png" alt="Full Network" loading="lazy">
               </a>
             </div>
             <div class="viz-footer">
-              <span class="viz-desc">En kritik 1000 paketin oluşturduğu ağ yapısı. Yoğun kümeler, sıkı bağlı alt ekosistemleri gösterir.</span>
+              <span class="viz-desc">Tüm ağın genel görünümü.</span>
               <div class="btn-group">
-                <a href="results/plots/network_full_topN.png" download class="btn btn-primary">PNG İndir</a>
-                <a href="results/plots/network_full_topN.svg" download class="btn btn-outline">SVG İndir</a>
+                <a href="results/plots/network_full_topN.png" download class="btn btn-primary">PNG</a>
+                <a href="results/plots/network_full_topN.svg" download class="btn btn-outline">SVG</a>
               </div>
             </div>
           </div>
 
-          <!-- Risk Scores -->
+          <!-- Network TopN Only -->
           <div class="viz-card">
             <div class="viz-header">
-              <h3>⚠️ En Yüksek Risk Skorlu 20 Paket</h3>
+              <h3>🕸️ Sadece Top 1000 Paket Ağı</h3>
             </div>
             <div class="viz-body">
-              <a href="results/plots/top20_risk_scores.png" target="_blank">
-                <img src="results/plots/top20_risk_scores.png" alt="Top 20 Risk Scores" loading="lazy">
+              <a href="results/plots/network_topN_only.png" target="_blank">
+                <img src="results/plots/network_topN_only.png" alt="TopN Network" loading="lazy">
               </a>
             </div>
             <div class="viz-footer">
-              <span class="viz-desc">Bileşik Risk Skoru (BRS) en yüksek paketler. Bu paketler hem popüler hem de stratejik konuma sahiptir.</span>
+              <span class="viz-desc">Sadece başlangıç kümesindeki paketlerin ilişkileri.</span>
               <div class="btn-group">
-                <a href="results/plots/top20_risk_scores.png" download class="btn btn-primary">PNG İndir</a>
-                <a href="results/plots/top20_risk_scores.svg" download class="btn btn-outline">SVG İndir</a>
+                <a href="results/plots/network_topN_only.png" download class="btn btn-primary">PNG</a>
+                <a href="results/plots/network_topN_only.svg" download class="btn btn-outline">SVG</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Degree Distributions -->
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>📈 Derece Dağılımları (Log-Log)</h3>
+            </div>
+            <div class="viz-body">
+              <a href="results/plots/degree_distributions.png" target="_blank">
+                <img src="results/plots/degree_distributions.png" alt="Degree Distributions" loading="lazy">
+              </a>
+            </div>
+            <div class="viz-footer">
+              <span class="viz-desc">Ağın ölçekten bağımsız (scale-free) yapısını gösteren logaritmik dağılım.</span>
+              <div class="btn-group">
+                <a href="results/plots/degree_distributions.png" download class="btn btn-primary">PNG</a>
+                <a href="results/plots/degree_distributions.svg" download class="btn btn-outline">SVG</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Degree Histograms -->
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>📊 Derece Histogramları</h3>
+            </div>
+            <div class="viz-body">
+              <a href="results/plots/degree_histograms.png" target="_blank">
+                <img src="results/plots/degree_histograms.png" alt="Degree Histograms" loading="lazy">
+              </a>
+            </div>
+            <div class="viz-footer">
+              <span class="viz-desc">In-degree ve Out-degree frekans dağılımları.</span>
+              <div class="btn-group">
+                <a href="results/plots/degree_histograms.png" download class="btn btn-primary">PNG</a>
+                <a href="results/plots/degree_histograms.svg" download class="btn btn-outline">SVG</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>2. Risk ve Kritiklik Analizi</h2>
+        <div class="viz-grid">
+          <!-- Risk Scores -->
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>⚠️ Top 20 Bileşik Risk Skoru (BRS)</h3>
+            </div>
+            <div class="viz-body">
+              <a href="results/plots/top20_risk_scores.png" target="_blank">
+                <img src="results/plots/top20_risk_scores.png" alt="Risk Scores" loading="lazy">
+              </a>
+            </div>
+            <div class="viz-footer">
+              <span class="viz-desc">En yüksek risk skoruna sahip paketler.</span>
+              <div class="btn-group">
+                <a href="results/plots/top20_risk_scores.png" download class="btn btn-primary">PNG</a>
+                <a href="results/plots/top20_risk_scores.svg" download class="btn btn-outline">SVG</a>
               </div>
             </div>
           </div>
@@ -453,17 +453,117 @@
           <!-- Cascade Impact -->
           <div class="viz-card">
             <div class="viz-header">
-              <h3>📉 Kaskad Etki Analizi (Robustluk)</h3>
+              <h3>📉 Kaskad Etki (Robustluk)</h3>
             </div>
             <div class="viz-body">
               <a href="results/plots/top20_cascade_impact.png" target="_blank">
-                <img src="results/plots/top20_cascade_impact.png" alt="Cascade Impact Analysis" loading="lazy">
+                <img src="results/plots/top20_cascade_impact.png" alt="Cascade Impact" loading="lazy">
               </a>
             </div>
             <div class="viz-footer">
-              <span class="viz-desc">Kritik paketlerin ağdan çıkarılmasının "En Büyük Bağlı Bileşen" (LCC) üzerindeki yıkıcı etkisi.</span>
+              <span class="viz-desc">Kritik paketlerin silinmesinin ağ bütünlüğüne etkisi.</span>
               <div class="btn-group">
-                <a href="results/plots/top20_cascade_impact.png" download class="btn btn-primary">PNG İndir</a>
+                <a href="results/plots/top20_cascade_impact.png" download class="btn btn-primary">PNG</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk vs Cascade -->
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>🔗 Risk Skoru vs. Kaskad Etki</h3>
+            </div>
+            <div class="viz-body">
+              <a href="results/plots/risk_vs_cascade.png" target="_blank">
+                <img src="results/plots/risk_vs_cascade.png" alt="Risk vs Cascade" loading="lazy">
+              </a>
+            </div>
+            <div class="viz-footer">
+              <span class="viz-desc">Hesaplanan risk skoru ile gerçek etki alanı arasındaki ilişki.</span>
+              <div class="btn-group">
+                <a href="results/plots/risk_vs_cascade.png" download class="btn btn-primary">PNG</a>
+                <a href="results/plots/risk_vs_cascade.svg" download class="btn btn-outline">SVG</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top 10 Leaders -->
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>🏆 Top 10 Liderler (Özet)</h3>
+            </div>
+            <div class="viz-body">
+              <a href="results/plots/top10_leaders.png" target="_blank">
+                <img src="results/plots/top10_leaders.png" alt="Top 10 Leaders" loading="lazy">
+              </a>
+            </div>
+            <div class="viz-footer">
+              <span class="viz-desc">Farklı metriklerde (In, Out, Btw) lider paketlerin karşılaştırması.</span>
+              <div class="btn-group">
+                <a href="results/plots/top10_leaders.png" download class="btn btn-primary">PNG</a>
+                <a href="results/plots/top10_leaders.svg" download class="btn btn-outline">SVG</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>3. Merkeziyet Metrikleri</h2>
+        <div class="viz-grid">
+          <!-- Top 10 In-Degree -->
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>📥 Top 10 In-Degree (Popülerlik)</h3>
+            </div>
+            <div class="viz-body">
+              <a href="results/plots/top10_in_degree.png" target="_blank">
+                <img src="results/plots/top10_in_degree.png" alt="In-Degree" loading="lazy">
+              </a>
+            </div>
+            <div class="viz-footer">
+              <span class="viz-desc">En çok doğrudan bağımlısı olan paketler.</span>
+              <div class="btn-group">
+                <a href="results/plots/top10_in_degree.png" download class="btn btn-primary">PNG</a>
+                <a href="results/plots/top10_in_degree.svg" download class="btn btn-outline">SVG</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top 10 Out-Degree -->
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>📤 Top 10 Out-Degree (Bağımlılık Yükü)</h3>
+            </div>
+            <div class="viz-body">
+              <a href="results/plots/top10_out_degree.png" target="_blank">
+                <img src="results/plots/top10_out_degree.png" alt="Out-Degree" loading="lazy">
+              </a>
+            </div>
+            <div class="viz-footer">
+              <span class="viz-desc">En çok dış pakete bağımlı olan (saldırı yüzeyi geniş) paketler.</span>
+              <div class="btn-group">
+                <a href="results/plots/top10_out_degree.png" download class="btn btn-primary">PNG</a>
+                <a href="results/plots/top10_out_degree.svg" download class="btn btn-outline">SVG</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top 10 Betweenness -->
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>🌉 Top 10 Betweenness (Köprü Rolü)</h3>
+            </div>
+            <div class="viz-body">
+              <a href="results/plots/top10_betweenness.png" target="_blank">
+                <img src="results/plots/top10_betweenness.png" alt="Betweenness" loading="lazy">
+              </a>
+            </div>
+            <div class="viz-footer">
+              <span class="viz-desc">Ağdaki bilgi akışını kontrol eden stratejik köprü paketler.</span>
+              <div class="btn-group">
+                <a href="results/plots/top10_betweenness.png" download class="btn btn-primary">PNG</a>
+                <a href="results/plots/top10_betweenness.svg" download class="btn btn-outline">SVG</a>
               </div>
             </div>
           </div>
@@ -471,18 +571,37 @@
           <!-- Correlations -->
           <div class="viz-card">
             <div class="viz-header">
-              <h3>📊 Metrik Korelasyonları</h3>
+              <h3>🔄 Metrik Korelasyonları</h3>
             </div>
             <div class="viz-body">
-              <a href="results/plots/scatter_correlations.png" target="_blank">
-                <img src="results/plots/scatter_correlations.png" alt="Metric Correlations" loading="lazy">
+              <a href="results/plots/metric_correlations.png" target="_blank">
+                <img src="results/plots/metric_correlations.png" alt="Correlations" loading="lazy">
               </a>
             </div>
             <div class="viz-footer">
-              <span class="viz-desc">In-degree, Out-degree ve Betweenness arasındaki ilişkiler. Popülerlik her zaman stratejik önem anlamına gelmez.</span>
+              <span class="viz-desc">Metrikler arası ilişki matrisi.</span>
               <div class="btn-group">
-                <a href="results/plots/scatter_correlations.png" download class="btn btn-primary">PNG İndir</a>
-                <a href="results/plots/scatter_correlations.svg" download class="btn btn-outline">SVG İndir</a>
+                <a href="results/plots/metric_correlations.png" download class="btn btn-primary">PNG</a>
+                <a href="results/plots/metric_correlations.svg" download class="btn btn-outline">SVG</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scatter Correlations -->
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>📍 Dağılım Grafikleri (Scatter)</h3>
+            </div>
+            <div class="viz-body">
+              <a href="results/plots/scatter_correlations.png" target="_blank">
+                <img src="results/plots/scatter_correlations.png" alt="Scatter Correlations" loading="lazy">
+              </a>
+            </div>
+            <div class="viz-footer">
+              <span class="viz-desc">Metrik çiftleri arasındaki dağılım detayları.</span>
+              <div class="btn-group">
+                <a href="results/plots/scatter_correlations.png" download class="btn btn-primary">PNG</a>
+                <a href="results/plots/scatter_correlations.svg" download class="btn btn-outline">SVG</a>
               </div>
             </div>
           </div>
@@ -492,7 +611,7 @@
       <section>
         <h2>Veri Setleri ve Raporlar</h2>
         <p class="lead" style="margin-bottom: 24px; font-size: 1rem;">
-          Analiz sürecinde üretilen ham veriler, hesaplanan metrikler ve Gephi uyumlu ağ dosyaları aşağıdan indirilebilir.
+          Aşağıdaki tabloda analiz sonucunda üretilen tüm veri dosyaları listelenmiştir.
         </p>
         <div class="table-container">
           <table>
@@ -501,45 +620,81 @@
                 <th>Dosya Adı</th>
                 <th>Açıklama</th>
                 <th>Format</th>
-                <th>İşlem</th>
+                <th>İndir</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td><strong>risk_scores.csv</strong></td>
-                <td>Tüm paketler için hesaplanan Bileşik Risk Skorları (BRS) ve sıralamalar.</td>
+                <td>Tüm paketlerin Bileşik Risk Skorları (BRS) ve sıralaması.</td>
                 <td>CSV</td>
                 <td><a href="results/risk_scores.csv" download>İndir</a></td>
               </tr>
               <tr>
                 <td><strong>metrics.csv</strong></td>
-                <td>Her bir paket için ham In-Degree, Out-Degree ve Betweenness değerleri.</td>
+                <td>Tüm paketlerin ham merkeziyet metrikleri (In, Out, Btw).</td>
                 <td>CSV</td>
                 <td><a href="results/metrics.csv" download>İndir</a></td>
               </tr>
               <tr>
                 <td><strong>graph_stats.json</strong></td>
-                <td>Ağın genel topolojik istatistikleri (yoğunluk, çap, kümelenme katsayısı vb.).</td>
+                <td>Ağın genel topolojik istatistikleri.</td>
                 <td>JSON</td>
                 <td><a href="results/graph_stats.json" download>İndir</a></td>
               </tr>
               <tr>
+                <td><strong>graph_stats.csv</strong></td>
+                <td>Ağ istatistiklerinin CSV formatı.</td>
+                <td>CSV</td>
+                <td><a href="results/graph_stats.csv" download>İndir</a></td>
+              </tr>
+              <tr>
+                <td><strong>cascade_impact.csv</strong></td>
+                <td>Kaskad etki simülasyon sonuçları.</td>
+                <td>CSV</td>
+                <td><a href="results/cascade_impact.csv" download>İndir</a></td>
+              </tr>
+              <tr>
+                <td><strong>robustness_test.json</strong></td>
+                <td>Robustluk testi detaylı sonuçları.</td>
+                <td>JSON</td>
+                <td><a href="results/robustness_test.json" download>İndir</a></td>
+              </tr>
+              <tr>
                 <td><strong>gephi_nodes.csv</strong></td>
-                <td>Gephi vb. araçlarda görselleştirme için düğüm listesi ve nitelikleri.</td>
+                <td>Gephi için düğüm listesi.</td>
                 <td>CSV</td>
                 <td><a href="results/gephi_nodes.csv" download>İndir</a></td>
               </tr>
               <tr>
                 <td><strong>gephi_edges.csv</strong></td>
-                <td>Gephi vb. araçlarda görselleştirme için kenar (bağımlılık) listesi.</td>
+                <td>Gephi için kenar listesi.</td>
                 <td>CSV</td>
                 <td><a href="results/gephi_edges.csv" download>İndir</a></td>
               </tr>
               <tr>
-                <td><strong>cascade_impact.csv</strong></td>
-                <td>Simülasyon sonuçları: Düğüm silme işlemlerinin ağ bütünlüğüne etkisi.</td>
+                <td><strong>edges.csv</strong></td>
+                <td>Ham kenar listesi.</td>
                 <td>CSV</td>
-                <td><a href="results/cascade_impact.csv" download>İndir</a></td>
+                <td><a href="results/edges.csv" download>İndir</a></td>
+              </tr>
+              <tr>
+                <td><strong>top20_betweenness.csv</strong></td>
+                <td>En yüksek Betweenness değerine sahip 20 paket.</td>
+                <td>CSV</td>
+                <td><a href="results/top20_betweenness.csv" download>İndir</a></td>
+              </tr>
+              <tr>
+                <td><strong>top20_in_degree.csv</strong></td>
+                <td>En yüksek In-Degree değerine sahip 20 paket.</td>
+                <td>CSV</td>
+                <td><a href="results/top20_in_degree.csv" download>İndir</a></td>
+              </tr>
+              <tr>
+                <td><strong>top20_out_degree.csv</strong></td>
+                <td>En yüksek Out-Degree değerine sahip 20 paket.</td>
+                <td>CSV</td>
+                <td><a href="results/top20_out_degree.csv" download>İndir</a></td>
               </tr>
             </tbody>
           </table>
