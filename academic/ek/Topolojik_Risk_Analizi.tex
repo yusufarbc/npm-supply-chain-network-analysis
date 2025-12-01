@@ -1,0 +1,174 @@
+﻿% !TeX program = pdflatex
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[turkish]{babel}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage{flafter}
+\usepackage{etoolbox}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titling}
+
+\geometry{margin=1.4cm}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\linespread{1.05}
+\graphicspath{{../results/}{results/}{./}{../}}
+\DeclareGraphicsExtensions{.png,.pdf,.jpg,.jpeg}
+\setkeys{Gin}{width=0.95\linewidth, keepaspectratio}
+\floatplacement{figure}{H}
+\floatplacement{table}{H}
+\captionsetup{font=small,labelfont=bf}
+\setlist{itemsep=2pt,topsep=2pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Y.\,T. Arabacı}
+\fancyhead[R]{NPM Topolojik Risk Analizi}
+\fancyfoot[C]{\thepage}
+\pretitle{\begin{center}\Large\bfseries}
+\posttitle{\par\end{center}\vspace{-0.5em}\hrule\vspace{1em}}
+\preauthor{\begin{center}\normalsize}
+\postauthor{\par\end{center}}
+\predate{\begin{center}\small}
+\postdate{\par\end{center}}
+\AtBeginDocument{\shorthandoff{=}}
+\preto\section{\FloatBarrier}
+\preto\subsection{\FloatBarrier}
+\AfterEndEnvironment{figure}{\FloatBarrier}
+\AfterEndEnvironment{table}{\FloatBarrier}
+\AfterEndEnvironment{longtable}{\FloatBarrier}
+
+\title{Yazılım Tedarik Zincirinde Kritiklik Haritalaması\\NPM Ekosisteminde Topolojik Risk Analizi}
+\author{\textbf{Yusuf Talha ARABACI}}
+\date{Ekim 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+NPM ekosisteminde tek bir bağımlılıktaki kusur veya kötü niyetli değişiklik, transitif bağımlılıklar üzerinden çok kısa sürede binlerce projeye sirayet edebilir. Bu çalışma, paket içeriklerinden ziyade paketler arası ilişkilerin \emph{topolojik} örüntülerine odaklanarak yüksek etki alanlı düğümlerin belirlenmesini amaçlar. Son 12 aylık indirme verisiyle seçilen Top 1000 paket üzerinden yönlü bağımlılık grafiği kurulmuş; in-degree, out-degree ve betweenness merkeziyetleri min–max normalizasyonu ile \emph{Bileşik Risk Skoru}na (BRS) dönüştürülmüştür. Sağlamlık ve kaskad analizleriyle kritik düğümlerin çıkarımının en büyük bağlı bileşen ve erişilebilirlik üzerindeki etkisi ölçülmüş, sonuçlar uzun tablolar ve görsellerle raporlanmıştır.
+\end{abstract}
+
+\clearpage
+
+\section{Giriş ve Motivasyon}
+Açık kaynak paket yöneticileri modern yazılım geliştirmenin vazgeçilmez bir bileşeni hâline gelirken, bağımlılık zincirlerindeki tekil kırılmalar sistemik risk üretmektedir. NPM ekosistemi, milyonlarca paket ve yoğun ters-bağımlı ağ yapısı nedeniyle \emph{kırılgan omurga düğümlerine} sahiptir. Mevcut araştırmalar kritik düğümlerin varlığını ortaya koysa da, bu düğümlerin tespit hatlarına nasıl öncelik kuyruğu olarak aktarılacağı ve politika/bütünlük süreçlerine nasıl bağlanacağı yeterince detaylandırılmamıştır.
+
+\subsection*{Çalışmanın Katkıları}
+\begin{enumerate}
+  \item Resmî çözümleme kurallarına sadık kalarak kurulan yönlü graf üzerinde, in-/out-degree ve betweenness ölçülerini min–max ölçekleyen ve \(w_{in}=0.5\), \(w_{out}=0.2\), \(w_{btw}=0.3\) ağırlıklarıyla birleştiren \textbf{Bileşik Risk Skoru (BRS)} tanımlanmıştır.
+  \item BRS çıktıları; kaskad etki, en büyük bağlı bileşen (LCC) ve köprü kenar analizleriyle ilişkilendirilerek topolojik riskin sistemik yansımaları nicelleştirilmiştir.
+  \item Tüm veriler \texttt{results/} klasöründe izlenebilir CSV/JSON çıktılarına, tablolar ise \texttt{analysis/make\_tables.py} betiğiyle yeniden üretilebilir LaTeX dosyalarına bağlanarak \emph{uçtan uca şeffaflık} sağlanmıştır.
+\end{enumerate}
+
+\section{Literatür Özeti}
+Literatür taraması dört eksende toplanmaktadır: (i) tehdit taksonomileri, (ii) topolojik analizler, (iii) tespit hatları ve (iv) politika/bütünlük çalışmaları.
+
+\subsection{Tehdit Taksonomileri ve Vaka Derlemeleri}
+Backstabber’s Knife Collection ve The Hitchhiker’s Guide gibi derlemeler, kayıt saldırılarının kurulum/anlık yürütme evrelerine dair kapsamlı taksonomiler sunar. Duan ve arkadaşları kayıt istismarı fenomenini hem istatistiksel hem de niteliksel yöntemlerle inceleyerek 339 yeni kötü paket bildirmektedir. Bu çalışmalar, olay farkındalığını artırsa da \emph{önceliklendirilmiş müdahale listeleri} üretmemektedir.
+
+\subsection{Topoloji ve Merkeziyet Çalışmaları}
+Zimmermann, Hafner ve Oldnall tarafından yürütülen çalışmalar NPM ağının küçük-dünya özellikleri taşıdığını ve az sayıdaki bakımcının orantısız etkiye sahip olduğunu göstermiştir. Buna rağmen kullanım yoğunluğu ile topolojik merkeziyeti tek bir metrike birleştiren yaklaşımlar sınırlıdır. Bu boşluk, BRS ile giderilmiştir.
+
+\subsection{Tespit Hatları ve Savunma}
+Amalfi, Cerebro, OSCAR, ACME ve MeMPtec gibi boru hatları; makine öğrenmesi, dinamik analiz ve imza üretimi teknikleriyle binlerce kötü niyetli paketi ortaya koymaktadır. Ancak bu hatların tarama kapasitesi sınırlıdır ve \emph{topolojik ön filtre} ihtiyacı devam etmektedir.
+
+\subsection{Politika, İmza ve Bütünlük}
+in-toto, imza benimsemesi ve depo bütünlüğü üzerine çalışmalar, politikaların kalitesini artıran araçlar sunmaktadır. BRS, bu politikaların hangi paketlerden başlaması gerektiğine dair veri temelli hedef listeler üretir.
+
+\clearpage
+
+\section{Veri ve Yöntem}
+\subsection{Veri Kaynağı ve Ön İşleme}
+Top 1000 paket listesi; ecosyste.ms, npmjs.com ve npms.io akışlarının birleştirilmesiyle elde edilen, son 12 aylık indirme verisine dayalı çekirdeği temsil eder. Paket meta verileri ve bağımlılık ilişkileri NPM registry API’sinden çekilmiş, sürüm başına bağımlılıklar resmî çözümleme kurallarına uygun şekilde genişletilmiştir.
+
+\subsection{Bağımlılık Grafiğinin Kurulumu}
+Her paket sürümü bir düğüm, \texttt{dependencies} alanındaki her ilişki yönlü bir kenar olarak modellenmiştir. Döngüler çıkarılmış, isteğe bağlı bağımlılıklar grafın dışına alınmıştır. Grafik; NetworkX, pandas ve numpy kullanılarak inşa edilmiş ve JSON/CSV olarak \texttt{results/} dizinine yazılmıştır.
+
+\subsection{Merkeziyet Ölçüleri ve Normalizasyon}
+In-degree, out-degree ve betweenness merkeziyetleri hesaplanmış, betweenness için örnekleme parametresi \(k \approx 200\) seçilmiştir. Her metrik min–max yöntemiyle ölçeklenmiştir:
+\[
+x' = \frac{x - \min(x)}{\max(x)-\min(x)}.
+\]
+
+\subsection{Bileşik Risk Skoru}
+Ölçeklenmiş değerler şu ağırlıkla birleşir:
+\[
+\text{BRS} = 0.5 \cdot in' + 0.2 \cdot out' + 0.3 \cdot btw'.
+\]
+BRS çıktısı \texttt{results/risk\_scores.csv} dosyasında saklanmış ve uzun tablolar için kullanılabilir hâle getirilmiştir.
+
+\subsection{Sağlamlık ve Kaskad Analizleri}
+Kritik düğümler sırasıyla grafikten çıkarılmış; LCC boyutu, ortalama yol uzunluğu ve ters-yön erişilebilirlik ölçümleri yeniden hesaplanmıştır. Ayrıca \texttt{cascade\_impact\_top20.csv} dosyası oluşturularak her düğümün potansiyel olarak etkileyebileceği paket sayısı raporlanmıştır.
+
+\subsection{Tablo ve Görsel Üretim Hattı}
+\texttt{analysis/make\_tables.py} betiği; \texttt{metrics.csv}, \texttt{risk\_scores.csv}, \texttt{edge\_betweenness\_top10.csv} ve \texttt{cascade\_impact\_top20.csv} dosyalarından uzun tablolar üretir. Betik yeniden çalıştırılarak metin ile tabloların uyumu korunabilir.
+
+\section{Bulgular ve Değerlendirme}
+\subsection{Ağ Görünümü ve Derece Dağılımları}
+\begin{figure}[H]\centering\includegraphics{network_full_topN.png}\caption{Top 1000 çekirdeğinin tam ağ görselleştirmesi; yoğun bölgeler omurga kümelerini göstermektedir.}\end{figure}
+\begin{figure}[H]\centering\includegraphics{degree_histograms.png}\caption{In-degree ve out-degree histogramları ağır kuyruklu dağılımları ortaya koymaktadır.}\end{figure}
+Top 1000 çekirdeği seyrek fakat kısmen ölçekten-bağımsız özellik sergiler; az sayıda paket yüzlerce bağımlılığın birleşme noktası durumundadır.
+
+\subsection{Merkezi Düğümler ve Korelasyonlar}
+\begin{figure}[H]\centering\includegraphics{scatter_correlations.png}\caption{Merkeziyet ölçüleri arasındaki korelasyonlar.}\end{figure}
+\begin{figure}[H]\centering\includegraphics{top10_leaders.png}\caption{Birleşik liderler görünümü.}\end{figure}
+In-degree ile betweenness arasında güçlü fakat tam olmayan bir ilişki bulunmakta; bu da kullanım yoğunluğu yüksek fakat köprü rolü sınırlı paketler olduğunu göstermektedir.
+
+\subsection{İlk 20 Düğüm Listeleri}
+Uzun tablolar, merkeziyet ölçümlerine göre kritik düğümleri gösterir:
+\input{../results/metrics_top20_in_degree.tex}
+\input{../results/metrics_top20_out_degree.tex}
+\input{../results/metrics_top20_betweenness.tex}
+In-degree listesinde @swc/helpers, prop-types ve @babel/runtime gibi omurga paketler öne çıkarken, out-degree listesi paketlerin dışa bağımlılık karmaşıklığını göstermektedir. Betweenness sıralaması ise az sayıda düğümün topluluklar arası köprü görevi gördüğünü kanıtlar.
+
+\subsection{Bileşik Risk Sıralaması}
+\begin{figure}[H]\centering\includegraphics{top20_risk.png}\caption{BRS açısından ilk 20 paket.}\end{figure}
+\input{../results/risk_scores_top20.tex}
+Prop-types, @react-aria/utils ve @griffel/react gibi paketler hem kullanım yoğunluğu hem de akış kontrolü açısından yüksek skor üretmektedir. Tablo, tespit hatlarının öncelik kuyruğu olarak kullanılabilir.
+
+\subsection{Kaskad Etkisi ve Sağlamlık}
+\begin{figure}[H]\centering\includegraphics{risk_vs_cascade.png}\caption{BRS ile kaskad etki (erişilebilirlik) ilişkisi.}\end{figure}
+\begin{figure}[H]\centering\includegraphics{cascade_impact_top20.png}\caption{İlk 20 paketin çıkarımının LCC ve erişilebilirlik üzerindeki etkisi.}\end{figure}
+\input{../results/cascade_impact_top20.tex}
+BRS sıralamasındaki düğümlerin hedefli çıkarımı, rastgele çıkarımlara kıyasla LCC’yi çok daha hızlı küçültmekte ve ortalama yol uzunluğunu artırmaktadır. Bu sonuç, BRS’in sistemik riski öngörme gücünü doğrular.
+
+\subsection{Köprü Kenarlar}
+\input{../results/edge_betweenness_top10.tex}
+Edge betweenness sıralaması, topluluklar arasındaki kritik kenarları (örneğin prop-types → object-assign) ortaya koyar. Bu kenarların izlenmesi, paket seviyesindeki izleme mekanizmalarını tamamlar.
+
+\section{Tartışma}
+\textbf{Operasyonelleştirme.} BRS çıktıları, Amalfi, Cerebro ve OSCAR gibi tespit boru hatlarında \emph{topolojik ön filtre} olarak kullanılabilir; analistlerin sınırlı inceleme kapasitesi yüksek riskli düğümlere yönlendirilir. \textbf{Politika ve bütünlük.} in-toto ve benzeri imza altyapıları için hedef paket listeleri üretmek, hem imza kapsamını artırır hem de kritik bakımcıların iş yükünü önceliklendirir. \textbf{Ekosistem paydaşları.} Paket bakımcıları için BRS geri bildirimi; bakım sıklığını, bağımlılık diyetini ve sigorta kapsamlarını planlamada yeni bir gösterge sunar.
+
+\section{Yeniden Üretilebilirlik}
+\begin{itemize}
+  \item \textbf{Kod ve not defterleri:} \texttt{analysis/analysis.ipynb} Python 3, NetworkX, pandas, numpy, matplotlib ve seaborn ile çalıştırılabilir.
+  \item \textbf{Parametreler:} Betweenness örnekleme \(k \approx 200\); min–max ölçekleme; ağırlık kümesi \((0.5, 0.2, 0.3)\).
+  \item \textbf{Veri saklama:} Tüm ara çıktılar \texttt{results/} dizininde CSV/JSON olarak tutulur; görseller aynı dizinde PNG biçimindedir.
+  \item \textbf{Tabloların üretimi:} \texttt{analysis/make\_tables.py} betiği uzun tabloları otomatik olarak oluşturur ve \LaTeX{} dosyasına \texttt{\textbackslash input} ile eklenir.
+\end{itemize}
+
+\section{Sınırlılıklar ve Gelecek Çalışmalar}
+Top 1000 çekirdeği, uzun kuyrukta kalan paketleri kapsamamaktadır; ileride kayan pencere yaklaşımı ve PyPI/Cargo gibi ekosistemlerle karşılaştırmalı analiz planlanmaktadır. Betweenness örnekleme hatasını azaltmak ve kullanım yoğunluğu için bakım/organizasyonel sinyalleri BRS’e entegre etmek de öncelikli hedeflerdir.
+
+\section{Sonuç}
+Bu çalışma, NPM ekosistemindeki yapısal merkeziyet ile kullanım yoğunluğunu tek bir Bileşik Risk Skoru’nda birleştirerek hem teknik tespit hatlarına hem de politika/bütünlük mekanizmalarına veri temelli öncelik listeleri sunmaktadır. Sağlamlık ve kaskad analizleri, önerilen skorun sistemik riski öngörmede güçlü olduğunu göstermektedir.
+
+\clearpage
+
+\input{bib.tex}
+
+\end{document}

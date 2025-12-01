@@ -1,0 +1,169 @@
+% !TeX program = pdflatex
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[turkish]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\graphicspath{{../results/}}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{csquotes}
+\usepackage{amsmath}
+\geometry{margin=2.5cm}
+\setlength{\parskip}{0.6em}
+\setlength{\parindent}{0pt}
+\newlength{\figW}
+
+\title{NPM Bağımlılık Ağı Üzerinden Yapısal Riskin Ölçümlenmesi}
+\author{Proje Ekibi}
+\date{Ekim 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+NPM ekosistemindeki paketleri yönlü bir ağ olarak modelleyip, in-degree, out-degree ve betweenness merkeziyetleri ile 
+min–max normalizasyonu temel alan bileşik bir risk skoru öneriyoruz. Amaç, paket içi zafiyetlerden bağımsız olarak, 
+bağımlılık topolojisinin doğurduğu yapısal riski nicel ve karşılaştırılabilir biçimde ortaya koymaktır. Çalışma, en çok 
+indirilen paketlerden kurulan graf üzerinde yürütülmüş, sonuçlar metrik tabloları ve görsellerle birlikte sunulmuştur.
+\end{abstract}
+
+\section{Giriş}
+Güncel tedarik zinciri saldırıları (örn. Eylül 2025’te NPM'de yaşanan hesap ele geçirme vakaları) bağımlılık ağının 
+yayılım dinamiklerini ve kritik bileşenlerini anlamayı zorunlu kılmıştır. Bu bildiride, NPM paketlerinden kurulan yönlü 
+bağımlılık grafiği üzerinde merkeziyet metriklerini çıkarıp, min–max ile normalize ederek bileşik bir yapısal risk 
+skoru elde ediyoruz. Böylece, tekil paket zafiyetlerinden ziyade topolojik konumdan kaynaklanan sistemik risk görünür 
+hale gelmektedir. Projenin web sunumu: \url{https://yusufarbc.github.io/npm-complex-network-analysis/}.
+
+\section{Yöntem}
+\subsection{Ağ Kurulumu}
+\begin{itemize}
+  \item Düğümler paketleri, kenarlar \emph{Dependent~$\to$~Dependency} yönünü temsil eder; self-loop yoktur, grafik yönlüdür.
+  \item Paketlerin en güncel sürümlerinden \texttt{dependencies} alanı çekilir; isteğe bağlı olarak \texttt{peerDependencies} dahil edilebilir.
+  \item HTTP oturumu yeniden kullanılır; istekler basit tekrar (retry) ve disk önbelleği (\texttt{results/cache\_deps.json}) ile dayanıklı hale getirilir.
+\end{itemize}
+
+\subsection{Metrikler}
+\begin{itemize}
+  \item \textbf{in-degree}: Bir pakete bağımlı paket sayısı — çekirdek/merkez cazibeyi yansıtır.
+  \item \textbf{out-degree}: Bir paketin bağlı olduğu bağımlılık sayısı — kırılgan yüzeyin genişliğini yansıtır.
+  \item \textbf{betweenness centrality}: Akışın aralarından geçtiği köprü konumlar. Büyük graflarda örnekleme 
+  (\texttt{sample-k}) ile hızlandırılır.
+\end{itemize}
+
+\subsection{Normalizasyon ve Bileşik Risk}
+Metrikler min–max ile [0,1] aralığına ölçeklenir: \(x' = (x-\min)/(\max-\min)\). Bileşik risk skoru,
+\begin{displayquote}
+\centering
+\(\text{risk} = w_{in}\,in' + w_{out}\,out' + w_{btw}\,btw'\)\quad (varsayılan: \(0.5,\,0.2,\,0.3\)).
+\end{displayquote}
+Ağırlıklar komut satırı seçenekleri ile değiştirilebilir.
+
+\subsection{Sınıflandırma ve Ek Analizler}
+Risk dağılımı kantil eşiklerine göre Low/Medium/High katmanlarına ayrılabilir (varsayılan eşikler 0.7 ve 0.9). 
+Ek olarak kenar betweenness ile köprü niteliğindeki bağlantılar sıralanır; graf tersyönünde (dependents) yapılan 
+kaskad etki analizi ise seçili tohumlardan erişilebilen paket sayısını verir.
+
+\section{Sonuçlar}
+Aşağıdaki görseller ve tablolar \texttt{results/} klasöründen çekilmiştir.
+
+\subsection{Ağ ve Dağılımlar}
+\begin{figure}[h]
+  \centering
+  \includegraphics{network_full_topN.png}
+  \caption{En çok indirilen paketlerle kurulan tam ağın görselleştirmesi.}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics{degree_histograms.png}
+  \caption{In-degree ve out-degree dağılımlarının histogramları.}
+\end{figure}
+
+\subsection{Öncü Paketler ve Korelasyonlar}
+\begin{figure}[h]
+  \centering
+  \includegraphics{top10_in_degree.png}
+  \caption{In-degree açısından ilk 10 paket.}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics{top10_out_degree.png}
+  \caption{Out-degree açısından ilk 10 paket.}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics{top10_betweenness.png}
+  \caption{Betweenness merkeziyeti açısından ilk 10 paket.}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics{scatter_correlations.png}
+  \caption{Metrikler arası korelasyonlara ilişkin saçılım grafikleri.}
+\end{figure}
+
+\subsection{Bileşik Risk ve Kaskad Etki}
+\begin{figure}[h]
+  \centering
+  \includegraphics{top20_risk.png}
+  \caption{Bileşik risk skoruna göre ilk 20 paket.}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics{risk_vs_cascade.png}
+  \caption{Risk skoru ile kaskad etki (dependents yönü) ilişkisi.}
+\end{figure}
+
+\subsection{Tablolar}
+% Uzun tablolar results/*.tex dosyalarından içe alınır
+\input{../results/metrics_top20_in_degree.tex}
+\input{../results/metrics_top20_out_degree.tex}
+\input{../results/metrics_top20_betweenness.tex}
+\input{../results/risk_scores_top20.tex}
+\input{../results/edge_betweenness_top10.tex}
+\input{../results/cascade_impact_top20.tex}
+
+\section{Literatür Taraması (Özet)}
+Tedarik zinciri tehdit taksonomileri, kötüye kullanım teknik haritaları ve bağımlılık ağlarının yapısal özelliklerini 
+inceleyen zengin bir literatür bulunmaktadır. Örneğin \emph{Backstabbers Knife Collection} saldırı taksonomisi, 
+\emph{Hitchhiker’s Guide} ekosistemler arası kurulum/çalışma zamanı tekniklerini, \emph{OSCAR} gibi dinamik analiz 
+hattı çalışmaları ise zehirleme tespitinde pratik iyileştirmeleri rapor eder. NPM bağımlılık ağlarının küçük-dünya 
+özellikleri ve hedefli düğüm çıkarımlarındaki kırılganlık da daha önce sayısallaştırılmıştır. Bu çalışma, söz konusu 
+bulguları operasyonel bir “yapısal risk” metriğinde birleştirip önceliklendirmeye odaklanmaktadır. Seçme kaynaklar:
+\begin{itemize}
+  \item 04- Backstabbers Knife Collection (A Review of OSS Supply Chain Attacks).\footnote{\url{../academic/04- Backstabbers Knife Collection A Review of Open Source Software Supply Chain Attacks.pdf}}
+  \item 24- The Hitchhiker’s Guide to Malicious Third-Party Dependencies.\footnote{\url{../academic/24- The Hitchhikers Guide to Malicious Third-Party Dependencies.pdf}}
+  \item 29- Towards Robust Detection of OSS Supply Chain Poisoning (OSCAR).\footnote{\url{../academic/29- Towards Robust Detection of OSS Supply Chain Poisoning (OSCAR).pdf}}
+  \item 16- Node package manager’s dependency network robustness.\footnote{\url{../academic/16-Node package manager's dependency network robustness.pdf}}
+  \item 25- The web of dependencies: a complex network analysis of the NPM.\footnote{\url{../academic/25-The web of dependencies a complex network analysis of the NPM.pdf}}
+  \item 08- Demystifying vulnerability propagation via dependency trees in npm.\footnote{\url{../academic/08-Demystifying vulnerability propagation via dependency trees in npm.pdf}}
+  \item 19- Practical Automated Detection of Malicious npm Packages.\footnote{\url{../academic/19- Practical Automated Detection of Malicious npm Packages.pdf}}
+  \item 28- Towards Measuring Supply Chain Attacks on Package Managers.\footnote{\url{../academic/28- Towards Measuring Supply Chain Attacks on Package Managers.pdf}}
+\end{itemize}
+
+\section{Tartışma ve Sınırlılıklar}
+Betweenness merkeziyeti büyük graflarda hesaplama açısından pahalıdır; bu nedenle örnekleme kullanımı pratikte gereklidir. 
+HTTP API yanıtlarındaki geçici hatalar eksik veri doğurabilir; önbellekleme ve tekrar denemeleri bu etkiyi azaltır. Risk 
+ağırlıkları alan-bağımlıdır; bağlamınıza göre \(w_{in}, w_{out}, w_{btw}\) değerlerini yeniden kalibre etmeniz önerilir.
+
+\section{Sonuç}
+Bağımlılık topolojisinin merkeziliği ve köprü konumları, paket içi zafiyet göstergelerinin ötesinde yapısal bir risk 
+perspektifi sunar. Burada sunulan basit ama yorumlanabilir bileşik skor, sınırlı analiz kapasitesini yüksek etkili 
+paketlere yönlendirmek için kullanılabilir. Gelecek çalışmalar, sayfa-derecesi (PageRank), k-çekirdek ya da 
+topluluk/çekirdek ayrışımı gibi ek metriklerle skoru zenginleştirebilir.
+
+\section*{Çıktılar ve Tekrarlanabilirlik}
+Tam çıktı listesi ve görseller için \texttt{results/} klasörüne bakınız. CLI tekrarı:
+\begin{quote}
+\texttt{python -m analysis.run --topN 200 --sample-k 200 --classify}
+\end{quote}
+
+\end{document}
+
