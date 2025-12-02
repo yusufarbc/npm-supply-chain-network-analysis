@@ -1,6 +1,5 @@
 # NPM Tedarik Zinciri Ağ Analizi ve Kritiklik Haritalaması
 
-![Network Graph](media/network_preview.png)
 
 > **NPM ekosistemindeki sistemik risklerin, paket içeriğinden bağımsız topolojik analiz yöntemleriyle haritalandırılması.**
 
