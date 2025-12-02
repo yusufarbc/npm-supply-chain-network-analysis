@@ -6,7 +6,7 @@
 
 Node Package Manager (NPM), 3 milyondan fazla paketi barındıran ve haftalık milyarlarca indirme işlemi gerçekleştiren dünyanın en büyük yazılım kayıt defteridir. Modern yazılım geliştirme süreçleri, hızı artırmak amacıyla üçüncü taraf kod kütüphanelerine (bağımlılıklar) büyük ölçüde güvenir. Ancak, bir projeye tek bir NPM paketi eklendiğinde, ortalama 79 adet transitif (dolaylı) paket de dolaylı olarak güven zincirine dahil edilir.
 
-Bu "örtük güven" (implicit trust) modeli, NPM'i saldırganlar için cazip bir hedef haline getirmiştir. Saldırganlar, tek bir popüler paketi veya onun derinliklerindeki bir bağımlılığı ele geçirerek, milyonlarca geliştiriciyi ve son kullanıcıyı etkileyebilecek "bire-çok" (one-to-many) dağıtım mekanizmasına sahip olurlar,. Bu belge, NPM ekosistemindeki aktif tehditleri ve bunlara karşı alınması gereken teknik savunma mekanizmalarını tanımlar.
+Bu "örtük güven" (implicit trust) modeli, NPM'i saldırganlar için cazip bir hedef haline getirmiştir. Saldırganlar, tek bir popüler paketi veya onun derinliklerindeki bir bağımlılığı ele geçirerek, milyonlarca geliştiriciyi ve son kullanıcıyı etkileyebilecek "bire-çok" (one-to-many) dağıtım mekanizmasına sahip olurlar. Bu belge, NPM ekosistemindeki aktif tehditleri ve bunlara karşı alınması gereken teknik savunma mekanizmalarını tanımlar.
 
 ---
 
@@ -22,11 +22,11 @@ Aşağıdaki saldırı vektörleri, modern yazılım tedarik zincirini hedef ala
 *   **Teknik Detay:**
     *   **Manifest Manipülasyonu:** Saldırgan, kopyaladığı paketin `package.json` dosyasını değiştirir ancak kodun tamamını veya bir kısmını korur.
     *   **Kilit Dosyası İstismarı:** `package-lock.json` veya `npm-shrinkwrap.json` dosyaları manipüle edilerek, bağımlılık ağacında bilinen güvenlik açıklarına sahip eski versiyonlar "sabitlenir" (pinned).
-    *   **Güvenlik Riski:** Orijinal pakette bir güvenlik açığı bulunduğunda ve düzeltildiğinde (patch), bu düzeltme klonlanmış pakete (Shrinkwrapped Clone) yansımaz. `npm audit` gibi araçlar, klonun orijinal paketle ilişkisini bilmediği için bu güvenlik açığını tespit edemez,. Bu durum, bilinen zafiyetlerin "hayalet" sürümler aracılığıyla sistemde kalmasına neden olur.
+    *   **Güvenlik Riski:** Orijinal pakette bir güvenlik açığı bulunduğunda ve düzeltildiğinde (patch), bu düzeltme klonlanmış pakete (Shrinkwrapped Clone) yansımaz. `npm audit` gibi araçlar, klonun orijinal paketle ilişkisini bilmediği için bu güvenlik açığını tespit edemez. Bu durum, bilinen zafiyetlerin "hayalet" sürümler aracılığıyla sistemde kalmasına neden olur.
 
 ### 2.2. Typosquatting (Yazım Hatası Avcılığı)
 **Risk Seviyesi:** Orta-Yüksek
-**Tanım:** Popüler paket isimlerine benzeyen isimlerle (örn. `react` yerine `raect` veya `colors` yerine `clolors`) zararlı paketlerin yayınlanmasıdır,.
+**Tanım:** Popüler paket isimlerine benzeyen isimlerle (örn. `react` yerine `raect` veya `colors` yerine `clolors`) zararlı paketlerin yayınlanmasıdır.
 
 *   **Nasıl Çalışır?** Geliştiricinin `npm install` komutunu yazarken yapacağı anlık bir dikkatsizlikten faydalanır.
 *   **Teknik Detay:** Saldırganlar, Levenshtein mesafesi (iki kelime arasındaki karakter farkı) düşük olan isimleri seçer. Paket yüklendiğinde, `package.json` içindeki `preinstall` veya `postinstall` betikleri (scripts) aracılığıyla zararlı kod (malware) çalıştırılır ve sistemden ortam değişkenleri (ENV variables) veya SSH anahtarları çalınmaya çalışılır.
@@ -39,20 +39,20 @@ Aşağıdaki saldırı vektörleri, modern yazılım tedarik zincirini hedef ala
 *   **Teknik Detay:**
     *   *Private Package:* `@internal/auth-utils` (v1.0.0)
     *   *Malicious Public Package:* `@internal/auth-utils` (v99.0.0)
-    *   Sistem otomatik güncelleme veya kurulum sırasında public registry'deki zararlı paketi çeker ve iç ağa sızma gerçekleşir,.
+    *   Sistem otomatik güncelleme veya kurulum sırasında public registry'deki zararlı paketi çeker ve iç ağa sızma gerçekleşir.
 
 ### 2.4. Account Takeover (ATO) & Worms (Hesap Ele Geçirme)
 **Risk Seviyesi:** Kritik
 **Tanım:** Güvenilir paket geliştiricilerinin hesaplarının (zayıf şifre, phishing veya sızdırılmış tokenlar nedeniyle) ele geçirilmesi ve paketlerine zararlı kod enjekte edilmesidir.
 
 *   **Nasıl Çalışır?** Saldırgan, meşru geliştirici kimliğine bürünerek güvenilir bir paketin "yeni ve zararlı" bir versiyonunu yayınlar.
-*   **Teknik Detay (Shai-Hulud Örneği):** Eylül 2025'te yaşanan bir olayda, saldırganlar oltalama (phishing) yoluyla geliştirici hesaplarını ele geçirmiştir. "Shai-Hulud" adı verilen zararlı yazılım, ele geçirdiği sistemdeki `.npmrc` dosyasındaki yayınlama tokenlarını (publishing tokens) çalarak kendini otomatik olarak diğer paketlere yaymış (worm-like behavior) ve yüzlerce paketi enfekte etmiştir,.
+*   **Teknik Detay (Shai-Hulud Örneği):** Eylül 2025'te yaşanan bir olayda, saldırganlar oltalama (phishing) yoluyla geliştirici hesaplarını ele geçirmiştir. "Shai-Hulud" adı verilen zararlı yazılım, ele geçirdiği sistemdeki `.npmrc` dosyasındaki yayınlama tokenlarını (publishing tokens) çalarak kendini otomatik olarak diğer paketlere yaymış (worm-like behavior) ve yüzlerce paketi enfekte etmiştir.
 
 ### 2.5. Protestware / Malicious Updates (Zararlı Güncellemeler)
 **Risk Seviyesi:** Yüksek
 **Tanım:** Meşru bir paket sahibinin, paketi kasıtlı olarak bozması (sabotaj) veya pakete zararlı işlevsellik eklemesidir.
 
-*   **Nasıl Çalışır?** `node-ipc` veya `faker.js` olaylarında görüldüğü gibi, geliştirici politik veya kişisel nedenlerle popüler paketine, belirli IP adreslerindeki dosyaları silen veya sonsuz döngüye girerek sistemi kilitleyen kodlar ekler,.
+*   **Nasıl Çalışır?** `node-ipc` veya `faker.js` olaylarında görüldüğü gibi, geliştirici politik veya kişisel nedenlerle popüler paketine, belirli IP adreslerindeki dosyaları silen veya sonsuz döngüye girerek sistemi kilitleyen kodlar ekler.
 *   **Teknik Detay:** Bu saldırılar, genellikle `minor` veya `patch` güncellemeleri (SemVer kurallarına göre güvenli olması beklenen) aracılığıyla dağıtılır ve otomatik güncelleme mekanizmalarını (örn. `^1.0.0`) hedef alır.
 
 ---
@@ -75,11 +75,11 @@ Saldırı yüzeyini daraltmak için savunma derinliği (defense-in-depth) ilkesi
 Şirket içi paketler için mutlaka `@sirket/paket-adi` formatında **Scoped Packages** kullanılmalıdır. Bu, NPM registry'ye bu paketin bir kullanıcıya veya organizasyona ait olduğunu bildirir ve Dependency Confusion saldırılarını engellemek için `.npmrc` dosyasında bu kapsamın (scope) sadece özel registry'ye (örn. Artifactory, Verdaccio) yönlendirilmesini sağlar.
 
 #### 2FA ve Token Güvenliği
-NPM hesapları için **İki Faktörlü Kimlik Doğrulama (2FA)** zorunlu hale getirilmelidir (özellikle `publish` yetkisi olan hesaplar için). Otomasyon token'ları (Automation Tokens) kullanılırken, sadece gerekli paketlere ve IP adreslerine (CIDR whitelist) izin veren granüler yetkilendirmeler yapılmalıdır,.
+NPM hesapları için **İki Faktörlü Kimlik Doğrulama (2FA)** zorunlu hale getirilmelidir (özellikle `publish` yetkisi olan hesaplar için). Otomasyon token'ları (Automation Tokens) kullanılırken, sadece gerekli paketlere ve IP adreslerine (CIDR whitelist) izin veren granüler yetkilendirmeler yapılmalıdır.
 
 #### Yazılım Bileşen Analizi (SCA) ve Güvenlik Araçları
-*   **Socket.dev / OSSF Scorecard:** Geleneksel zafiyet tarayıcılarının aksine, bu araçlar paketin "davranışını" ve "sağlığını" analiz eder. Bir paketin aniden ağa erişim isteği göndermesi, dosya sistemine yazmaya çalışması veya `install` script eklemesi gibi anormallikleri tespit eder,.
-*   **Snyk / npm audit:** Bilinen CVE (Common Vulnerabilities and Exposures) kayıtlarını taramak için kullanılır. Ancak, Shrinkwrapped Clones gibi gizli zafiyetleri her zaman yakalayamayacakları unutulmamalıdır,.
+*   **Socket.dev / OSSF Scorecard:** Geleneksel zafiyet tarayıcılarının aksine, bu araçlar paketin "davranışını" ve "sağlığını" analiz eder. Bir paketin aniden ağa erişim isteği göndermesi, dosya sistemine yazmaya çalışması veya `install` script eklemesi gibi anormallikleri tespit eder.
+*   **Snyk / npm audit:** Bilinen CVE (Common Vulnerabilities and Exposures) kayıtlarını taramak için kullanılır. Ancak, Shrinkwrapped Clones gibi gizli zafiyetleri her zaman yakalayamayacakları unutulmamalıdır.
 
 ### 3.3. Manifest Dosyası İncelemesi
 Geliştiriciler, `package.json` dosyasında özellikle şu alanlara dikkat etmelidir:

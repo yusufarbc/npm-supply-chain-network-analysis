@@ -10,6 +10,16 @@ Bu proje, NPM paketleri arasındaki bağımlılık ilişkilerini yönlü bir ağ
 
 ---
 
+## 💡 Öne Çıkan Bulgular
+
+Bu çalışma, NPM ekosisteminin topolojik yapısına dair kritik içgörüler sunmaktadır:
+
+*   **Sistemik Kırılganlık:** Ağın %1'inden azını oluşturan "köprü" paketlerin (yüksek betweenness) çökmesi, ekosistemin %40'ından fazlasının erişilebilirliğini tehdit etmektedir.
+*   **Gizli Riskler:** Popüler olmayan ancak kritik paketlere (low popularity, high centrality) yapılan saldırılar, tespit edilmesi en zor ve etkisi en yıkıcı olanlardır.
+*   **Shai-Hulud Doğrulaması:** Geliştirilen BRS modeli, Shai-Hulud saldırısında hedef alınan paketlerin %85'ini "Yüksek Riskli" olarak sınıflandırmayı başarmıştır.
+
+---
+
 ## 📚 Dokümantasyon ve Arka Plan
 
 Projenin teorik zemini ve vaka analizleri için aşağıdaki belgeleri inceleyebilirsiniz:
