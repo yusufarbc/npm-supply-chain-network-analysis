@@ -68,53 +68,60 @@ Software supply chain security, NPM, dependency network analysis, topological ri
 \IEEEpeerreviewmaketitle
 
 \section{G{\footnotesize İ}r{\footnotesize İ}ş}
-Modern yazılım mühendisliğinin temel dinamiklerinden biri olan verimlilik arayışı, geliştirme süreçlerini NPM, PyPI ve RubyGems gibi merkezi paket yöneticilerinin sunduğu kullanıma hazır kod kütüphanelerine bağımlı kılmıştır.
-Bu modüler mimari, inovasyon döngülerini ivmelendirmekle birlikte, tedarik zincirinin herhangi bir noktasındaki zafiyetin tüm ekosisteme sirayet edebildiği kırılgan bir zemin oluşturmuştur \cite{wyss2025npm}.
-Milyonlarca paketi ve bunlar arasındaki girift bağımlılık ilişkilerini barındıran NPM ekosistemi, sunduğu geniş saldırı yüzeyiyle tehdit aktörleri için cazip bir hedef konumundadır \cite{wang2023threat}. Zafiyetlerin bağımlılık ağaçları üzerinden kontrolsüz yayılımı \cite{liu2022demystifying, zerouali2022impact} ve paketlerin bakım süreçlerindeki aksaklıklar \cite{rahman2024update, cogo2020maintenance, jafari2023mitigation}, bu riski önemli ölçüde artırmaktadır. Literatür, bu ağın "küçük dünya" (small-world) özellikleri taşıdığını, dolayısıyla sınırlı sayıda paketin veya bakımcının ekosistem üzerinde orantısız bir etkiye sahip olduğunu doğrulamaktadır \cite{zimmermann2019smallworld, hafner2021robustness, oldnall2017complex, jaisri2024selfcontained}.
+Modern yazılım mühendisliğinin temel dinamiklerinden biri olan verimlilik arayışı, geliştirme süreçlerini NPM, PyPI ve RubyGems gibi merkezi paket yöneticilerinin sunduğu kullanıma hazır kod kütüphanelerine bağımlı kılmıştır \cite{wyss2025npm, duan2020measuring}. 
+Bu modüler mimari, yazılım geliştirme süreçlerini hızlandırmakla birlikte, tedarik zincirinin herhangi bir noktasındaki zafiyetin tüm ekosisteme yayılabildiği kırılgan bir zemin oluşturmuştur \cite{wyss2025npm}.
+Milyonlarca paketi ve bunlar arasındaki girift bağımlılık ilişkilerini barındıran NPM ekosistemi, sunduğu geniş saldırı yüzeyiyle tehdit aktörleri için cazip bir hedef konumundadır \cite{wang2023threat}. 
+Zafiyetlerin bağımlılık ağları üzerinden kontrolsüz yayılımı \cite{liu2022demystifying, zerouali2022impact} ve paketlerin bakım süreçlerindeki aksaklıklar \cite{rahman2024update, cogo2020maintenance, jafari2023mitigation}, bu riski artırmaktadır. 
+Literatür, bu ağın "küçük dünya" (small-world) özellikleri taşıdığını, dolayısıyla sınırlı sayıda paketin veya bakımcının ekosistem üzerinde orantısız bir etkiye sahip olduğunu doğrulamaktadır \cite{zimmermann2019smallworld, hafner2021robustness, oldnall2017complex, jaisri2024selfcontained}.
 
-Tedarik zinciri saldırıları, güvenilir paketlerin ele geçirilmesinden, popüler paket isimlerinin taklit edildiği "typosquatting" tuzaklarına kadar geniş bir yelpazede kendini göstermektedir. Kaynak zehirlenmesi (source poisoning) \cite{hastings2024poisoning}, prototip kirliliği (prototype pollution) \cite{shcherbakov2021prototype} ve Node.js mimarisine özgü bağımlılık tabanlı saldırılar \cite{yip2022dependency}, tehditlerin çeşitliliğini ortaya koymaktadır. "Backstabber’s Knife Collection" \cite{ohm2020backstabber} ve "The Hitchhiker’s Guide" \cite{ladisa2023hitchhiker} gibi kapsamlı çalışmalar, saldırıların anatomisini kurulum ve çalışma zamanı evreleri üzerinden incelerken; Duan ve ark. \cite{duan2020measuring}, kayıt defteri (registry) düzeyindeki istismarlara odaklanarak yüzlerce kötü niyetli paketin varlığını belgelemektedir.
+Tedarik zinciri saldırıları, güvenilir paketlerin ele geçirilmesinden, popüler paket isimlerinin taklit edildiği "typosquatting" tuzaklarına kadar geniş bir yelpazede kendini göstermektedir \cite{ohm2020backstabber}. Kaynak zehirlenmesi (source poisoning) \cite{hastings2024poisoning}, prototip kirliliği (prototype pollution) \cite{shcherbakov2021prototype} ve Node.js mimarisine özgü bağımlılık tabanlı saldırılar \cite{yip2022dependency}, tehditlerin çeşitliliğini ortaya koymaktadır. 
+"Backstabber’s Knife Collection" \cite{ohm2020backstabber} ve "The Hitchhiker’s Guide" \cite{ladisa2023hitchhiker} gibi kapsamlı çalışmalar, saldırıların anatomisini kurulum ve çalışma zamanı evreleri üzerinden incelerken; Duan ve ark. \cite{duan2020measuring}, kayıt defteri (registry) düzeyindeki istismarlara odaklanarak yüzlerce kötü niyetli paketin varlığını belgelemektedir.
 
-Bu tehditlere karşı Amalfi \cite{sejfia2022amalfi}, Cerebro ve OSCAR \cite{zheng2024oscar} gibi makine öğrenmesi ve dinamik analiz tabanlı savunma mekanizmalarının yanı sıra; meta veri analizi \cite{halder2024metadata}, kötü niyetli davranış sekansları \cite{zhang2023behavior}, diller arası tespit \cite{ladisa2023crosslang} ve imza tabanlı yaklaşımlar \cite{correia2022detection, ohm2021acme} geliştirilmiştir. Ancak ekosistemin devasa ölçeği, her bir paketin derinlemesine taranmasını maliyet ve zaman açısından sürdürülemez kılmaktadır.
+Bu tehditlere karşı Amalfi \cite{sejfia2022amalfi}, Cerebro ve OSCAR \cite{zheng2024oscar} gibi makine öğrenmesi ve dinamik analiz tabanlı savunma mekanizmalarının yanı sıra; meta veri analizi \cite{halder2024metadata}, kötü niyetli davranış sekansları \cite{zhang2023behavior}, diller arası tespit \cite{ladisa2023crosslang}, güvenli kullanım pratikleri \cite{imtiaz2023secure} ve imza tabanlı yaklaşımlar \cite{correia2022detection, ohm2021acme, schorlemmer2024signing} geliştirilmiştir. 
+Ancak ekosistemin devasa ölçeği, her bir paketin derinlemesine taranmasını maliyet ve zaman açısından sürdürülemez kılmaktadır.
 
-Mevcut literatür kritik düğümlerin varlığını kabul etmekle birlikte, bu düğümlerin sistematik tespiti ve \textit{in-toto} \cite{torres2020intoto} gibi güvenlik politikalarına entegrasyonu konusunda metodolojik bir boşluk barındırmaktadır. Analizler genellikle popülerlik (indirme sayısı) veya statik kod analizi gibi metriklere odaklanmakta, ağ topolojisinden kaynaklanan yapısal riskleri bütüncül bir perspektifle değerlendirmekte yetersiz kalmaktadır. Bu çalışma, paket içeriklerinden bağımsız olarak, yalnızca paketler arası bağımlılıkların topolojik mimarisine odaklanmakta ve yapısal riskin haritalandırılması için özgün bir metodoloji sunarak söz konusu boşluğu doldurmayı hedeflemektedir.
+Literatürde, paketlerin bakım durumu \cite{rahman2024update} veya bilinen zafiyetlerin yayılım dinamikleri \cite{liu2022demystifying} üzerinden risk analizi yapan değerli çalışmalar mevcuttur. Ancak, ağın topolojik yapısından kaynaklanan sistemik çöküş risklerini (kaskad etkisini) ölçen ve bunları operasyonel bir risk skoruna dönüştüren yaklaşımlar kısıtlıdır. Mevcut çalışmalar genellikle ağın genel karakteristiklerini betimsel düzeyde ortaya koymakta; güvenlik kaynaklarının optimizasyonu için somut bir önceliklendirme mekanizması sunma konusunda eksik kalmaktadır. Bu çalışmada, paket içeriklerinden bağımsız olarak, yalnızca paketler arası bağımlılıkların topolojik mimarisine odaklanılmış ve yapısal riskin haritalandırılması hedeflenmiştir.
 
-Araştırmanın literatüre sunduğu temel katkılar şunlardır:
-\begin{enumerate}
-  \item Resmî çözümleme kuralları çerçevesinde inşa edilen yönlü graf üzerinde in-degree, out-degree ve betweenness ölçümleri min–max yöntemiyle ölçeklenmiş; \(w_{in} = 0.5\), \(w_{out} = 0.2\), \(w_{btw} = 0.3\) ağırlıklarıyla sentezlenerek \textbf{Bileşik Risk Skoru (BRS)} geliştirilmiştir.
-  \item BRS sıralaması, kaskad etki ve en büyük bağlı bileşen (LCC) analizleriyle ilişkilendirilerek, topolojik riskin sistemik yansımaları nicel verilerle ortaya konulmuştur.
-  \item Elde edilen bulgular, güvenlik analistleri ve paket yöneticileri için önceliklendirilmiş bir izleme listesi sunarak, kısıtlı güvenlik kaynaklarının en kritik noktalara odaklanmasına olanak tanımaktadır.
-\end{enumerate}
+Çalışma kapsamında, NPM'in standart bağımlılık çözümleme algoritmaları temel alınarak inşa edilen yönlü graf üzerinde in-degree, out-degree ve betweenness ölçümleri ağırlıklandırılarak \textbf{Bileşik Risk Skoru (BRS)} geliştirilmiştir. Bu model, kaskad etki ve en büyük bağlı bileşen (LCC) analizleriyle desteklenerek, topolojik riskin sistemik yansımaları nicel verilerle ortaya konulmuştur. Böylece, güvenlik analistleri ve paket yöneticileri için önceliklendirilmiş bir izleme listesi oluşturularak, kısıtlı güvenlik kaynaklarının en kritik noktalara yönlendirilmesi amaçlanmıştır.
 
 \section{Ver{\footnotesize İ} ve Yöntem}
 
 \subsection{Veri Setinin Oluşturulması ve Kapsam}
-NPM ekosisteminin risk topolojisini çözümlemeyi amaçlayan bu çalışmada, örneklem stratejisi olarak "En Çok İndirilenler" veya "Trend Olanlar" gibi metrikler yerine, sistemik etkiyi önceleyen bir yaklaşım benimsenmiştir. Yürütülen ön analizler, tedarik zinciri güvenliğini en gerçekçi biçimde modellemenin, niceliksel popülariteden ziyade, en fazla sayıda projeye altyapı sağlayan "omurga" paketlere odaklanmaktan geçtiğini göstermiştir. Bu doğrultuda, analizin merkezine, ekosistemin derinliklerine kök salmış (örneğin \texttt{lodash}, \texttt{chalk}, \texttt{express} gibi) ilk 1000 paket yerleştirilmiştir. Bu paketler, son kullanıcı uygulamalarından ziyade, tüm sistemin üzerine inşa edildiği temel yapı taşlarını temsil etmektedir.
+Çalışmada, salt indirme sayıları yerine sistemik etkiyi merkeze alan bir örneklem stratejisi benimsenmiştir. 
+Bu doğrultuda, \texttt{ecosyste.ms} verilerine göre en çok bağımlıya (\textit{dependents}) sahip ilk 1.000 paket başlangıç kümesi (seed) olarak belirlenmiş ve bu kümenin 7. derinlik seviyesine kadar olan tüm bağımlılıkları (\texttt{dependencies}) analiz kapsamına alınmıştır.
+Döngüsel referansların giderildiği veri ön işleme sürecinin ardından, 1.506 düğüm ve 3.058 kenardan oluşan yönlü bir graf elde edilmiştir. 
+Ağın modellenmesi ve analiz süreçlerinde Python NetworkX kütüphanesi kullanılmıştır.
 
-NPM ekosistemi, en üst katmanda uygulamaların yer aldığı ve aşağıya doğru kütüphanelere dallanan tersine çevrilmiş bir ağaç yapısını andırmaktadır. Bu çalışmada seçilen örneklem ise, sistemin yükünü sırtlayan merkezi katmana tekabül etmektedir. Analiz sürecinde, bu temel paketlerin \texttt{dependencies} listeleri izlenerek 7. derinlik seviyesine kadar inilmiş ve tedarik zincirinin katmanlı yapısı haritalandırılmıştır. Paketlerin, kendilerini kullanan üst katman projelerine dair doğrudan bir referans içermemesi, analizin yukarı yönlü (upstream) takibini teknik olarak zorlaştırmaktadır. Bu kısıtlılığı aşmak adına, NPM API aracılığıyla her paketin toplam "bağımlı sayısı" (dependents) sorgulanmış; bu metrik, örneklem seçiminde temel kriter olarak belirlenerek analizin ekosistemin en kritik katmanına odaklanması sağlanmıştır.
-
-Süreçte yalnızca üretim bağımlılıkları (\texttt{dependencies}) filtreye tabi tutulmuş, döngüsel referanslar ayıklanarak 1.506 düğüm ve 3.058 kenardan oluşan yönlü bir graf inşa edilmiştir. Ortaya çıkan bu yapı, ekosistemdeki kritik düğümleri ve yapısal kırılganlıkları somut bir biçimde gözler önüne sermektedir. Grafiğin inşası ve analizi Python tabanlı NetworkX kütüphanesi kullanılarak gerçekleştirilmiş; elde edilen veri setleri ve Gephi uyumlu çıktılar (\texttt{gephi\_nodes.csv}, \texttt{gephi\_edges.csv}) \texttt{results/} dizininde arşivlenmiştir.
 
 \subsection{Merkeziyet Ölçüleri ve Normalizasyon}
-Ağdaki her bir paketin önemini ve sistemik risk potansiyelini nicel verilerle ifade edebilmek adına üç temel merkeziyet metriğine başvurulmuştur:
+Paketlerin ağ içindeki önemini belirlemek için üç merkeziyet metriği kullanılmıştır:
 \begin{itemize}
-    \item \textbf{In-Degree:} Bir paketin popülaritesini ve doğrudan etki alanını tanımlayan bu metrik, söz konusu pakete doğrudan bağımlı olan diğer paketlerin sayısını ifade etmektedir.
-    \item \textbf{Out-Degree:} Bir paketin işlevselliğini sürdürebilmek için ihtiyaç duyduğu dış bağımlılıkların sayısıdır. Yüksek bir out-degree değeri, paketin saldırı yüzeyinin genişliğine ve dış kaynaklı risklere karşı kırılganlığına işaret etmektedir.
-    \item \textbf{Betweenness (Arasılık):} Bir paketin, ağdaki diğer düğümler arasındaki en kısa yollar üzerinde ne sıklıkla yer aldığını ölçmektedir. Bu metrik, paketin ağ içindeki "köprü" rolünü ve bilgi/risk akışını denetleme kapasitesini yansıtır. Hesaplama maliyetini optimize etmek amacıyla \(k = 20\) örneklemli bir yaklaşım benimsenmiştir.
+    \item \textbf{In-Degree:} Doğrudan bağımlı paket sayısını ifade eder. Popülarite ve doğrudan etki alanının göstergesidir.
+    \item \textbf{Out-Degree:} Dış bağımlılık sayısını gösterir. Yüksek out-degree, saldırı yüzeyinin genişliğini ifade eder.
+    \item \textbf{Betweenness:} En kısa yollar üzerinde bulunma sıklığıdır. Paketin ağdaki köprü rolünü ve stratejik konumunu yansıtır.
 \end{itemize}
-Farklı ölçeklerdeki bu üç metriği ortak bir paydada buluşturmak amacıyla, her biri min-max normalizasyonu yöntemiyle [0,1] aralığına indirgenmiştir:
-\[
-x' = \frac{x - \min(x)}{\max(x)-\min(x)}
-\]
+
+\subsection{Matematiksel Model}
+NPM ekosistemi, paketlerin düğümleri ($V$) ve bağımlılıkların kenarları ($E$) temsil ettiği yönlü bir graf $G=(V, E)$ olarak modellenmiştir. Her bir düğüm $v \in V$ için risk skoru hesaplanmadan önce, metrikler Min-Max yöntemiyle $[0,1]$ aralığına normalize edilmiştir:
+\begin{equation}
+x' = \frac{x - \min(x)}{\max(x) - \min(x)}
+\end{equation}
+Burada $x$, ilgili metriğin ham değerini; $x'$ ise normalize edilmiş değerini ifade eder.
 
 \subsection{Bileşik Risk Skoru (BRS)}
-Normalizasyon sürecinden geçirilen değerler, her bir metriğin risk potansiyelini farklı boyutlarıyla yansıtması gözetilerek, ağırlıklı bir formül aracılığıyla bütünleşik bir skora dönüştürülmüştür:
+Normalizasyon sonrası değerler ağırlıklandırılarak Bileşik Risk Skoru (BRS) hesaplanmıştır:
 \[
 \text{BRS} = 0.5 \cdot in' + 0.2 \cdot out' + 0.3 \cdot btw'
 \]
-Bu formülasyonda in-degree'ye en yüksek ağırlığın ($w_{in}=0.5$) atfedilmesi, bir paketin tehlikeye girmesinin doğrudan etkileyeceği proje sayısının sistemik risk açısından taşıdığı kritik öneme dayanmaktadır. Ağdaki dolaylı yayılım riskini ve stratejik konumu temsil eden betweenness ise ikinci en yüksek ağırlıkla ($w_{btw}=0.3$) modeldeki yerini almıştır.
+Formülde in-degree ($w_{in}=0.5$) en yüksek ağırlığa sahiptir. 
+Bu durum, paketin etkileyeceği proje sayısının sistemik risk göstergesi olmasıyla ilişkilidir. 
+Betweenness ($w_{btw}=0.3$) ikinci faktör olarak modele dahil edilmiştir. 
+Ağırlık katsayıları, tedarik zinciri saldırılarında "etki alanı"nın (impact radius), "saldırı yüzeyi"nden daha kritik bir risk faktörü olduğu varsayımına dayanılarak ampirik olarak belirlenmiştir.
 
 \subsection{Sağlamlık ve Kaskad Analizleri}
-BRS metriğinin sistemik riski öngörme kapasitesini sınamak amacıyla "hedefli saldırı" simülasyonları gerçekleştirilmiştir. Bu senaryolar kapsamında, en yüksek BRS skoruna sahip paketler ağdan kademeli olarak izole edilmiş; bu müdahalenin En Büyük Bağlı Bileşen (LCC) boyutuna, ortalama yol uzunluğuna ve ağın genel erişilebilirliğine (reachability) olan etkisi incelenmiştir. Buna ek olarak, her bir düğümün potansiyel etki alanını (transitif kapanış) ölçen bir kaskad analizi yürütülerek, BRS'nin öngörü gücü çapraz doğrulamaya tabi tutulmuştur.
+Model geçerliliğinin testi için hedefli saldırı simülasyonları uygulanmıştır. 
+Yüksek BRS skorlu paketler ağdan çıkarılarak En Büyük Bağlı Bileşen (LCC) boyutu ve ağ erişilebilirliği üzerindeki etkiler analiz edilmiştir. 
+Ayrıca kaskad analizi ile modelin öngörü gücü doğrulanmıştır.
 
 \section{Bulgular ve Değerlend{\footnotesize İ}rme}
 
@@ -139,18 +146,18 @@ Ortalama Arasılık (Avg Betweenness) & $1.05 \times 10^{-5}$ \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{network_full_topN.png}
-\caption{Top 1000 paket ağının görselleştirmesi. Yoğun bölgeler, ekosistemin omurgasını oluşturan alt kümeleri işaret etmektedir.}
+\caption{Top 1000 paket ağının görselleştirmesi. Yoğun bölgeler alt kümeleri işaret etmektedir.}
 \label{fig:network}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{degree_histograms.png}
-\caption{In-degree ve out-degree histogramları. Dağılımın ağır kuyruklu (heavy-tailed) yapısı, merkeziyetin az sayıda pakette toplandığını doğrulamaktadır.}
+\caption{In-degree ve out-degree histogramları. Dağılımın ağır kuyruklu yapısı görülmektedir.}
 \label{fig:histograms}
 \end{figure}
 
-Şekil \ref{fig:network} ile sunulan ağ topolojisi, homojen bir dağılımdan ziyade, belirli çekim merkezleri etrafında yoğunlaşan belirgin bir kümelenme (clustering) eğilimi sergilemektedir. Derece dağılımlarının irdelendiği Şekil \ref{fig:histograms}, bu yapısal karakteristiği istatistiksel olarak doğrulamaktadır: Ağ, düğümlerin büyük çoğunluğunun marjinal sayıda bağlantıya sahip olduğu, buna karşın "hub" niteliğindeki elit bir azınlığın yüzlerce bağlantıyı domine ettiği, tipik bir "ölçekten bağımsız" (scale-free) mimari arz etmektedir. Dağılımın bu ağır kuyruklu (heavy-tailed) doğası, merkeziyetin ve dolayısıyla sistemik riskin, ekosistemin çok küçük bir fraksiyonunun tekelinde toplandığını kanıtlamaktadır.
+Şekil \ref{fig:network}'te ağ topolojisinin kümelenme yapısı görülmektedir. Şekil \ref{fig:histograms}'teki derece dağılımları, ağın ölçekten bağımsız (scale-free) yapısını göstermektedir. Düğümlerin çoğunluğu az sayıda bağlantıya sahipken, az sayıda düğüm yüksek bağlantı sayısına sahiptir. Bu bulgu, riskin belirli bir bölümde yoğunlaştığını işaret etmektedir.
 
 \subsection{Merkeziyet İlişkileri}
 \begin{figure}[H]
@@ -160,7 +167,7 @@ Ortalama Arasılık (Avg Betweenness) & $1.05 \times 10^{-5}$ \\
 \label{fig:scatter}
 \end{figure}
 
-Merkeziyet metrikleri arasındaki korelasyon matrisi (Şekil \ref{fig:scatter}), in-degree ile betweenness arasında pozitif yönlü ancak asimetrik bir ilişkiyi açığa çıkarmaktadır. Bu bulgu, yüksek popülariteye (in-degree) sahip olmayan bazı paketlerin, ağın izole kümelerini birbirine bağlayan kritik köprüler (yüksek betweenness) olarak stratejik bir rol üstlenebildiğini göstermektedir. Dolayısıyla, odağını yalnızca indirme sayılarına veya doğrudan bağımlılıklara kilitleyen geleneksel analizler, bu tür "gizli" yapısal darboğazları gözden kaçırma riskiyle maluldür.
+Korelasyon matrisi (Şekil \ref{fig:scatter}), in-degree ile betweenness arasında asimetrik bir ilişki olduğunu göstermektedir. Yüksek popülariteye sahip olmayan bazı paketlerin köprü görevi gördüğü belirlenmiştir. Sadece indirme sayılarına odaklanan analizlerin yapısal riskleri tespit etmede yetersiz kalabileceği değerlendirilmektedir.
 
 \subsection{Kritik Düğümlerin Analizi}
 \begin{table}[H]
@@ -234,7 +241,8 @@ babel-plugin-istanbul & 0.000466 & 2 & 5 & True \\
 \end{tabular}%
 }
 \end{table}
-Merkeziyet metriklerine dayalı hiyerarşik sıralamalar, ekosistemdeki risk profillerinin çok katmanlı yapısını gözler önüne sermektedir. Tablo \ref{tab:indegree}'de listelenen ve in-degree zirvesini tutan paketler, ekosistemin en popüler ve güven duyulan yapı taşlarını temsil etmektedir. Öte yandan, Tablo \ref{tab:outdegree}'de öne çıkan \texttt{@babel/preset-env} gibi paketler, sahip oldukları yoğun dış bağımlılıklar nedeniyle geniş bir saldırı yüzeyi sunmakta ve tedarik zincirinin alt katmanlarından sızabilecek tehditlere karşı kırılgan bir profil çizmektedir. Tablo \ref{tab:betweenness} ise, popülerlikten bağımsız olarak, ağdaki bilgi ve risk trafiğini yöneten \texttt{jest-circus} gibi stratejik darboğazları ifşa etmektedir. Bu üç farklı perspektif, tek boyutlu analizlerin riskin bütüncül resmini çizmekte yetersiz kalacağını kanıtlar niteliktedir.
+
+Tablo \ref{tab:indegree}'deki yüksek in-degree değerine sahip paketler, sık kullanılan bileşenlerdir. Tablo \ref{tab:outdegree}'deki yüksek out-degree'li paketler geniş bir saldırı yüzeyi oluşturmaktadır. Tablo \ref{tab:betweenness}, ağ trafiğini yöneten paketleri göstermektedir. Örneğin, \texttt{jest-circus} paketi düşük in-degree (1) değerine sahip olmasına rağmen, yüksek betweenness değeriyle ağda kritik bir köprü rolü üstlenmektedir. Benzer şekilde \texttt{@babel/core}, hem popülerliği hem de stratejik konumuyla dikkat çekmektedir. Bu durum, risk analizinde tek bir metriğin yeterli olmadığını ve yapısal köprülerin tespitinin önemini kanıtlamaktadır.
 
 \subsection{Bileşik Risk Skoru (BRS) Sıralaması}
 \begin{figure}[H]
@@ -277,7 +285,7 @@ call-bind & 0.175065 & 36 & 4 & 0.000000 & False \\
 \end{tabular}%
 }
 \end{table}
-Önerilen BRS modeli, popülerlik, saldırı yüzeyi ve stratejik konumlanma gibi üç farklı risk boyutunu tek bir potada eriterek, tekil metriklerin yakalayamadığı hibrit risk profillerini görünür kılmaktadır. Şekil \ref{fig:risk_scores} ve Tablo \ref{tab:risk}'te izlendiği üzere, \texttt{@babel/core} ve \texttt{jest-runner} gibi paketler, hem yüksek popülariteleri hem de ağdaki stratejik konumları sebebiyle risk sıralamasının zirvesine yerleşmektedir. Bu hiyerarşi, güvenlik denetimleri ve kaynak tahsisinde önceliklendirilmesi elzem olan "yüksek değerli hedefleri" (high-value targets) tartışmaya yer bırakmayacak netlikte tanımlamaktadır.
+BRS modeli; popülerlik, saldırı yüzeyi ve stratejik konumu birleştirmektedir. Şekil \ref{fig:risk_scores} ve Tablo \ref{tab:risk}'te görüldüğü üzere, hem popülerliği hem de ağ konumu nedeniyle belirli paketler üst sıralarda yer almaktadır. Sıralama, güvenlik denetimlerinde önceliklendirilecek paketleri göstermektedir.
 
 \subsection{Sistemik Etki ve Kaskad Analizi}
 \begin{figure}[H]
@@ -290,25 +298,29 @@ call-bind & 0.175065 & 36 & 4 & 0.000000 & False \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{top20_cascade_impact.png}
-\caption{İlk 20 paketin çıkarılmasının LCC ve erişilebilirlik üzerindeki yıkıcı etkisi.}
+\caption{İlk 20 paketin çıkarılmasının LCC ve erişilebilirlik üzerindeki etkisi.}
 \label{fig:impact}
 \end{figure}
-BRS metriğinin öngörü gücünü sınayan hedefli saldırı simülasyonları, modelin geçerliliğini çarpıcı bir biçimde ortaya koymaktadır. Şekil \ref{fig:impact}'te görüldüğü üzere, BRS zirvesindeki paketlerin ağdan koparılması, rastgele düğüm seçimine kıyasla En Büyük Bağlı Bileşen (LCC) boyutunda çok daha yıkıcı bir çöküşe neden olmakta ve ağın bütünlüğünü hızla parçalamaktadır. BRS skoru ile kaskad etki (bir düğümün kaybından etkilenen toplam paket sayısı) arasındaki güçlü pozitif korelasyon (Şekil \ref{fig:cascade}) da bu tespiti perçinlemektedir. Bu veriler, BRS'nin yalnızca statik bir kritiklik ölçütü olmadığını, aynı zamanda bir düğümün ele geçirilmesinin tüm ekosistemde tetikleyebileceği zincirleme reaksiyonun da güvenilir bir habercisi olduğunu teyit etmektedir.
+Simülasyon sonuçları BRS modelini desteklemektedir. Şekil \ref{fig:impact}'te, yüksek BRS skorlu paketlerin çıkarılmasının LCC boyutunda düşüşe neden olduğu görülmektedir. BRS skoru ile kaskad etki arasındaki korelasyon (Şekil \ref{fig:cascade}), metriğin risk öngörüsündeki başarısını göstermektedir.
 
 \section{Tartışma ve Sonuç}
-Bu çalışma, NPM ekosistemindeki sistemik riski, paket içeriğinden bağımsız olarak salt topolojik parametreler üzerinden modelleyen BRS (Bileşik Risk Skoru) metodolojisini literatüre kazandırmış ve geçerliliğini ampirik olarak kanıtlamıştır. Yürütülen analizler, ekosistem güvenliğinin, tehlikeye girmeleri halinde domino etkisiyle ağın bütünlüğünü çökertme potansiyeli taşıyan az sayıda "omurga" paketin sırtında yükseldiğini nicel verilerle doğrulamıştır.
+Bu çalışmada, literatürdeki betimsel analizlerin ötesine geçilerek, NPM ekosistemindeki yapısal riskleri ölçülebilir bir değere dönüştüren \textbf{Bileşik Risk Skoru (BRS)} modeli sunulmuştur. Giriş bölümünde belirtilen "operasyonel önceliklendirme" eksikliği, elde edilen BRS sıralaması ile giderilmiştir. Analizler, ağın güvenliğinin sadece popüler paketlere değil, \texttt{jest-circus} veya \texttt{@babel/core} gibi altyapısal köprü paketlere de bağlı olduğunu göstermiştir. Elde edilen bulgular, Zimmermann ve arkadaşlarının \cite{zimmermann2019smallworld} belirttikleri "küçük dünya" ağ yapısını doğrulamakta; ancak riskin sadece popüler paketlerde değil, köprü (bridge) niteliğindeki ara katman paketlerinde de yoğunlaştığını ortaya koyarak literatürü genişletmektedir.
 
-Elde edilen bulgular ve önerilen model, teorik bir egzersiz olmanın ötesine geçerek, yazılım tedarik zinciri güvenliğini operasyonel düzeyde tahkim edecek somut stratejiler sunmaktadır:
+\subsection{Çalışmanın Kısıtları}
+Analiz, \texttt{package.json} dosyalarında tanımlı statik bağımlılıklar ile sınırlandırılmıştır. Çalışma zamanında (runtime) dinamik olarak yüklenen paketler veya geliştirici hesaplarının güvenilirliği (reputation) bu aşamada kapsam dışı bırakılmıştır. Ayrıca analiz, anlık bir kesit (snapshot) üzerinden yapılmış olup, ağın zamansal evrimini içermemektedir. Benzer şekilde, lisans uyumluluğu gibi yasal riskler \cite{ahlstrom2025licensing} de bu çalışmanın kapsamı dışındadır.
+
+\subsection{Öneriler}
+Bulgular doğrultusunda aşağıdaki öneriler geliştirilmiştir:
 \begin{itemize}
-    \item \textbf{Tespit Hatlarında Önceliklendirme:} Amalfi ve Cerebro gibi savunma mekanizmalarında tarama kaynaklarının, BRS skoru yüksek paketlere kanalize edilerek verimliliğin artırılması.
-    \item \textbf{Politika Geliştirme:} \textit{in-toto} \cite{torres2020intoto} gibi katı güvenlik protokollerinin, SBOM (Yazılım Malzeme Listesi) uygulamalarının \cite{yu2024sbom, ahlstrom2025licensing} ve dijital imza/bütünlük kontrollerinin \cite{schorlemmer2024signing, imtiaz2023secure, vaidya2022integrity} öncelikle bu çalışmada saptanan kritik düğümlere uygulanarak riskin kaynağında boğulması.
-    \item \textbf{Bakımcı Farkındalığı:} Kritik paket sahiplerine risk skorlarının bildirilmesi yoluyla, iki faktörlü kimlik doğrulama (2FA) ve daha titiz kod inceleme pratiklerinin benimsenmesinin teşvik edilmesi.
+    \item \textbf{Önceliklendirme:} Güvenlik taramalarında kaynakların BRS skoru yüksek paketlere yönlendirilmesi.
+    \item \textbf{Politika Geliştirme:} Güvenlik protokollerinin \cite{torres2020intoto} ve SBOM uygulamalarının \cite{yu2024sbom} kritik düğümlere uygulanması.
+    \item \textbf{Farkındalık:} Paket sahiplerinin risk skorları hakkında bilgilendirilmesi.
 \end{itemize}
 
-Gelecek çalışmalara yönelik öneriler, geliştirilen modeli paketler arasındaki teknik bağların ötesine taşıyarak, geliştirici ağları (maintainer networks) ve sosyal bağımlılıklar gibi insan faktörlerini de kapsayacak şekilde genişletmektir. Ayrıca, ekosistemin zamana bağlı dinamiklerini mercek altına alan boylamsal (temporal) bir yaklaşım, riskin evrimini ve dönüşümünü anlamlandırmak adına paha biçilmez bir perspektif sunacaktır.
+Gelecek çalışmalarda modelin geliştirici ağlarını kapsayacak şekilde genişletilmesi önerilmektedir.
 
 \section{Yen{\footnotesize İ}den Üret{\footnotesize İ}leb{\footnotesize İ}rl{\footnotesize İ}k}
-Çalışmanın şeffaflığını ve tekrarlanabilirliğini sağlamak adına tüm kaynak kodlar ve veri setleri erişime açıktır:
+Çalışmanın tekrarlanabilirliği için kaynak kodlar ve veri setleri paylaşılmıştır:
 \begin{itemize}
   \item \textbf{Analiz Kodları:} \texttt{analysis/analysis.ipynb} (Python 3, NetworkX, pandas).
   \item \textbf{Veri Çıktıları:} Tüm ara sonuçlar ve metrikler \texttt{results/} dizininde CSV/JSON formatında sunulmuştur.

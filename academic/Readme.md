@@ -1,5 +1,15 @@
 ﻿Bu rapor, Node Package Manager (NPM) ekosistemini hedef alan yazılım tedarik zinciri saldırılarına (SSCA) ilişkin önemli olayları, kullanılan vektörleri, kötü amaçlı yazılımın anatomisini ve ekosistemin yapısal kırılganlığını kapsamlı bir şekilde derlemektedir.
 
+@babel/helper-plugin-utils, Babel eklentileri (plugins) ve hazır ayarları (presets) geliştirilirken kullanılan yardımcı bir pakettir.
+
+Temel işlevleri şunlardır:
+
+Eklenti Tanımlama Standardı: Eklentilerin standart bir yapıda tanımlanmasını sağlayan declare fonksiyonunu sunar.
+Sürüm Kontrolü: api.assertVersion metodunun her zaman var olmasını garanti eder. Bu sayede eklenti, çalıştığı Babel sürümüyle uyumlu olup olmadığını kontrol edebilir ve uyumsuzsa anlamlı bir hata mesajı fırlatır.
+Parametre Güvenliği: options parametresinin her zaman dolu gelmesini sağlar. Böylece eski Babel sürümlerinde (örneğin Babel 6) bu parametre undefined gelse bile kodun hata vermesini engeller.
+Hata Yönetimi: Eklentinin ihtiyaç duyduğu API'lerin eksik olduğu durumlarda geliştiriciye net hata mesajları verilmesini sağlar.
+Özetle; Babel ekosistemindeki eklentilerin daha kararlı çalışmasını ve sürümler arası uyumluluk sorunlarının daha kolay yönetilmesini sağlayan bir altyapı paketidir. Çalışmanızda en yüksek risk skoruna (BRS: 0.50) sahip çıkmasının nedeni, neredeyse tüm Babel eklentileri tarafından kullanılması ve çok yüksek bir in-degree (110) değerine sahip olmasıdır.
+
 ---
 
 # NPM Yazılım Tedarik Zinciri Saldırıları Raporu
