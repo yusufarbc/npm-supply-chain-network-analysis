@@ -1,4 +1,6 @@
-# Yazılım Tedarik Zinciri Güvenliği ve Saldırı Vektörleri
+# 🛡️ NPM Güvenlik Manzarası: Tehditler ve Saldırı Vektörleri
+
+> **Bağlam:** Bu belge, [NPM Tedarik Zinciri Ağ Analizi](./README.md) projesinin teorik zeminini oluşturur. Projede kullanılan topolojik risk modelinin *neden* gerekli olduğunu, ekosistemdeki aktif tehditler üzerinden açıklar.
 
 ## 1. Giriş: NPM Neden Birincil Saldırı Yüzeyidir?
 

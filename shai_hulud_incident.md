@@ -1,4 +1,6 @@
-﻿# Shai-Hulud: NPM Ekosisteminde Tedarik Zinciri Güvenliğinin Çöküşü
+﻿# 🐛 Vaka Analizi: Shai-Hulud Olayı
+
+> **Bağlam:** Bu rapor, [NPM Tedarik Zinciri Ağ Analizi](./README.md) projesinde öne sürülen "topolojik risk" kavramının somut bir örneğidir. Shai-Hulud saldırısı, saldırganların ağ yapısını nasıl silah olarak kullandığını kanıtlamaktadır.
 
 ## 1. Giriş: Bir Dönüm Noktası
 2025 yılı, yazılım tedarik zinciri güvenliği literatüründe kesin bir kırılma noktası olarak kayıtlara geçmiştir. NPM ekosistemi, Frank Herbert’ın *Dune* evrenindeki dev kum solucanlarına atıfla "Shai-Hulud" olarak adlandırılan ve kendi kendini yayan (wormable) ilk büyük ölçekli kötü amaçlı yazılım saldırısına maruz kalmıştır. Bu olay dizisi, yalnızca binlerce projeyi etkilemekle kalmamış, aynı zamanda mevcut güvenlik paradigmalarının—özellikle paket içeriğine odaklanan geleneksel tarayıcıların—yetersizliğini acı bir şekilde gözler önüne sermiştir.
