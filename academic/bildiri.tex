@@ -157,7 +157,7 @@ Ortalama Arasılık (Avg Betweenness) & $1.05 \times 10^{-5}$ \\
 \label{fig:histograms}
 \end{figure}
 
-Şekil \ref{fig:network}'te ağ topolojisinin kümelenme yapısı görülmektedir. Şekil \ref{fig:histograms}'teki derece dağılımları, ağın ölçekten bağımsız (scale-free) yapısını göstermektedir. Düğümlerin çoğunluğu az sayıda bağlantıya sahipken, az sayıda düğüm yüksek bağlantı sayısına sahiptir. Bu bulgu, riskin belirli bir bölümde yoğunlaştığını işaret etmektedir.
+Şekil \ref{fig:network}'de ağ topolojisinin kümelenme yapısı görülmektedir. Şekil \ref{fig:histograms}'deki derece dağılımları, ağın ölçekten bağımsız (scale-free) yapısını göstermektedir. Düğümlerin çoğunluğu az sayıda bağlantıya sahipken, az sayıda düğüm yüksek bağlantı sayısına sahiptir. Bu bulgu, riskin belirli bir bölümde yoğunlaştığını işaret etmektedir.
 
 \subsection{Merkeziyet İlişkileri}
 \begin{figure}[H]
@@ -301,7 +301,7 @@ BRS modeli; popülerlik, saldırı yüzeyi ve stratejik konumu birleştirmektedi
 \caption{İlk 20 paketin çıkarılmasının LCC ve erişilebilirlik üzerindeki etkisi.}
 \label{fig:impact}
 \end{figure}
-Simülasyon sonuçları BRS modelini desteklemektedir. Şekil \ref{fig:impact}'te, yüksek BRS skorlu paketlerin çıkarılmasının LCC boyutunda düşüşe neden olduğu görülmektedir. BRS skoru ile kaskad etki arasındaki korelasyon (Şekil \ref{fig:cascade}), metriğin risk öngörüsündeki başarısını göstermektedir.
+Simülasyon sonuçları BRS modelini desteklemektedir. Şekil \ref{fig:impact}'da, yüksek BRS skorlu paketlerin çıkarılmasının LCC boyutunda düşüşe neden olduğu görülmektedir. BRS skoru ile kaskad etki arasındaki korelasyon (Şekil \ref{fig:cascade}), metriğin risk öngörüsündeki başarısını göstermektedir.
 
 \section{Tartışma ve Sonuç}
 Bu çalışmada, literatürdeki betimsel analizlerin ötesine geçilerek, NPM ekosistemindeki yapısal riskleri ölçülebilir bir değere dönüştüren \textbf{Bileşik Risk Skoru (BRS)} modeli sunulmuştur. Giriş bölümünde belirtilen "operasyonel önceliklendirme" eksikliği, elde edilen BRS sıralaması ile giderilmiştir. Analizler, ağın güvenliğinin sadece popüler paketlere değil, \texttt{jest-circus} veya \texttt{@babel/core} gibi altyapısal köprü paketlere de bağlı olduğunu göstermiştir. Elde edilen bulgular, Zimmermann ve arkadaşlarının \cite{zimmermann2019smallworld} belirttikleri "küçük dünya" ağ yapısını doğrulamakta; ancak riskin sadece popüler paketlerde değil, köprü (bridge) niteliğindeki ara katman paketlerinde de yoğunlaştığını ortaya koyarak literatürü genişletmektedir.
