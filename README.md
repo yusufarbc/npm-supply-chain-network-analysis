@@ -1,104 +1,104 @@
-# NPM Tedarik Zinciri Ağ Analizi ve Kritiklik Haritalaması
+# NPM Supply Chain Network Analysis and Criticality Mapping
 
 
-> **NPM ekosistemindeki sistemik risklerin, paket içeriğinden bağımsız topolojik analiz yöntemleriyle haritalandırılması.**
+> **Mapping systemic risks in the NPM ecosystem through topology-independent analysis methods.**
 
-Bu proje, NPM paketleri arasındaki bağımlılık ilişkilerini yönlü bir ağ (directed graph) olarak modeller ve **Bileşik Risk Skoru (BRS)** ile yapısal riski ölçer. Amaç, klasik zafiyet taramalarının (CVE) ötesine geçerek, bir paketin ağ içindeki *konumundan* kaynaklanan sistemik tehditleri görünür kılmaktır.
+This project models dependency relationships between NPM packages as a directed graph and measures structural risk using the **Composite Risk Score (CRS)**. The goal is to go beyond traditional vulnerability scans (CVE) and make visible systemic threats arising from a package's *position* within the network.
 
-🔗 **Canlı Önizleme:** [yusufarbc.github.io/npm-supply-chain-network-analysis](https://yusufarbc.github.io/npm-supply-chain-network-analysis/)
-
----
-
-## 💡 Öne Çıkan Bulgular
-
-Bu çalışma, NPM ekosisteminin topolojik yapısına dair kritik içgörüler sunmaktadır:
-
-*   **Sistemik Kırılganlık:** Ağın %1'inden azını oluşturan "köprü" paketlerin (yüksek betweenness) çökmesi, ekosistemin %40'ından fazlasının erişilebilirliğini tehdit etmektedir.
-*   **Gizli Riskler:** Popüler olmayan ancak kritik paketlere (low popularity, high centrality) yapılan saldırılar, tespit edilmesi en zor ve etkisi en yıkıcı olanlardır.
-*   **Shai-Hulud Doğrulaması:** Geliştirilen BRS modeli, Shai-Hulud saldırısında hedef alınan paketlerin %85'ini "Yüksek Riskli" olarak sınıflandırmayı başarmıştır.
+🔗 **Live Preview:** [yusufarbc.github.io/npm-supply-chain-network-analysis](https://yusufarbc.github.io/npm-supply-chain-network-analysis/)
 
 ---
 
-## 📚 Dokümantasyon ve Arka Plan
+## 💡 Key Findings
 
-Projenin teorik zemini ve vaka analizleri için aşağıdaki belgeleri inceleyebilirsiniz:
+This study presents critical insights into the topological structure of the NPM ecosystem:
 
-*   **[🛡️ NPM Güvenlik Manzarası](npm_security_landscape.md):** Ekosistemdeki aktif tehditler (Typosquatting, Dependency Confusion vb.) ve neden topolojik analize ihtiyaç duyulduğu.
-*   **[🐛 Vaka Analizi: Shai-Hulud](shai_hulud_incident.md):** Kendi kendini yayan (wormable) ilk büyük ölçekli NPM saldırısının teknik analizi ve projenin bu tür saldırıları nasıl öngörebileceği.
-*   **[📚 Literatür Taraması](literature.md):** Akademik çalışmalar, boşluk analizi ve projenin literatürdeki konumu.
-*   **[📐 Metodoloji ve BRS Modeli](methodology.md):** Ağ modellemesi, kullanılan merkeziyet metrikleri (In-Degree, Betweenness) ve risk skorunun matematiksel formülü.
+*   **Systemic Fragility:** The collapse of "bridge" packages (high betweenness) that constitute less than 1% of the network threatens the accessibility of more than 40% of the ecosystem.
+*   **Hidden Risks:** Attacks on unpopular but critical packages (low popularity, high centrality) are the most difficult to detect and most devastating in impact.
+*   **Shai-Hulud Validation:** The developed CRS model successfully classified 85% of packages targeted in the Shai-Hulud attack as "High Risk".
 
 ---
 
-## 🚀 Hızlı Başlangıç
+## 📚 Documentation and Background
 
-### Önkoşullar
-*   Python 3.11.x (Önerilen: 3.11.9)
+For the theoretical foundation of the project and case analyses, please review the following documents:
 
-### Kurulum
+*   **[🛡️ NPM Security Landscape](docs/npm_security_landscape.md):** Active threats in the ecosystem (Typosquatting, Dependency Confusion, etc.) and why topological analysis is needed.
+*   **[🐛 Case Study: Shai-Hulud](docs/shai_hulud_incident.md):** Technical analysis of the first large-scale wormable NPM attack and how the project can predict such attacks.
+*   **[📚 Literature Review](docs/literature.md):** Academic studies, gap analysis, and the project's position in the literature.
+*   **[📐 Methodology and CRS Model](docs/methodology.md):** Network modeling, centrality metrics used (In-Degree, Betweenness), and mathematical formula of the risk score.
 
-1.  **Depoyu klonlayın ve dizine gidin:**
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+*   Python 3.11.x (Recommended: 3.11.9)
+
+### Installation
+
+1.  **Clone the repository and navigate to the directory:**
     ```powershell
     git clone https://github.com/yusufarbc/npm-supply-chain-network-analysis.git
     cd npm-supply-chain-network-analysis
     ```
 
-2.  **Sanal ortamı kurun ve etkinleştirin (Windows PowerShell):**
+2.  **Set up and activate the virtual environment (Windows PowerShell):**
     ```powershell
     python -m venv .venv
     .\.venv\Scripts\Activate.ps1
     ```
 
-3.  **Bağımlılıkları yükleyin:**
+3.  **Install dependencies:**
     ```powershell
     pip install -r analysis/requirements.txt
     python -m pip install notebook
     ```
 
-4.  **Analizi başlatın:**
+4.  **Start the analysis:**
     ```powershell
     python -m notebook
-    # analysis/analysis.ipynb dosyasını açın
+    # Open the analysis/analysis.ipynb file
     ```
 
 ---
 
-## 📊 Kullanım (Pipeline)
+## 📊 Usage (Pipeline)
 
-Analiz motoru `analysis/run_pipeline.py` üzerinden çalışır. Notebook içerisindeki **ilk hücreyi** çalıştırarak tam analizi gerçekleştirebilirsiniz.
+The analysis engine runs through `analysis/run_pipeline.py`. You can perform a complete analysis by running the **first cell** in the notebook.
 
 ```python
 from analysis.run_pipeline import run_pipeline
 
-# Varsayılan: En kritik altyapı paketleri (Top 1000 Dependents + 7 Derinlik)
+# Default: Most critical infrastructure packages (Top 1000 Dependents + Depth 7)
 result = run_pipeline(
-    top_n=1000,                    # Analiz edilecek paket sayısı
-    leaderboard_mode="dependents",  # Mod: dependents, downloads, trending
-    depth=7,                        # Tarama derinliği
-    results_dir="../results",      # Çıktı dizini
-    compute_plots=True              # Grafikleri oluştur
+    top_n=1000,                    # Number of packages to analyze
+    leaderboard_mode="dependents",  # Mode: dependents, downloads, trending
+    depth=7,                        # Scanning depth
+    results_dir="../results",      # Output directory
+    compute_plots=True              # Generate plots
 )
 ```
 
-### Analiz Modları
+### Analysis Modes
 
-| Mod | Parametre | Açıklama | Kullanım Senaryosu |
+| Mode | Parameter | Description | Use Case |
 |-----|-----------|----------|---------------------|
-| **Most Dependent** | `dependents` | En çok bağımlı olunan paketler | **Kritik Altyapı Analizi (Varsayılan)** |
-| **Most Downloaded**| `downloads` | En çok indirilen paketler | Genel popülarite ve trafik analizi |
-| **Trending** | `trending` | Hızla yükselen paketler | Erken uyarı ve anomali tespiti |
+| **Most Dependent** | `dependents` | Most depended-upon packages | **Critical Infrastructure Analysis (Default)** |
+| **Most Downloaded**| `downloads` | Most downloaded packages | General popularity and traffic analysis |
+| **Trending** | `trending` | Rapidly rising packages | Early warning and anomaly detection |
 
 ---
 
-## 📂 Proje Yapısı
+## 📂 Project Structure
 
-*   `academic/`: Akademik bildiri ve LaTeX kaynak dosyaları.
-*   `analysis/`: Python analiz kodları, veri çekme ve işleme modülleri.
-*   `results/`: Analiz çıktıları (CSV, JSON, GEXF) ve oluşturulan grafikler.
-*   `media/`: Proje görselleri.
+*   `academic/`: Academic paper and LaTeX source files.
+*   `analysis/`: Python analysis code, data fetching and processing modules.
+*   `results/`: Analysis outputs (CSV, JSON, GEXF) and generated plots.
+*   `media/`: Project images.
 
 ---
 
-## 📜 Lisans
+## 📜 License
 
-Bu proje MIT Lisansı ile lisanslanmıştır.
+This project is licensed under the MIT License.
