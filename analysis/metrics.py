@@ -32,9 +32,18 @@ def calculate_risk_scores(G, betweenness_k=100):
                 # Convert to int for numeric columns
                 if attr in ['dependents_count', 'downloads', 'rank']:
                     try:
-                        val = int(val)
+                        # Handle empty strings or None strings
+                        if val == "" or val == "None":
+                            val = 0
+                        else:
+                            val = int(val)
                     except (ValueError, TypeError):
                         val = 0
+            
+            # Special handling for Rank: 0 means unknown/unranked -> set to high number
+            if attr == 'rank' and val == 0:
+                val = 999999
+                
             values.append(val)
         data[attr] = values
         

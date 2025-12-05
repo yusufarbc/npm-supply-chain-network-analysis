@@ -82,14 +82,27 @@ def fetch_npm_dependencies(package_name):
         # We use a separate try-except block so metadata failure doesn't stop graph building
         dependents_count = 0
         downloads = 0
+        rank = None
+        
         try:
             response_eco = requests.get(url_ecosystems, timeout=10)
             if response_eco.status_code == 200:
                 data_eco = response_eco.json()
                 dependents_count = data_eco.get("dependent_repos_count", 0)
                 downloads = data_eco.get("downloads", 0)
+                rank = data_eco.get("rank")
         except:
             pass # Keep defaults if ecosyste.ms fails
+
+        # Fallback: Fetch downloads from NPM Registry API if 0
+        if not downloads:
+            try:
+                url_npm_dl = f"https://api.npmjs.org/downloads/point/last-month/{package_name}"
+                resp_dl = requests.get(url_npm_dl, timeout=5)
+                if resp_dl.status_code == 200:
+                    downloads = resp_dl.json().get("downloads", 0)
+            except:
+                pass
 
         # Extract comprehensive metadata
         metadata = {
@@ -99,6 +112,7 @@ def fetch_npm_dependencies(package_name):
             "description": str(data_latest.get("description", "")),
             "downloads": str(downloads),
             "dependents_count": str(dependents_count),
+            "rank": str(rank) if rank is not None else "",
             # We can't easily get creation time from latest endpoint, skipping or using empty
             "created": "", 
             "modified": "" 
