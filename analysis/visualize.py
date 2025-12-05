@@ -60,9 +60,41 @@ def plot_correlations(risk_df, output_dir='../results/plots'):
     Plots correlations between metrics (Fig 3 in paper).
     """
     ensure_plot_dir(output_dir)
-    metrics = risk_df[['in_degree', 'out_degree', 'betweenness', 'risk_score']]
     
-    g = sns.pairplot(metrics, diag_kind="kde", plot_kws={'alpha': 0.5})
+    # Check available columns and select relevant ones
+    cols_to_plot = ['in_degree', 'out_degree', 'betweenness', 'risk_score']
+    
+    # Add optional columns if they exist
+    if 'dependents_count' in risk_df.columns:
+        cols_to_plot.append('dependents_count')
+    elif 'dependents_count_log' in risk_df.columns:
+        cols_to_plot.append('dependents_count_log')
+        
+    if 'downloads' in risk_df.columns:
+        cols_to_plot.append('downloads')
+        
+    metrics = risk_df[cols_to_plot].copy()
+    
+    # Log transform skewed metrics for better visualization if not already logged
+    if 'dependents_count' in metrics.columns:
+        metrics['Deps(Log)'] = np.log1p(metrics['dependents_count'])
+        metrics = metrics.drop(columns=['dependents_count'])
+    elif 'dependents_count_log' in metrics.columns:
+        metrics = metrics.rename(columns={'dependents_count_log': 'Deps(Log)'})
+        
+    if 'downloads' in metrics.columns:
+        metrics['Downloads(Log)'] = np.log1p(metrics['downloads'])
+        metrics = metrics.drop(columns=['downloads'])
+    
+    # Rename columns for better plot labels
+    metrics = metrics.rename(columns={
+        'in_degree': 'In-Deg',
+        'out_degree': 'Out-Deg',
+        'betweenness': 'Betw.',
+        'risk_score': 'Risk'
+    })
+    
+    g = sns.pairplot(metrics, diag_kind="kde", plot_kws={'alpha': 0.5, 's': 10})
     g.fig.suptitle("Correlation Matrix of Metrics", y=1.02)
     
     plt.savefig(f'{output_dir}/scatter_correlations.png', dpi=300)
@@ -142,8 +174,12 @@ def plot_metric_heatmap(risk_df, output_dir='../results/plots'):
     # Select top 20 packages by risk score
     top_packages = risk_df.head(20).copy()
     
-    # Select relevant metrics for heatmap
-    metrics = ['in_degree', 'out_degree', 'betweenness', 'dependents_count']
+    # Select relevant metrics for heatmap (Updated for Balanced Model)
+    metrics = ['in_degree', 'out_degree', 'betweenness', 'dependents_count', 'downloads', 'staleness_days', 'clustering']
+    
+    # Filter metrics that exist in the dataframe
+    metrics = [m for m in metrics if m in top_packages.columns]
+    
     heatmap_data = top_packages[['package'] + metrics].set_index('package')
     
     # Normalize each column for better visualization
@@ -152,7 +188,7 @@ def plot_metric_heatmap(risk_df, output_dir='../results/plots'):
     plt.figure(figsize=(12, 10))
     sns.heatmap(heatmap_data_norm, cmap='YlOrRd', cbar_kws={'label': 'Normalized Value'}, 
                 linewidths=0.5, linecolor='gray')
-    plt.title('Top 20 Critical Packages: Multi-metric Heatmap')
+    plt.title('Top 20 Critical Packages: Multi-metric Heatmap (Balanced Model)')
     plt.xlabel('Metrics')
     plt.ylabel('Package')
     
@@ -165,38 +201,70 @@ def plot_brs_components(risk_df, output_dir='../results/plots'):
     """
     Stacked bar chart showing the contribution of each component to BRS for top packages.
     Demonstrates how different factors contribute to overall risk.
+    Updated for Balanced Model.
     """
     ensure_plot_dir(output_dir)
     
     # Select top 15 packages
     top_df = risk_df.head(15).copy()
     
-    # Normalize components (they are already normalized in metrics.py)
+    # Normalize components (weights must match metrics.py)
+    # Popularity (30%)
+    c_in_degree = top_df['in_degree_norm'].values * 0.10
+    c_dependents = top_df['dependents_count_norm'].values * 0.10
+    c_downloads = top_df['downloads_norm'].values * 0.10
+    
+    # Structure (40%)
+    c_betweenness = top_df['betweenness_norm'].values * 0.20
+    c_clustering = top_df['clustering_risk_norm'].values * 0.10
+    c_out_degree = top_df['out_degree_norm'].values * 0.10
+    
+    # Lifecycle (30%)
+    c_staleness = top_df['staleness_norm'].values * 0.20
+    # Maintainer risk is often 0 or low variance, but let's include if available
+    if 'maintainer_risk_norm' in top_df.columns:
+        c_maintainer = top_df['maintainer_risk_norm'].values * 0.10
+    else:
+        # Fallback if not normalized in df, though metrics.py should have it. 
+        # If missing, we just skip or assume 0 for plot safety
+        c_maintainer = np.zeros(len(top_df))
+
     components = {
-        'In-Degree': top_df['in_degree_norm'].values * 0.25,
-        'Out-Degree': top_df['out_degree_norm'].values * 0.25,
-        'Betweenness': top_df['betweenness_norm'].values * 0.25,
-        'Dependents Count': top_df['dependents_count_norm'].values * 0.25
+        'In-Degree (10%)': c_in_degree,
+        'Dependents (10%)': c_dependents,
+        'Downloads (10%)': c_downloads,
+        'Betweenness (20%)': c_betweenness,
+        'Clustering (10%)': c_clustering,
+        'Out-Degree (10%)': c_out_degree,
+        'Staleness (20%)': c_staleness
     }
     
-    fig, ax = plt.subplots(figsize=(14, 8))
+    fig, ax = plt.subplots(figsize=(16, 9))
     
     x = np.arange(len(top_df))
     width = 0.6
     
     bottom = np.zeros(len(top_df))
-    colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']
+    # Colors for each component
+    colors = [
+        '#2ECC71', # In-Degree (Green)
+        '#F39C12', # Dependents (Orange)
+        '#F1C40F', # Downloads (Yellow)
+        '#2980B9', # Betweenness (Blue)
+        '#8E44AD', # Clustering (Purple)
+        '#16A085', # Out-Degree (Teal)
+        '#C0392B'  # Staleness (Red)
+    ]
     
     for idx, (component, values) in enumerate(components.items()):
         ax.bar(x, values, width, label=component, bottom=bottom, color=colors[idx])
         bottom += values
     
-    ax.set_ylabel('BRS Component Contribution')
-    ax.set_xlabel('Package')
-    ax.set_title('BRS Composition: Top 15 Critical Packages\n(Each color represents a 25% component)')
+    ax.set_ylabel('BRS Contribution (Weighted Score)')
+    ax.set_title('BRS Composition: Top 15 Critical Packages (Balanced Model)')
     ax.set_xticks(x)
     ax.set_xticklabels(top_df['package'], rotation=45, ha='right')
-    ax.legend(loc='upper right')
+    ax.legend(loc='upper right', bbox_to_anchor=(1.15, 1), title="Risk Components")
     ax.grid(axis='y', alpha=0.3)
     
     plt.tight_layout()
@@ -446,8 +514,9 @@ def plot_top20_brs_component_lines(risk_df, impact_df, output_dir='../results/pl
     ).fillna(0)
     
     # Prepare metrics for plotting - all already normalized
-    metrics_to_plot = ['in_degree_norm', 'out_degree_norm', 'betweenness_norm', 
-                       'dependents_count_norm', 'risk_score']
+    # Updated for Balanced Model
+    metrics_to_plot = ['in_degree_norm', 'betweenness_norm', 'dependents_count_norm', 
+                       'downloads_norm', 'staleness_norm', 'risk_score']
     
     # Also normalize cascade impact to 0-1 scale for fair comparison
     cascade_norm = (top20_with_impact['cascade_impact'] - top20_with_impact['cascade_impact'].min()) / \
@@ -458,18 +527,20 @@ def plot_top20_brs_component_lines(risk_df, impact_df, output_dir='../results/pl
     
     # Define colors and styling for each metric
     colors = {
-        'in_degree_norm': '#FF6B6B',      # Red - Network popularity
-        'out_degree_norm': '#4ECDC4',     # Teal - Complexity
-        'betweenness_norm': '#45B7D1',    # Blue - Structural importance
-        'dependents_count_norm': '#FFA07A', # Light salmon - Ecosystem impact
+        'in_degree_norm': '#2ECC71',      # Green - Network popularity
+        'betweenness_norm': '#2980B9',    # Blue - Structural importance
+        'dependents_count_norm': '#F39C12', # Orange - Ecosystem impact
+        'downloads_norm': '#F1C40F',      # Yellow - Usage intensity
+        'staleness_norm': '#C0392B',      # Red - Abandonware risk
         'risk_score': '#2D3436'           # Dark gray - BRS composite
     }
     
     labels_display = {
         'in_degree_norm': 'In-Degree (Network Popularity)',
-        'out_degree_norm': 'Out-Degree (Complexity)',
         'betweenness_norm': 'Betweenness (Structural Role)',
         'dependents_count_norm': 'Dependents Count (Ecosystem Impact)',
+        'downloads_norm': 'Downloads (Usage Intensity)',
+        'staleness_norm': 'Staleness (Abandonware Risk)',
         'risk_score': 'BRS (Composite Risk Score)'
     }
     
@@ -494,8 +565,8 @@ def plot_top20_brs_component_lines(risk_df, impact_df, output_dir='../results/pl
             zorder = 3
         
         ax.plot(x_pos, top20_with_impact[metric].values, 
-               color=colors[metric], 
-               label=labels_display[metric],
+               color=colors.get(metric, 'gray'), 
+               label=labels_display.get(metric, metric),
                linewidth=linewidth,
                linestyle=linestyle,
                marker=marker,
@@ -517,7 +588,7 @@ def plot_top20_brs_component_lines(risk_df, impact_df, output_dir='../results/pl
     # Formatting and labels
     ax.set_xlabel('Top 20 Critical Packages (Ranked by BRS)', fontsize=13, fontweight='bold')
     ax.set_ylabel('Normalized Metric Value (0-1 Scale)', fontsize=13, fontweight='bold')
-    ax.set_title('BRS Component Analysis: Top 20 Packages\n' + 
+    ax.set_title('BRS Component Analysis: Top 20 Packages (Balanced Model)\n' + 
                 'Validation that BRS Captures All Critical Dimensions of Supply Chain Risk',
                 fontsize=14, fontweight='bold', pad=20)
     
@@ -534,10 +605,11 @@ def plot_top20_brs_component_lines(risk_df, impact_df, output_dir='../results/pl
     
     # Add explanation box
     explanation = (
-        'BRS Formula: 0.25 × In-Degree + 0.25 × Out-Degree + 0.25 × Betweenness + 0.25 × Dependents\n'
-        'Red dotted line (Cascade Impact) represents actual network damage. '
-        'BRS alignment with damage indicates formula validity.\n'
-        'Solid dark line = BRS (composite), Dashed lines = Components, Dotted = Actual Impact'
+        'BRS Formula (Balanced):\n'
+        '• Structure (40%): Betweenness(20) + Clustering(10) + Out-Degree(10)\n'
+        '• Lifecycle (30%): Staleness(20) + Maintainer(10)\n'
+        '• Popularity (30%): In-Degree(10) + Dependents(10) + Downloads(10)\n'
+        'Red dotted line = Actual Cascade Impact.'
     )
     ax.text(0.02, 0.02, explanation, transform=ax.transAxes, fontsize=10,
            verticalalignment='bottom', bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.9),

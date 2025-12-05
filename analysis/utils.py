@@ -38,9 +38,13 @@ def export_results(risk_df, G, impact_df=None, output_dir='../results'):
         'in_degree': 'InDegree',
         'out_degree': 'OutDegree',
         'betweenness': 'Betweenness',
+        # 'pagerank': 'PageRank', # Removed PageRank
         'dependents_count': 'DependentsCount',
         'downloads': 'Downloads',
-        'rank': 'Rank',
+        'staleness_days': 'StalenessDays',
+        'clustering': 'ClusteringCoeff',
+        'maintainer_risk': 'MaintainerRisk',
+        # 'rank': 'Rank', # Removed Rank as it is redundant/calculated
         'type': 'Type'
     }
     gephi_nodes = gephi_nodes.rename(columns=col_mapping)
