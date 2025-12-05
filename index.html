@@ -257,12 +257,13 @@
         text-decoration: none;
       }
 
-      /* Downloads Table */
+      /* Tables */
       .table-container {
         overflow-x: auto;
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 12px;
+        margin-top: 20px;
       }
 
       table {
@@ -329,19 +330,19 @@
         <h2>Network Statistics</h2>
         <div class="stats-grid">
           <div class="stat-card">
-            <span class="stat-value">1,506</span>
+            <span class="stat-value">1,529</span>
             <span class="stat-label">Nodes (Packages)</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value">3,058</span>
+            <span class="stat-value">3,133</span>
             <span class="stat-label">Edges (Dependencies)</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value">2.03</span>
+            <span class="stat-value">2.05</span>
             <span class="stat-label">Average Degree</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value">0.0013</span>
+            <span class="stat-value">0.001341</span>
             <span class="stat-label">Network Density</span>
           </div>
         </div>
@@ -364,26 +365,6 @@
               <span class="viz-desc">Overview of the entire network.</span>
               <div class="btn-group">
                 <a href="results/plots/network_full_topN.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/network_full_topN.svg" download class="btn btn-outline">SVG</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Network TopN Only -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>🕸️ Top 1000 Package Network Only</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/network_topN_only.png" target="_blank">
-                <img src="results/plots/network_topN_only.png" alt="TopN Network" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">Relationships of packages in the initial set only.</span>
-              <div class="btn-group">
-                <a href="results/plots/network_topN_only.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/network_topN_only.svg" download class="btn btn-outline">SVG</a>
               </div>
             </div>
           </div>
@@ -402,26 +383,6 @@
               <span class="viz-desc">Logarithmic distribution showing the scale-free structure of the network.</span>
               <div class="btn-group">
                 <a href="results/plots/degree_distributions.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/degree_distributions.svg" download class="btn btn-outline">SVG</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Degree Histograms -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>📊 Degree Histograms</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/degree_histograms.png" target="_blank">
-                <img src="results/plots/degree_histograms.png" alt="Degree Histograms" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">In-degree and Out-degree frequency distributions.</span>
-              <div class="btn-group">
-                <a href="results/plots/degree_histograms.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/degree_histograms.svg" download class="btn btn-outline">SVG</a>
               </div>
             </div>
           </div>
@@ -437,15 +398,14 @@
               <h3>⚠️ Top 20 Composite Risk Score (BRS)</h3>
             </div>
             <div class="viz-body">
-              <a href="results/plots/top20_risk_scores.png" target="_blank">
-                <img src="results/plots/top20_risk_scores.png" alt="Risk Scores" loading="lazy">
+              <a href="results/plots/top_risk_scores.png" target="_blank">
+                <img src="results/plots/top_risk_scores.png" alt="Risk Scores" loading="lazy">
               </a>
             </div>
             <div class="viz-footer">
               <span class="viz-desc">Packages with the highest risk score.</span>
               <div class="btn-group">
-                <a href="results/plots/top20_risk_scores.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/top20_risk_scores.svg" download class="btn btn-outline">SVG</a>
+                <a href="results/plots/top_risk_scores.png" download class="btn btn-primary">PNG</a>
               </div>
             </div>
           </div>
@@ -456,24 +416,6 @@
               <h3>📉 Cascade Impact (Robustness)</h3>
             </div>
             <div class="viz-body">
-              <a href="results/plots/top20_cascade_impact.png" target="_blank">
-                <img src="results/plots/top20_cascade_impact.png" alt="Cascade Impact" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">Impact of deleting critical packages on network integrity.</span>
-              <div class="btn-group">
-                <a href="results/plots/top20_cascade_impact.png" download class="btn btn-primary">PNG</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Risk vs Cascade -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>🔗 Risk Score vs. Cascade Impact</h3>
-            </div>
-            <div class="viz-body">
               <a href="results/plots/risk_vs_cascade.png" target="_blank">
                 <img src="results/plots/risk_vs_cascade.png" alt="Risk vs Cascade" loading="lazy">
               </a>
@@ -482,92 +424,86 @@
               <span class="viz-desc">Relationship between calculated risk score and actual impact area.</span>
               <div class="btn-group">
                 <a href="results/plots/risk_vs_cascade.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/risk_vs_cascade.svg" download class="btn btn-outline">SVG</a>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Top 10 Leaders -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>🏆 Top 10 Leaders (Summary)</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/top10_leaders.png" target="_blank">
-                <img src="results/plots/top10_leaders.png" alt="Top 10 Leaders" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">Comparison of leading packages in different metrics (In, Out, Btw).</span>
-              <div class="btn-group">
-                <a href="results/plots/top10_leaders.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/top10_leaders.svg" download class="btn btn-outline">SVG</a>
-              </div>
-            </div>
-          </div>
+        <h3 style="margin-top: 40px;">🚨 Top 20 Critical Packages (Risk Score)</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Package</th>
+                <th>Risk Score</th>
+                <th>In-Degree</th>
+                <th>Betweenness</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>es-abstract</td><td>0.4818</td><td>0.0111</td><td>0.0017</td></tr>
+              <tr><td>@babel/helper-plugin-utils</td><td>0.4030</td><td>0.0720</td><td>0.0000</td></tr>
+              <tr><td>@babel/preset-env</td><td>0.4029</td><td>0.0020</td><td>0.0000</td></tr>
+              <tr><td>postcss-preset-env</td><td>0.3198</td><td>0.0007</td><td>0.0000</td></tr>
+              <tr><td>@babel/types</td><td>0.2917</td><td>0.0209</td><td>0.0001</td></tr>
+              <tr><td>@babel/traverse</td><td>0.2837</td><td>0.0131</td><td>0.0001</td></tr>
+              <tr><td>send</td><td>0.2609</td><td>0.0013</td><td>0.0000</td></tr>
+              <tr><td>@babel/core</td><td>0.2594</td><td>0.0079</td><td>0.0001</td></tr>
+              <tr><td>browserslist</td><td>0.2562</td><td>0.0105</td><td>0.0002</td></tr>
+              <tr><td>supports-color</td><td>0.2545</td><td>0.0013</td><td>0.0000</td></tr>
+              <tr><td>resolve</td><td>0.2534</td><td>0.0046</td><td>0.0000</td></tr>
+              <tr><td>fill-range</td><td>0.2524</td><td>0.0007</td><td>0.0001</td></tr>
+              <tr><td>jest-snapshot</td><td>0.2423</td><td>0.0039</td><td>0.0004</td></tr>
+              <tr><td>postcss-value-parser</td><td>0.2409</td><td>0.0255</td><td>0.0000</td></tr>
+              <tr><td>to-regex-range</td><td>0.2405</td><td>0.0007</td><td>0.0000</td></tr>
+              <tr><td>fs.realpath</td><td>0.2399</td><td>0.0000</td><td>0.0000</td></tr>
+              <tr><td>finalhandler</td><td>0.2382</td><td>0.0007</td><td>0.0000</td></tr>
+              <tr><td>@jest/types</td><td>0.2373</td><td>0.0170</td><td>0.0002</td></tr>
+              <tr><td>yargs</td><td>0.2359</td><td>0.0007</td><td>0.0000</td></tr>
+              <tr><td>get-intrinsic</td><td>0.2354</td><td>0.0144</td><td>0.0003</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top: 40px;">💥 Top 20 Cascade Impact (Network Damage)</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Package</th>
+                <th>Cascade Impact</th>
+                <th>Risk Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>workbox-build</td><td>20.0000</td><td>0.1972</td></tr>
+              <tr><td>react-scripts</td><td>16.0000</td><td>0.2334</td></tr>
+              <tr><td>postcss-preset-env</td><td>14.0000</td><td>0.3198</td></tr>
+              <tr><td>regexpu-core</td><td>8.0000</td><td>0.2061</td></tr>
+              <tr><td>eslint</td><td>8.0000</td><td>0.1917</td></tr>
+              <tr><td>@babel/types</td><td>7.0000</td><td>0.2917</td></tr>
+              <tr><td>@babel/helper-plugin-utils</td><td>7.0000</td><td>0.4030</td></tr>
+              <tr><td>cssnano-preset-default</td><td>6.0000</td><td>0.2142</td></tr>
+              <tr><td>source-map-resolve</td><td>6.0000</td><td>0.1925</td></tr>
+              <tr><td>webpack-dev-server</td><td>5.0000</td><td>0.2304</td></tr>
+              <tr><td>sax</td><td>5.0000</td><td>0.1938</td></tr>
+              <tr><td>browserslist</td><td>4.0000</td><td>0.2562</td></tr>
+              <tr><td>yargs</td><td>4.0000</td><td>0.2359</td></tr>
+              <tr><td>extglob</td><td>3.0000</td><td>0.1994</td></tr>
+              <tr><td>snapdragon</td><td>3.0000</td><td>0.2077</td></tr>
+              <tr><td>@jest/types</td><td>3.0000</td><td>0.2373</td></tr>
+              <tr><td>jest-snapshot</td><td>3.0000</td><td>0.2423</td></tr>
+              <tr><td>fill-range</td><td>3.0000</td><td>0.2524</td></tr>
+              <tr><td>resolve</td><td>3.0000</td><td>0.2534</td></tr>
+              <tr><td>postcss</td><td>3.0000</td><td>0.1902</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
       <section>
         <h2>3. Centrality Metrics</h2>
         <div class="viz-grid">
-          <!-- Top 10 In-Degree -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>📥 Top 10 In-Degree (Popularity)</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/top10_in_degree.png" target="_blank">
-                <img src="results/plots/top10_in_degree.png" alt="In-Degree" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">Packages with the most direct dependents.</span>
-              <div class="btn-group">
-                <a href="results/plots/top10_in_degree.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/top10_in_degree.svg" download class="btn btn-outline">SVG</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Top 10 Out-Degree -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>📤 Top 10 Out-Degree (Dependency Burden)</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/top10_out_degree.png" target="_blank">
-                <img src="results/plots/top10_out_degree.png" alt="Out-Degree" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">Packages dependent on the most external packages (wide attack surface).</span>
-              <div class="btn-group">
-                <a href="results/plots/top10_out_degree.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/top10_out_degree.svg" download class="btn btn-outline">SVG</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Top 10 Betweenness -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>🌉 Top 10 Betweenness (Bridge Role)</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/top10_betweenness.png" target="_blank">
-                <img src="results/plots/top10_betweenness.png" alt="Betweenness" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">Strategic bridge packages controlling information flow in the network.</span>
-              <div class="btn-group">
-                <a href="results/plots/top10_betweenness.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/top10_betweenness.svg" download class="btn btn-outline">SVG</a>
-              </div>
-            </div>
-          </div>
-
           <!-- Correlations -->
           <div class="viz-card">
             <div class="viz-header">
@@ -582,29 +518,153 @@
               <span class="viz-desc">Correlation matrix between metrics.</span>
               <div class="btn-group">
                 <a href="results/plots/metric_correlations.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/metric_correlations.svg" download class="btn btn-outline">SVG</a>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Scatter Correlations -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>📍 Scatter Plots</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/scatter_correlations.png" target="_blank">
-                <img src="results/plots/scatter_correlations.png" alt="Scatter Correlations" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">Scatter details between metric pairs.</span>
-              <div class="btn-group">
-                <a href="results/plots/scatter_correlations.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/scatter_correlations.svg" download class="btn btn-outline">SVG</a>
-              </div>
-            </div>
-          </div>
+        <h3 style="margin-top: 40px;">🔗 Top 20 Most Depended-upon Packages (In-Degree)</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Package</th>
+                <th>In-Degree</th>
+                <th>Out-Degree</th>
+                <th>Risk Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>@babel/helper-plugin-utils</td><td>0.0720</td><td>0.0000</td><td>0.4030</td></tr>
+              <tr><td>call-bound</td><td>0.0268</td><td>0.0013</td><td>0.1153</td></tr>
+              <tr><td>postcss-value-parser</td><td>0.0255</td><td>0.0000</td><td>0.2409</td></tr>
+              <tr><td>call-bind</td><td>0.0236</td><td>0.0026</td><td>0.1835</td></tr>
+              <tr><td>@types/node</td><td>0.0223</td><td>0.0007</td><td>0.1336</td></tr>
+              <tr><td>debug</td><td>0.0223</td><td>0.0007</td><td>0.1468</td></tr>
+              <tr><td>es-errors</td><td>0.0216</td><td>0.0000</td><td>0.0750</td></tr>
+              <tr><td>@babel/types</td><td>0.0209</td><td>0.0013</td><td>0.2917</td></tr>
+              <tr><td>define-properties</td><td>0.0190</td><td>0.0020</td><td>0.0923</td></tr>
+              <tr><td>chalk</td><td>0.0183</td><td>0.0000</td><td>0.1196</td></tr>
+              <tr><td>@csstools/css-tokenizer</td><td>0.0183</td><td>0.0000</td><td>0.0641</td></tr>
+              <tr><td>@csstools/css-parser-algorithms</td><td>0.0177</td><td>0.0000</td><td>0.0618</td></tr>
+              <tr><td>@jest/types</td><td>0.0170</td><td>0.0046</td><td>0.2373</td></tr>
+              <tr><td>@csstools/utilities</td><td>0.0151</td><td>0.0000</td><td>0.0523</td></tr>
+              <tr><td>jest-util</td><td>0.0144</td><td>0.0039</td><td>0.1726</td></tr>
+              <tr><td>get-intrinsic</td><td>0.0144</td><td>0.0065</td><td>0.2354</td></tr>
+              <tr><td>postcss-selector-parser</td><td>0.0137</td><td>0.0013</td><td>0.1894</td></tr>
+              <tr><td>graceful-fs</td><td>0.0137</td><td>0.0000</td><td>0.0980</td></tr>
+              <tr><td>es-object-atoms</td><td>0.0131</td><td>0.0007</td><td>0.0507</td></tr>
+              <tr><td>@babel/traverse</td><td>0.0131</td><td>0.0046</td><td>0.2837</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top: 40px;">📦 Top 20 Most Dependent Packages (Out-Degree)</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Package</th>
+                <th>Out-Degree</th>
+                <th>In-Degree</th>
+                <th>Risk Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>@babel/preset-env</td><td>0.0458</td><td>0.0020</td><td>0.4029</td></tr>
+              <tr><td>postcss-preset-env</td><td>0.0452</td><td>0.0007</td><td>0.3198</td></tr>
+              <tr><td>es-abstract</td><td>0.0353</td><td>0.0111</td><td>0.4818</td></tr>
+              <tr><td>react-scripts</td><td>0.0314</td><td>0.0000</td><td>0.2334</td></tr>
+              <tr><td>workbox-build</td><td>0.0242</td><td>0.0007</td><td>0.1972</td></tr>
+              <tr><td>eslint</td><td>0.0223</td><td>0.0007</td><td>0.1917</td></tr>
+              <tr><td>cssnano-preset-default</td><td>0.0196</td><td>0.0007</td><td>0.2142</td></tr>
+              <tr><td>express</td><td>0.0183</td><td>0.0007</td><td>0.1827</td></tr>
+              <tr><td>webpack-dev-server</td><td>0.0183</td><td>0.0007</td><td>0.2304</td></tr>
+              <tr><td>@jest/core</td><td>0.0183</td><td>0.0013</td><td>0.2171</td></tr>
+              <tr><td>webpack</td><td>0.0164</td><td>0.0007</td><td>0.0917</td></tr>
+              <tr><td>jest-config</td><td>0.0157</td><td>0.0013</td><td>0.1792</td></tr>
+              <tr><td>react-dev-utils</td><td>0.0157</td><td>0.0007</td><td>0.1546</td></tr>
+              <tr><td>@jest/reporters</td><td>0.0151</td><td>0.0007</td><td>0.1970</td></tr>
+              <tr><td>jest-runner</td><td>0.0144</td><td>0.0013</td><td>0.1691</td></tr>
+              <tr><td>jest-runtime</td><td>0.0144</td><td>0.0026</td><td>0.2197</td></tr>
+              <tr><td>jest-snapshot</td><td>0.0137</td><td>0.0039</td><td>0.2423</td></tr>
+              <tr><td>jsdom</td><td>0.0131</td><td>0.0007</td><td>0.1787</td></tr>
+              <tr><td>jest-circus</td><td>0.0131</td><td>0.0007</td><td>0.1273</td></tr>
+              <tr><td>eslint-plugin-import</td><td>0.0124</td><td>0.0007</td><td>0.1179</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top: 40px;">🌉 Top 20 Bridges (Betweenness Centrality)</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Package</th>
+                <th>Betweenness</th>
+                <th>In-Degree</th>
+                <th>Risk Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>es-abstract</td><td>0.0017</td><td>0.0111</td><td>0.4818</td></tr>
+              <tr><td>jest-snapshot</td><td>0.0004</td><td>0.0039</td><td>0.2423</td></tr>
+              <tr><td>which-builtin-type</td><td>0.0004</td><td>0.0007</td><td>0.1190</td></tr>
+              <tr><td>call-bind</td><td>0.0003</td><td>0.0236</td><td>0.1835</td></tr>
+              <tr><td>get-intrinsic</td><td>0.0003</td><td>0.0144</td><td>0.2354</td></tr>
+              <tr><td>jest-runtime</td><td>0.0003</td><td>0.0026</td><td>0.2197</td></tr>
+              <tr><td>array-includes</td><td>0.0003</td><td>0.0026</td><td>0.1534</td></tr>
+              <tr><td>jsdom</td><td>0.0003</td><td>0.0007</td><td>0.1787</td></tr>
+              <tr><td>jest-message-util</td><td>0.0003</td><td>0.0065</td><td>0.1878</td></tr>
+              <tr><td>reflect.getprototypeof</td><td>0.0003</td><td>0.0013</td><td>0.0877</td></tr>
+              <tr><td>array.prototype.flat</td><td>0.0002</td><td>0.0013</td><td>0.1205</td></tr>
+              <tr><td>jest-watcher</td><td>0.0002</td><td>0.0020</td><td>0.1538</td></tr>
+              <tr><td>@jest/types</td><td>0.0002</td><td>0.0170</td><td>0.2373</td></tr>
+              <tr><td>side-channel</td><td>0.0002</td><td>0.0026</td><td>0.1572</td></tr>
+              <tr><td>browserslist</td><td>0.0002</td><td>0.0105</td><td>0.2562</td></tr>
+              <tr><td>typed-array-length</td><td>0.0002</td><td>0.0007</td><td>0.0754</td></tr>
+              <tr><td>object.assign</td><td>0.0002</td><td>0.0026</td><td>0.1174</td></tr>
+              <tr><td>typed-array-byte-offset</td><td>0.0002</td><td>0.0007</td><td>0.0677</td></tr>
+              <tr><td>@jest/fake-timers</td><td>0.0002</td><td>0.0026</td><td>0.1683</td></tr>
+              <tr><td>@babel/core</td><td>0.0001</td><td>0.0079</td><td>0.2594</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top: 40px;">🌍 Top 20 Ecosystem Critical (Dependents Count)</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Package</th>
+                <th>Dependents Count</th>
+                <th>In-Degree</th>
+                <th>Risk Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>supports-color</td><td>5,765,200</td><td>0.0013</td><td>0.2545</td></tr>
+              <tr><td>fs.realpath</td><td>5,532,257</td><td>0.0000</td><td>0.2399</td></tr>
+              <tr><td>fill-range</td><td>5,461,792</td><td>0.0007</td><td>0.2524</td></tr>
+              <tr><td>to-regex-range</td><td>5,300,496</td><td>0.0007</td><td>0.2405</td></tr>
+              <tr><td>fsevents</td><td>5,289,351</td><td>0.0007</td><td>0.2316</td></tr>
+              <tr><td>resolve</td><td>5,229,428</td><td>0.0046</td><td>0.2534</td></tr>
+              <tr><td>statuses</td><td>5,106,018</td><td>0.0026</td><td>0.2305</td></tr>
+              <tr><td>setprototypeof</td><td>5,068,682</td><td>0.0007</td><td>0.2221</td></tr>
+              <tr><td>unpipe</td><td>5,053,604</td><td>0.0007</td><td>0.2214</td></tr>
+              <tr><td>fresh</td><td>5,019,855</td><td>0.0013</td><td>0.2222</td></tr>
+              <tr><td>send</td><td>4,993,661</td><td>0.0013</td><td>0.2609</td></tr>
+              <tr><td>serve-static</td><td>4,975,561</td><td>0.0007</td><td>0.2323</td></tr>
+              <tr><td>fast-deep-equal</td><td>4,968,905</td><td>0.0026</td><td>0.2246</td></tr>
+              <tr><td>fast-json-stable-stringify</td><td>4,957,551</td><td>0.0020</td><td>0.2218</td></tr>
+              <tr><td>utils-merge</td><td>4,948,638</td><td>0.0000</td><td>0.2146</td></tr>
+              <tr><td>finalhandler</td><td>4,946,523</td><td>0.0007</td><td>0.2382</td></tr>
+              <tr><td>readdirp</td><td>4,905,460</td><td>0.0007</td><td>0.2150</td></tr>
+              <tr><td>yargs</td><td>4,893,685</td><td>0.0007</td><td>0.2359</td></tr>
+              <tr><td>camelcase</td><td>4,809,686</td><td>0.0033</td><td>0.2199</td></tr>
+              <tr><td>uri-js</td><td>4,745,435</td><td>0.0000</td><td>0.2094</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -631,34 +691,10 @@
                 <td><a href="results/risk_scores.csv" download>Download</a></td>
               </tr>
               <tr>
-                <td><strong>metrics.csv</strong></td>
-                <td>Raw centrality metrics of all packages (In, Out, Btw).</td>
-                <td>CSV</td>
-                <td><a href="results/metrics.csv" download>Download</a></td>
-              </tr>
-              <tr>
-                <td><strong>graph_stats.json</strong></td>
-                <td>General topological statistics of the network.</td>
-                <td>JSON</td>
-                <td><a href="results/graph_stats.json" download>Download</a></td>
-              </tr>
-              <tr>
-                <td><strong>graph_stats.csv</strong></td>
-                <td>CSV format of network statistics.</td>
-                <td>CSV</td>
-                <td><a href="results/graph_stats.csv" download>Download</a></td>
-              </tr>
-              <tr>
-                <td><strong>cascade_impact.csv</strong></td>
+                <td><strong>impact_scores.csv</strong></td>
                 <td>Cascade impact simulation results.</td>
                 <td>CSV</td>
-                <td><a href="results/cascade_impact.csv" download>Download</a></td>
-              </tr>
-              <tr>
-                <td><strong>robustness_test.json</strong></td>
-                <td>Detailed results of robustness test.</td>
-                <td>JSON</td>
-                <td><a href="results/robustness_test.json" download>Download</a></td>
+                <td><a href="results/impact_scores.csv" download>Download</a></td>
               </tr>
               <tr>
                 <td><strong>gephi_nodes.csv</strong></td>
@@ -673,28 +709,16 @@
                 <td><a href="results/gephi_edges.csv" download>Download</a></td>
               </tr>
               <tr>
-                <td><strong>edges.csv</strong></td>
-                <td>Raw edge list.</td>
+                <td><strong>package_risk_scores.csv</strong></td>
+                <td>Simplified list of packages and their risk scores.</td>
                 <td>CSV</td>
-                <td><a href="results/edges.csv" download>Download</a></td>
+                <td><a href="results/package_risk_scores.csv" download>Download</a></td>
               </tr>
               <tr>
-                <td><strong>top20_betweenness.csv</strong></td>
-                <td>Top 20 packages with highest Betweenness.</td>
-                <td>CSV</td>
-                <td><a href="results/top20_betweenness.csv" download>Download</a></td>
-              </tr>
-              <tr>
-                <td><strong>top20_in_degree.csv</strong></td>
-                <td>Top 20 packages with highest In-Degree.</td>
-                <td>CSV</td>
-                <td><a href="results/top20_in_degree.csv" download>Download</a></td>
-              </tr>
-              <tr>
-                <td><strong>top20_out_degree.csv</strong></td>
-                <td>Top 20 packages with highest Out-Degree.</td>
-                <td>CSV</td>
-                <td><a href="results/top20_out_degree.csv" download>Download</a></td>
+                <td><strong>Readme.md</strong></td>
+                <td>Full analysis report in Markdown format.</td>
+                <td>Markdown</td>
+                <td><a href="results/Readme.md" download>Download</a></td>
               </tr>
             </tbody>
           </table>
@@ -708,7 +732,7 @@
             <div class="viz-header">
               <h3>📚 Literature Review</h3>
             </div>
-            <div class="viz-body" style="padding: 20px; text-align: left; height: auto;">
+            <div class="viz-body" style="padding: 20px; text-align: left; height: auto; display: block;">
               <p>A comprehensive review of academic studies on NPM ecosystem security, threat taxonomies, and network analysis.</p>
               <ul style="margin-top: 10px; padding-left: 20px;">
                 <li>Threat Taxonomies (Backstabber’s Knife Collection)</li>
@@ -726,7 +750,7 @@
             <div class="viz-header">
               <h3>🔬 Methodology</h3>
             </div>
-            <div class="viz-body" style="padding: 20px; text-align: left; height: auto;">
+            <div class="viz-body" style="padding: 20px; text-align: left; height: auto; display: block;">
               <p>Details on how the NPM supply chain network is modeled and the Composite Risk Score (CRS) calculation.</p>
               <ul style="margin-top: 10px; padding-left: 20px;">
                 <li>Data Collection (Top 1000 packages)</li>
@@ -744,7 +768,7 @@
             <div class="viz-header">
               <h3>🛡️ Security Landscape</h3>
             </div>
-            <div class="viz-body" style="padding: 20px; text-align: left; height: auto;">
+            <div class="viz-body" style="padding: 20px; text-align: left; height: auto; display: block;">
               <p>An overview of active threats and attack vectors in the NPM ecosystem.</p>
               <ul style="margin-top: 10px; padding-left: 20px;">
                 <li>Shrinkwrapped Clones</li>
@@ -762,7 +786,7 @@
             <div class="viz-header">
               <h3>🐛 Case Study: Shai-Hulud</h3>
             </div>
-            <div class="viz-body" style="padding: 20px; text-align: left; height: auto;">
+            <div class="viz-body" style="padding: 20px; text-align: left; height: auto; display: block;">
               <p>A deep dive into the "Shai-Hulud" wormable malware attack that targeted the NPM ecosystem in 2025.</p>
               <ul style="margin-top: 10px; padding-left: 20px;">
                 <li>First Wave: Reconnaissance</li>
@@ -780,9 +804,8 @@
 
       <footer>
         <p>This work was prepared by <strong>Yusuf Talha Arabacı</strong> for academic research purposes.</p>
-        <p style="opacity: 0.6; font-size: 0.75rem;">Last Update: November 2025</p>
+        <p style="opacity: 0.6; font-size: 0.75rem;">Last Update: December 2025</p>
       </footer>
     </div>
   </body>
 </html>
-

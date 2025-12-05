@@ -33,13 +33,20 @@ def build_dependency_graph(seed_packages, max_depth=2, api_delay=0.1):
             current_pkg, depth = queue.pop(0)
             pbar.update(1)
             
+            # Fetch dependencies and metadata
+            dependencies, metadata = fetch_npm_dependencies(current_pkg)
+            
+            # Update current node with metadata
+            if metadata:
+                for k, v in metadata.items():
+                    # Ensure all values are strings for GML compatibility
+                    G.nodes[current_pkg][k] = str(v) if v is not None else ""
+            
+            time.sleep(api_delay / 2) # Slight delay to be polite
+
             # Stop condition: Do not crawl children if current_depth >= MAX_DEPTH
             if depth >= max_depth:
                 continue
-            
-            # Fetch dependencies
-            dependencies = fetch_npm_dependencies(current_pkg)
-            time.sleep(api_delay / 2) # Slight delay to be polite
             
             for dep in dependencies:
                 # Add edge
