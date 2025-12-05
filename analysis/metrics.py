@@ -107,32 +107,27 @@ def calculate_risk_scores(G, betweenness_k=100):
 
     # --- BRS Calculation (Updated Formula - Balanced) ---
     # Weights:
-    # POPULARITY (30%):
-    #   In-Degree: 10%
-    #   Dependents: 10%
-    #   Downloads: 10%
-    # STRUCTURE (40%):
-    #   Betweenness: 20% (Critical Bridge Role)
-    #   Clustering: 10% (Structural Fragility)
-    #   Out-Degree: 10% (Complexity)
-    # LIFECYCLE (30%):
-    #   Staleness: 20% (Abandonware Risk)
-    #   Maintainer: 10% (Bus Factor)
+    # STRUCTURAL RISK SCORE (Updated)
+    # Focus: Topological importance and structural fragility.
+    # Removed: Staleness, Maintainer Risk (Lifecycle metrics).
     
+    # WEIGHTS:
+    # Betweenness: 40% (Critical Bridges - highest impact on fragmentation)
+    # In-Degree:   20% (Major Hubs - Local Graph)
+    # Dependents:  10% (Major Hubs - Global Ecosystem)
+    # Out-Degree:  10% (Complexity/Dependency Chain Risk)
+    # Clustering:  10% (Local Fragility)
+    # Downloads:   10% (Usage Popularity - retained as minor proxy for impact)
+
     risk_scores = {}
     for node in G.nodes():
         score = (
-            # Popularity
-            0.10 * norm_in.get(node, 0) +
-            0.10 * norm_deps.get(node, 0) +
-            0.10 * norm_downloads.get(node, 0) +
-            # Structure
-            0.20 * norm_bet.get(node, 0) +
-            0.10 * norm_clustering_risk.get(node, 0) +
-            0.10 * norm_out.get(node, 0) +
-            # Lifecycle
-            0.20 * norm_staleness.get(node, 0) +
-            0.10 * norm_maint.get(node, 0)
+            0.40 * norm_bet.get(node, 0) +          # Critical Bridges
+            0.20 * norm_in.get(node, 0) +           # Local Hubs
+            0.10 * norm_deps.get(node, 0) +         # Global Hubs (Added back)
+            0.10 * norm_out.get(node, 0) +          # Complexity
+            0.10 * norm_clustering_risk.get(node, 0) + # Fragility
+            0.10 * norm_downloads.get(node, 0)      # Popularity
         )
         risk_scores[node] = score
 

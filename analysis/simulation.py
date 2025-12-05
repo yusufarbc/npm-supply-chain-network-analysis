@@ -34,15 +34,34 @@ def simulate_attacks(G, risk_df, num_removals=50):
         results['targeted_lcc'].append(lcc)
         
     # Random Simulation
-    G_random = G.copy()
-    for node in tqdm(targets_random, desc="Random Attack"):
-        if node in G_random:
-            G_random.remove_node(node)
-        if len(G_random) > 0:
-            lcc = len(max(nx.connected_components(G_random.to_undirected()), key=len))
-        else:
-            lcc = 0
-        results['random_lcc'].append(lcc)
+    # IMPORTANT: We run multiple random simulations and average them to get a stable baseline
+    # A single random run can be misleading if it accidentally hits a hub
+    random_runs = 5
+    avg_random_lcc = [0] * (num_removals + 1)
+    
+    print(f"Running {random_runs} random simulations to average...")
+    
+    for run in range(random_runs):
+        G_random = G.copy()
+        # Resample random targets for each run
+        current_random_targets = random.sample(list(G.nodes()), min(len(G), num_removals))
+        
+        # Initial state for this run
+        lcc = len(max(nx.connected_components(G_random.to_undirected()), key=len))
+        avg_random_lcc[0] += lcc
+        
+        for i, node in enumerate(current_random_targets):
+            if node in G_random:
+                G_random.remove_node(node)
+            
+            if len(G_random) > 0:
+                lcc = len(max(nx.connected_components(G_random.to_undirected()), key=len))
+            else:
+                lcc = 0
+            avg_random_lcc[i+1] += lcc
+            
+    # Calculate average
+    results['random_lcc'] = [x / random_runs for x in avg_random_lcc]
         
     return pd.DataFrame(results)
 

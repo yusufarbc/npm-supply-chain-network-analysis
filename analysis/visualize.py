@@ -125,8 +125,15 @@ def plot_simulation_results(sim_results, output_dir='../results/plots'):
     """
     ensure_plot_dir(output_dir)
     plt.figure(figsize=(10, 6))
-    sns.lineplot(data=sim_results, x='step', y='targeted_lcc', label='Targeted Attack (Top BRS)', marker='o', color='red')
-    sns.lineplot(data=sim_results, x='step', y='random_lcc', label='Random Attack', marker='x', color='grey')
+    
+    # Use markevery to avoid cluttering the plot with markers if there are many steps
+    mark_every = max(1, len(sim_results) // 20)
+    
+    sns.lineplot(data=sim_results, x='step', y='targeted_lcc', label='Targeted Attack (Top BRS)', 
+                 marker='o', markersize=6, markevery=mark_every, color='red', linewidth=2)
+    
+    sns.lineplot(data=sim_results, x='step', y='random_lcc', label='Random Attack', 
+                 marker='s', markersize=6, markevery=mark_every, color='blue', linewidth=2, linestyle='--')
     
     plt.title('Network Robustness: LCC Decay under Attack')
     plt.xlabel('Number of Nodes Removed')
