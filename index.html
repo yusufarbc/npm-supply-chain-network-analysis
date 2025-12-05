@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NPM Tedarik Zinciri Risk Analizi Panosu</title>
+    <title>NPM Supply Chain Risk Analysis Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -257,12 +257,13 @@
         text-decoration: none;
       }
 
-      /* Downloads Table */
+      /* Tables */
       .table-container {
         overflow-x: auto;
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 12px;
+        margin-top: 20px;
       }
 
       table {
@@ -314,46 +315,46 @@
     <div class="container">
       <header>
         <div class="badge-group">
-          <span class="badge">NPM Ekosistemi</span>
-          <span class="badge">Ağ Analizi</span>
-          <span class="badge">Siber Güvenlik</span>
+          <span class="badge">NPM Ecosystem</span>
+          <span class="badge">Network Analysis</span>
+          <span class="badge">Cyber Security</span>
         </div>
-        <h1>NPM Tedarik Zinciri Risk Analizi</h1>
+        <h1>NPM Supply Chain Risk Analysis</h1>
         <p class="lead">
-          Bu proje, NPM paket ekosistemindeki yapısal riskleri ve kritik bağımlılıkları topolojik ağ analizi yöntemleriyle haritalandırır. 
-          Aşağıdaki pano, tüm analiz grafiklerini ve ham veri setlerini içermektedir.
+          This project maps structural risks and critical dependencies in the NPM package ecosystem using topological network analysis methods.
+          The dashboard below contains all analysis charts and raw datasets.
         </p>
       </header>
 
       <section>
-        <h2>Ağ İstatistikleri</h2>
+        <h2>Network Statistics</h2>
         <div class="stats-grid">
           <div class="stat-card">
-            <span class="stat-value">1,506</span>
-            <span class="stat-label">Düğüm (Paket)</span>
+            <span class="stat-value">1,529</span>
+            <span class="stat-label">Nodes (Packages)</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value">3,058</span>
-            <span class="stat-label">Kenar (Bağımlılık)</span>
+            <span class="stat-value">3,133</span>
+            <span class="stat-label">Edges (Dependencies)</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value">2.03</span>
-            <span class="stat-label">Ortalama Derece</span>
+            <span class="stat-value">2.05</span>
+            <span class="stat-label">Average Degree</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value">0.0013</span>
-            <span class="stat-label">Ağ Yoğunluğu</span>
+            <span class="stat-value">0.001341</span>
+            <span class="stat-label">Network Density</span>
           </div>
         </div>
       </section>
 
       <section>
-        <h2>1. Ağ Yapısı ve Topoloji</h2>
+        <h2>1. Network Structure and Topology</h2>
         <div class="viz-grid">
           <!-- Network Full -->
           <div class="viz-card">
             <div class="viz-header">
-              <h3>🌐 Tam Ağ Yapısı (Top 1000 + Bağımlılıklar)</h3>
+              <h3>🌐 Full Network Structure (Top 1000 + Dependencies)</h3>
             </div>
             <div class="viz-body">
               <a href="results/plots/network_full_topN.png" target="_blank">
@@ -361,29 +362,9 @@
               </a>
             </div>
             <div class="viz-footer">
-              <span class="viz-desc">Tüm ağın genel görünümü.</span>
+              <span class="viz-desc">Overview of the entire network.</span>
               <div class="btn-group">
                 <a href="results/plots/network_full_topN.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/network_full_topN.svg" download class="btn btn-outline">SVG</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Network TopN Only -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>🕸️ Sadece Top 1000 Paket Ağı</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/network_topN_only.png" target="_blank">
-                <img src="results/plots/network_topN_only.png" alt="TopN Network" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">Sadece başlangıç kümesindeki paketlerin ilişkileri.</span>
-              <div class="btn-group">
-                <a href="results/plots/network_topN_only.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/network_topN_only.svg" download class="btn btn-outline">SVG</a>
               </div>
             </div>
           </div>
@@ -391,7 +372,7 @@
           <!-- Degree Distributions -->
           <div class="viz-card">
             <div class="viz-header">
-              <h3>📈 Derece Dağılımları (Log-Log)</h3>
+              <h3>📈 Degree Distributions (Log-Log)</h3>
             </div>
             <div class="viz-body">
               <a href="results/plots/degree_distributions.png" target="_blank">
@@ -399,29 +380,9 @@
               </a>
             </div>
             <div class="viz-footer">
-              <span class="viz-desc">Ağın ölçekten bağımsız (scale-free) yapısını gösteren logaritmik dağılım.</span>
+              <span class="viz-desc">Logarithmic distribution showing the scale-free structure of the network.</span>
               <div class="btn-group">
                 <a href="results/plots/degree_distributions.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/degree_distributions.svg" download class="btn btn-outline">SVG</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Degree Histograms -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>📊 Derece Histogramları</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/degree_histograms.png" target="_blank">
-                <img src="results/plots/degree_histograms.png" alt="Degree Histograms" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">In-degree ve Out-degree frekans dağılımları.</span>
-              <div class="btn-group">
-                <a href="results/plots/degree_histograms.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/degree_histograms.svg" download class="btn btn-outline">SVG</a>
               </div>
             </div>
           </div>
@@ -429,23 +390,22 @@
       </section>
 
       <section>
-        <h2>2. Risk ve Kritiklik Analizi</h2>
+        <h2>2. Risk and Criticality Analysis</h2>
         <div class="viz-grid">
           <!-- Risk Scores -->
           <div class="viz-card">
             <div class="viz-header">
-              <h3>⚠️ Top 20 Bileşik Risk Skoru (BRS)</h3>
+              <h3>⚠️ Top 20 Composite Risk Score (BRS)</h3>
             </div>
             <div class="viz-body">
-              <a href="results/plots/top20_risk_scores.png" target="_blank">
-                <img src="results/plots/top20_risk_scores.png" alt="Risk Scores" loading="lazy">
+              <a href="results/plots/top_risk_scores.png" target="_blank">
+                <img src="results/plots/top_risk_scores.png" alt="Risk Scores" loading="lazy">
               </a>
             </div>
             <div class="viz-footer">
-              <span class="viz-desc">En yüksek risk skoruna sahip paketler.</span>
+              <span class="viz-desc">Packages with the highest risk score.</span>
               <div class="btn-group">
-                <a href="results/plots/top20_risk_scores.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/top20_risk_scores.svg" download class="btn btn-outline">SVG</a>
+                <a href="results/plots/top_risk_scores.png" download class="btn btn-primary">PNG</a>
               </div>
             </div>
           </div>
@@ -453,25 +413,7 @@
           <!-- Cascade Impact -->
           <div class="viz-card">
             <div class="viz-header">
-              <h3>📉 Kaskad Etki (Robustluk)</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/top20_cascade_impact.png" target="_blank">
-                <img src="results/plots/top20_cascade_impact.png" alt="Cascade Impact" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">Kritik paketlerin silinmesinin ağ bütünlüğüne etkisi.</span>
-              <div class="btn-group">
-                <a href="results/plots/top20_cascade_impact.png" download class="btn btn-primary">PNG</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Risk vs Cascade -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>🔗 Risk Skoru vs. Kaskad Etki</h3>
+              <h3>📉 Cascade Impact (Robustness)</h3>
             </div>
             <div class="viz-body">
               <a href="results/plots/risk_vs_cascade.png" target="_blank">
@@ -479,99 +421,93 @@
               </a>
             </div>
             <div class="viz-footer">
-              <span class="viz-desc">Hesaplanan risk skoru ile gerçek etki alanı arasındaki ilişki.</span>
+              <span class="viz-desc">Relationship between calculated risk score and actual impact area.</span>
               <div class="btn-group">
                 <a href="results/plots/risk_vs_cascade.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/risk_vs_cascade.svg" download class="btn btn-outline">SVG</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Top 10 Leaders -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>🏆 Top 10 Liderler (Özet)</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/top10_leaders.png" target="_blank">
-                <img src="results/plots/top10_leaders.png" alt="Top 10 Leaders" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">Farklı metriklerde (In, Out, Btw) lider paketlerin karşılaştırması.</span>
-              <div class="btn-group">
-                <a href="results/plots/top10_leaders.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/top10_leaders.svg" download class="btn btn-outline">SVG</a>
               </div>
             </div>
           </div>
         </div>
+
+        <h3 style="margin-top: 40px;">🚨 Top 20 Critical Packages (Risk Score)</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Package</th>
+                <th>Risk Score</th>
+                <th>In-Degree</th>
+                <th>Betweenness</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>es-abstract</td><td>0.4818</td><td>0.0111</td><td>0.0017</td></tr>
+              <tr><td>@babel/helper-plugin-utils</td><td>0.4030</td><td>0.0720</td><td>0.0000</td></tr>
+              <tr><td>@babel/preset-env</td><td>0.4029</td><td>0.0020</td><td>0.0000</td></tr>
+              <tr><td>postcss-preset-env</td><td>0.3198</td><td>0.0007</td><td>0.0000</td></tr>
+              <tr><td>@babel/types</td><td>0.2917</td><td>0.0209</td><td>0.0001</td></tr>
+              <tr><td>@babel/traverse</td><td>0.2837</td><td>0.0131</td><td>0.0001</td></tr>
+              <tr><td>send</td><td>0.2609</td><td>0.0013</td><td>0.0000</td></tr>
+              <tr><td>@babel/core</td><td>0.2594</td><td>0.0079</td><td>0.0001</td></tr>
+              <tr><td>browserslist</td><td>0.2562</td><td>0.0105</td><td>0.0002</td></tr>
+              <tr><td>supports-color</td><td>0.2545</td><td>0.0013</td><td>0.0000</td></tr>
+              <tr><td>resolve</td><td>0.2534</td><td>0.0046</td><td>0.0000</td></tr>
+              <tr><td>fill-range</td><td>0.2524</td><td>0.0007</td><td>0.0001</td></tr>
+              <tr><td>jest-snapshot</td><td>0.2423</td><td>0.0039</td><td>0.0004</td></tr>
+              <tr><td>postcss-value-parser</td><td>0.2409</td><td>0.0255</td><td>0.0000</td></tr>
+              <tr><td>to-regex-range</td><td>0.2405</td><td>0.0007</td><td>0.0000</td></tr>
+              <tr><td>fs.realpath</td><td>0.2399</td><td>0.0000</td><td>0.0000</td></tr>
+              <tr><td>finalhandler</td><td>0.2382</td><td>0.0007</td><td>0.0000</td></tr>
+              <tr><td>@jest/types</td><td>0.2373</td><td>0.0170</td><td>0.0002</td></tr>
+              <tr><td>yargs</td><td>0.2359</td><td>0.0007</td><td>0.0000</td></tr>
+              <tr><td>get-intrinsic</td><td>0.2354</td><td>0.0144</td><td>0.0003</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top: 40px;">💥 Top 20 Cascade Impact (Network Damage)</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Package</th>
+                <th>Cascade Impact</th>
+                <th>Risk Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>workbox-build</td><td>20.0000</td><td>0.1972</td></tr>
+              <tr><td>react-scripts</td><td>16.0000</td><td>0.2334</td></tr>
+              <tr><td>postcss-preset-env</td><td>14.0000</td><td>0.3198</td></tr>
+              <tr><td>regexpu-core</td><td>8.0000</td><td>0.2061</td></tr>
+              <tr><td>eslint</td><td>8.0000</td><td>0.1917</td></tr>
+              <tr><td>@babel/types</td><td>7.0000</td><td>0.2917</td></tr>
+              <tr><td>@babel/helper-plugin-utils</td><td>7.0000</td><td>0.4030</td></tr>
+              <tr><td>cssnano-preset-default</td><td>6.0000</td><td>0.2142</td></tr>
+              <tr><td>source-map-resolve</td><td>6.0000</td><td>0.1925</td></tr>
+              <tr><td>webpack-dev-server</td><td>5.0000</td><td>0.2304</td></tr>
+              <tr><td>sax</td><td>5.0000</td><td>0.1938</td></tr>
+              <tr><td>browserslist</td><td>4.0000</td><td>0.2562</td></tr>
+              <tr><td>yargs</td><td>4.0000</td><td>0.2359</td></tr>
+              <tr><td>extglob</td><td>3.0000</td><td>0.1994</td></tr>
+              <tr><td>snapdragon</td><td>3.0000</td><td>0.2077</td></tr>
+              <tr><td>@jest/types</td><td>3.0000</td><td>0.2373</td></tr>
+              <tr><td>jest-snapshot</td><td>3.0000</td><td>0.2423</td></tr>
+              <tr><td>fill-range</td><td>3.0000</td><td>0.2524</td></tr>
+              <tr><td>resolve</td><td>3.0000</td><td>0.2534</td></tr>
+              <tr><td>postcss</td><td>3.0000</td><td>0.1902</td></tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section>
-        <h2>3. Merkeziyet Metrikleri</h2>
+        <h2>3. Centrality Metrics</h2>
         <div class="viz-grid">
-          <!-- Top 10 In-Degree -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>📥 Top 10 In-Degree (Popülerlik)</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/top10_in_degree.png" target="_blank">
-                <img src="results/plots/top10_in_degree.png" alt="In-Degree" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">En çok doğrudan bağımlısı olan paketler.</span>
-              <div class="btn-group">
-                <a href="results/plots/top10_in_degree.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/top10_in_degree.svg" download class="btn btn-outline">SVG</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Top 10 Out-Degree -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>📤 Top 10 Out-Degree (Bağımlılık Yükü)</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/top10_out_degree.png" target="_blank">
-                <img src="results/plots/top10_out_degree.png" alt="Out-Degree" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">En çok dış pakete bağımlı olan (saldırı yüzeyi geniş) paketler.</span>
-              <div class="btn-group">
-                <a href="results/plots/top10_out_degree.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/top10_out_degree.svg" download class="btn btn-outline">SVG</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Top 10 Betweenness -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>🌉 Top 10 Betweenness (Köprü Rolü)</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/top10_betweenness.png" target="_blank">
-                <img src="results/plots/top10_betweenness.png" alt="Betweenness" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">Ağdaki bilgi akışını kontrol eden stratejik köprü paketler.</span>
-              <div class="btn-group">
-                <a href="results/plots/top10_betweenness.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/top10_betweenness.svg" download class="btn btn-outline">SVG</a>
-              </div>
-            </div>
-          </div>
-
           <!-- Correlations -->
           <div class="viz-card">
             <div class="viz-header">
-              <h3>🔄 Metrik Korelasyonları</h3>
+              <h3>🔄 Metric Correlations</h3>
             </div>
             <div class="viz-body">
               <a href="results/plots/metric_correlations.png" target="_blank">
@@ -579,133 +515,297 @@
               </a>
             </div>
             <div class="viz-footer">
-              <span class="viz-desc">Metrikler arası ilişki matrisi.</span>
+              <span class="viz-desc">Correlation matrix between metrics.</span>
               <div class="btn-group">
                 <a href="results/plots/metric_correlations.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/metric_correlations.svg" download class="btn btn-outline">SVG</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Scatter Correlations -->
-          <div class="viz-card">
-            <div class="viz-header">
-              <h3>📍 Dağılım Grafikleri (Scatter)</h3>
-            </div>
-            <div class="viz-body">
-              <a href="results/plots/scatter_correlations.png" target="_blank">
-                <img src="results/plots/scatter_correlations.png" alt="Scatter Correlations" loading="lazy">
-              </a>
-            </div>
-            <div class="viz-footer">
-              <span class="viz-desc">Metrik çiftleri arasındaki dağılım detayları.</span>
-              <div class="btn-group">
-                <a href="results/plots/scatter_correlations.png" download class="btn btn-primary">PNG</a>
-                <a href="results/plots/scatter_correlations.svg" download class="btn btn-outline">SVG</a>
               </div>
             </div>
           </div>
         </div>
+
+        <h3 style="margin-top: 40px;">🔗 Top 20 Most Depended-upon Packages (In-Degree)</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Package</th>
+                <th>In-Degree</th>
+                <th>Out-Degree</th>
+                <th>Risk Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>@babel/helper-plugin-utils</td><td>0.0720</td><td>0.0000</td><td>0.4030</td></tr>
+              <tr><td>call-bound</td><td>0.0268</td><td>0.0013</td><td>0.1153</td></tr>
+              <tr><td>postcss-value-parser</td><td>0.0255</td><td>0.0000</td><td>0.2409</td></tr>
+              <tr><td>call-bind</td><td>0.0236</td><td>0.0026</td><td>0.1835</td></tr>
+              <tr><td>@types/node</td><td>0.0223</td><td>0.0007</td><td>0.1336</td></tr>
+              <tr><td>debug</td><td>0.0223</td><td>0.0007</td><td>0.1468</td></tr>
+              <tr><td>es-errors</td><td>0.0216</td><td>0.0000</td><td>0.0750</td></tr>
+              <tr><td>@babel/types</td><td>0.0209</td><td>0.0013</td><td>0.2917</td></tr>
+              <tr><td>define-properties</td><td>0.0190</td><td>0.0020</td><td>0.0923</td></tr>
+              <tr><td>chalk</td><td>0.0183</td><td>0.0000</td><td>0.1196</td></tr>
+              <tr><td>@csstools/css-tokenizer</td><td>0.0183</td><td>0.0000</td><td>0.0641</td></tr>
+              <tr><td>@csstools/css-parser-algorithms</td><td>0.0177</td><td>0.0000</td><td>0.0618</td></tr>
+              <tr><td>@jest/types</td><td>0.0170</td><td>0.0046</td><td>0.2373</td></tr>
+              <tr><td>@csstools/utilities</td><td>0.0151</td><td>0.0000</td><td>0.0523</td></tr>
+              <tr><td>jest-util</td><td>0.0144</td><td>0.0039</td><td>0.1726</td></tr>
+              <tr><td>get-intrinsic</td><td>0.0144</td><td>0.0065</td><td>0.2354</td></tr>
+              <tr><td>postcss-selector-parser</td><td>0.0137</td><td>0.0013</td><td>0.1894</td></tr>
+              <tr><td>graceful-fs</td><td>0.0137</td><td>0.0000</td><td>0.0980</td></tr>
+              <tr><td>es-object-atoms</td><td>0.0131</td><td>0.0007</td><td>0.0507</td></tr>
+              <tr><td>@babel/traverse</td><td>0.0131</td><td>0.0046</td><td>0.2837</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top: 40px;">📦 Top 20 Most Dependent Packages (Out-Degree)</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Package</th>
+                <th>Out-Degree</th>
+                <th>In-Degree</th>
+                <th>Risk Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>@babel/preset-env</td><td>0.0458</td><td>0.0020</td><td>0.4029</td></tr>
+              <tr><td>postcss-preset-env</td><td>0.0452</td><td>0.0007</td><td>0.3198</td></tr>
+              <tr><td>es-abstract</td><td>0.0353</td><td>0.0111</td><td>0.4818</td></tr>
+              <tr><td>react-scripts</td><td>0.0314</td><td>0.0000</td><td>0.2334</td></tr>
+              <tr><td>workbox-build</td><td>0.0242</td><td>0.0007</td><td>0.1972</td></tr>
+              <tr><td>eslint</td><td>0.0223</td><td>0.0007</td><td>0.1917</td></tr>
+              <tr><td>cssnano-preset-default</td><td>0.0196</td><td>0.0007</td><td>0.2142</td></tr>
+              <tr><td>express</td><td>0.0183</td><td>0.0007</td><td>0.1827</td></tr>
+              <tr><td>webpack-dev-server</td><td>0.0183</td><td>0.0007</td><td>0.2304</td></tr>
+              <tr><td>@jest/core</td><td>0.0183</td><td>0.0013</td><td>0.2171</td></tr>
+              <tr><td>webpack</td><td>0.0164</td><td>0.0007</td><td>0.0917</td></tr>
+              <tr><td>jest-config</td><td>0.0157</td><td>0.0013</td><td>0.1792</td></tr>
+              <tr><td>react-dev-utils</td><td>0.0157</td><td>0.0007</td><td>0.1546</td></tr>
+              <tr><td>@jest/reporters</td><td>0.0151</td><td>0.0007</td><td>0.1970</td></tr>
+              <tr><td>jest-runner</td><td>0.0144</td><td>0.0013</td><td>0.1691</td></tr>
+              <tr><td>jest-runtime</td><td>0.0144</td><td>0.0026</td><td>0.2197</td></tr>
+              <tr><td>jest-snapshot</td><td>0.0137</td><td>0.0039</td><td>0.2423</td></tr>
+              <tr><td>jsdom</td><td>0.0131</td><td>0.0007</td><td>0.1787</td></tr>
+              <tr><td>jest-circus</td><td>0.0131</td><td>0.0007</td><td>0.1273</td></tr>
+              <tr><td>eslint-plugin-import</td><td>0.0124</td><td>0.0007</td><td>0.1179</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top: 40px;">🌉 Top 20 Bridges (Betweenness Centrality)</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Package</th>
+                <th>Betweenness</th>
+                <th>In-Degree</th>
+                <th>Risk Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>es-abstract</td><td>0.0017</td><td>0.0111</td><td>0.4818</td></tr>
+              <tr><td>jest-snapshot</td><td>0.0004</td><td>0.0039</td><td>0.2423</td></tr>
+              <tr><td>which-builtin-type</td><td>0.0004</td><td>0.0007</td><td>0.1190</td></tr>
+              <tr><td>call-bind</td><td>0.0003</td><td>0.0236</td><td>0.1835</td></tr>
+              <tr><td>get-intrinsic</td><td>0.0003</td><td>0.0144</td><td>0.2354</td></tr>
+              <tr><td>jest-runtime</td><td>0.0003</td><td>0.0026</td><td>0.2197</td></tr>
+              <tr><td>array-includes</td><td>0.0003</td><td>0.0026</td><td>0.1534</td></tr>
+              <tr><td>jsdom</td><td>0.0003</td><td>0.0007</td><td>0.1787</td></tr>
+              <tr><td>jest-message-util</td><td>0.0003</td><td>0.0065</td><td>0.1878</td></tr>
+              <tr><td>reflect.getprototypeof</td><td>0.0003</td><td>0.0013</td><td>0.0877</td></tr>
+              <tr><td>array.prototype.flat</td><td>0.0002</td><td>0.0013</td><td>0.1205</td></tr>
+              <tr><td>jest-watcher</td><td>0.0002</td><td>0.0020</td><td>0.1538</td></tr>
+              <tr><td>@jest/types</td><td>0.0002</td><td>0.0170</td><td>0.2373</td></tr>
+              <tr><td>side-channel</td><td>0.0002</td><td>0.0026</td><td>0.1572</td></tr>
+              <tr><td>browserslist</td><td>0.0002</td><td>0.0105</td><td>0.2562</td></tr>
+              <tr><td>typed-array-length</td><td>0.0002</td><td>0.0007</td><td>0.0754</td></tr>
+              <tr><td>object.assign</td><td>0.0002</td><td>0.0026</td><td>0.1174</td></tr>
+              <tr><td>typed-array-byte-offset</td><td>0.0002</td><td>0.0007</td><td>0.0677</td></tr>
+              <tr><td>@jest/fake-timers</td><td>0.0002</td><td>0.0026</td><td>0.1683</td></tr>
+              <tr><td>@babel/core</td><td>0.0001</td><td>0.0079</td><td>0.2594</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top: 40px;">🌍 Top 20 Ecosystem Critical (Dependents Count)</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Package</th>
+                <th>Dependents Count</th>
+                <th>In-Degree</th>
+                <th>Risk Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>supports-color</td><td>5,765,200</td><td>0.0013</td><td>0.2545</td></tr>
+              <tr><td>fs.realpath</td><td>5,532,257</td><td>0.0000</td><td>0.2399</td></tr>
+              <tr><td>fill-range</td><td>5,461,792</td><td>0.0007</td><td>0.2524</td></tr>
+              <tr><td>to-regex-range</td><td>5,300,496</td><td>0.0007</td><td>0.2405</td></tr>
+              <tr><td>fsevents</td><td>5,289,351</td><td>0.0007</td><td>0.2316</td></tr>
+              <tr><td>resolve</td><td>5,229,428</td><td>0.0046</td><td>0.2534</td></tr>
+              <tr><td>statuses</td><td>5,106,018</td><td>0.0026</td><td>0.2305</td></tr>
+              <tr><td>setprototypeof</td><td>5,068,682</td><td>0.0007</td><td>0.2221</td></tr>
+              <tr><td>unpipe</td><td>5,053,604</td><td>0.0007</td><td>0.2214</td></tr>
+              <tr><td>fresh</td><td>5,019,855</td><td>0.0013</td><td>0.2222</td></tr>
+              <tr><td>send</td><td>4,993,661</td><td>0.0013</td><td>0.2609</td></tr>
+              <tr><td>serve-static</td><td>4,975,561</td><td>0.0007</td><td>0.2323</td></tr>
+              <tr><td>fast-deep-equal</td><td>4,968,905</td><td>0.0026</td><td>0.2246</td></tr>
+              <tr><td>fast-json-stable-stringify</td><td>4,957,551</td><td>0.0020</td><td>0.2218</td></tr>
+              <tr><td>utils-merge</td><td>4,948,638</td><td>0.0000</td><td>0.2146</td></tr>
+              <tr><td>finalhandler</td><td>4,946,523</td><td>0.0007</td><td>0.2382</td></tr>
+              <tr><td>readdirp</td><td>4,905,460</td><td>0.0007</td><td>0.2150</td></tr>
+              <tr><td>yargs</td><td>4,893,685</td><td>0.0007</td><td>0.2359</td></tr>
+              <tr><td>camelcase</td><td>4,809,686</td><td>0.0033</td><td>0.2199</td></tr>
+              <tr><td>uri-js</td><td>4,745,435</td><td>0.0000</td><td>0.2094</td></tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section>
-        <h2>Veri Setleri ve Raporlar</h2>
+        <h2>Datasets and Reports</h2>
         <p class="lead" style="margin-bottom: 24px; font-size: 1rem;">
-          Aşağıdaki tabloda analiz sonucunda üretilen tüm veri dosyaları listelenmiştir.
+          The table below lists all data files produced as a result of the analysis.
         </p>
         <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th>Dosya Adı</th>
-                <th>Açıklama</th>
+                <th>File Name</th>
+                <th>Description</th>
                 <th>Format</th>
-                <th>İndir</th>
+                <th>Download</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td><strong>risk_scores.csv</strong></td>
-                <td>Tüm paketlerin Bileşik Risk Skorları (BRS) ve sıralaması.</td>
+                <td>Composite Risk Scores (BRS) and ranking of all packages.</td>
                 <td>CSV</td>
-                <td><a href="results/risk_scores.csv" download>İndir</a></td>
+                <td><a href="results/risk_scores.csv" download>Download</a></td>
               </tr>
               <tr>
-                <td><strong>metrics.csv</strong></td>
-                <td>Tüm paketlerin ham merkeziyet metrikleri (In, Out, Btw).</td>
+                <td><strong>impact_scores.csv</strong></td>
+                <td>Cascade impact simulation results.</td>
                 <td>CSV</td>
-                <td><a href="results/metrics.csv" download>İndir</a></td>
-              </tr>
-              <tr>
-                <td><strong>graph_stats.json</strong></td>
-                <td>Ağın genel topolojik istatistikleri.</td>
-                <td>JSON</td>
-                <td><a href="results/graph_stats.json" download>İndir</a></td>
-              </tr>
-              <tr>
-                <td><strong>graph_stats.csv</strong></td>
-                <td>Ağ istatistiklerinin CSV formatı.</td>
-                <td>CSV</td>
-                <td><a href="results/graph_stats.csv" download>İndir</a></td>
-              </tr>
-              <tr>
-                <td><strong>cascade_impact.csv</strong></td>
-                <td>Kaskad etki simülasyon sonuçları.</td>
-                <td>CSV</td>
-                <td><a href="results/cascade_impact.csv" download>İndir</a></td>
-              </tr>
-              <tr>
-                <td><strong>robustness_test.json</strong></td>
-                <td>Robustluk testi detaylı sonuçları.</td>
-                <td>JSON</td>
-                <td><a href="results/robustness_test.json" download>İndir</a></td>
+                <td><a href="results/impact_scores.csv" download>Download</a></td>
               </tr>
               <tr>
                 <td><strong>gephi_nodes.csv</strong></td>
-                <td>Gephi için düğüm listesi.</td>
+                <td>Node list for Gephi.</td>
                 <td>CSV</td>
-                <td><a href="results/gephi_nodes.csv" download>İndir</a></td>
+                <td><a href="results/gephi_nodes.csv" download>Download</a></td>
               </tr>
               <tr>
                 <td><strong>gephi_edges.csv</strong></td>
-                <td>Gephi için kenar listesi.</td>
+                <td>Edge list for Gephi.</td>
                 <td>CSV</td>
-                <td><a href="results/gephi_edges.csv" download>İndir</a></td>
+                <td><a href="results/gephi_edges.csv" download>Download</a></td>
               </tr>
               <tr>
-                <td><strong>edges.csv</strong></td>
-                <td>Ham kenar listesi.</td>
+                <td><strong>package_risk_scores.csv</strong></td>
+                <td>Simplified list of packages and their risk scores.</td>
                 <td>CSV</td>
-                <td><a href="results/edges.csv" download>İndir</a></td>
+                <td><a href="results/package_risk_scores.csv" download>Download</a></td>
               </tr>
               <tr>
-                <td><strong>top20_betweenness.csv</strong></td>
-                <td>En yüksek Betweenness değerine sahip 20 paket.</td>
-                <td>CSV</td>
-                <td><a href="results/top20_betweenness.csv" download>İndir</a></td>
-              </tr>
-              <tr>
-                <td><strong>top20_in_degree.csv</strong></td>
-                <td>En yüksek In-Degree değerine sahip 20 paket.</td>
-                <td>CSV</td>
-                <td><a href="results/top20_in_degree.csv" download>İndir</a></td>
-              </tr>
-              <tr>
-                <td><strong>top20_out_degree.csv</strong></td>
-                <td>En yüksek Out-Degree değerine sahip 20 paket.</td>
-                <td>CSV</td>
-                <td><a href="results/top20_out_degree.csv" download>İndir</a></td>
+                <td><strong>Readme.md</strong></td>
+                <td>Full analysis report in Markdown format.</td>
+                <td>Markdown</td>
+                <td><a href="results/Readme.md" download>Download</a></td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
 
+      <section>
+        <h2>Documentation & Research</h2>
+        <div class="viz-grid">
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>📚 Literature Review</h3>
+            </div>
+            <div class="viz-body" style="padding: 20px; text-align: left; height: auto; display: block;">
+              <p>A comprehensive review of academic studies on NPM ecosystem security, threat taxonomies, and network analysis.</p>
+              <ul style="margin-top: 10px; padding-left: 20px;">
+                <li>Threat Taxonomies (Backstabber’s Knife Collection)</li>
+                <li>NPM Network Topology (Small-world, Scale-free)</li>
+                <li>Dependency Resolution & Propagation</li>
+                <li>Detection Pipelines (Amalfi, Cerebro, OSCAR)</li>
+              </ul>
+            </div>
+            <div class="viz-footer">
+              <a href="docs/literature.md" class="btn btn-primary">Read Full Review</a>
+            </div>
+          </div>
+
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>🔬 Methodology</h3>
+            </div>
+            <div class="viz-body" style="padding: 20px; text-align: left; height: auto; display: block;">
+              <p>Details on how the NPM supply chain network is modeled and the Composite Risk Score (CRS) calculation.</p>
+              <ul style="margin-top: 10px; padding-left: 20px;">
+                <li>Data Collection (Top 1000 packages)</li>
+                <li>Centrality Metrics (In-Degree, Out-Degree, Betweenness)</li>
+                <li>Composite Risk Score Formula</li>
+                <li>Robustness & Cascade Analysis</li>
+              </ul>
+            </div>
+            <div class="viz-footer">
+              <a href="docs/methodology.md" class="btn btn-primary">View Methodology</a>
+            </div>
+          </div>
+
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>🛡️ Security Landscape</h3>
+            </div>
+            <div class="viz-body" style="padding: 20px; text-align: left; height: auto; display: block;">
+              <p>An overview of active threats and attack vectors in the NPM ecosystem.</p>
+              <ul style="margin-top: 10px; padding-left: 20px;">
+                <li>Shrinkwrapped Clones</li>
+                <li>Typosquatting</li>
+                <li>Dependency Confusion</li>
+                <li>Account Takeover & Worms</li>
+              </ul>
+            </div>
+            <div class="viz-footer">
+              <a href="docs/npm_security_landscape.md" class="btn btn-primary">Explore Threats</a>
+            </div>
+          </div>
+
+          <div class="viz-card">
+            <div class="viz-header">
+              <h3>🐛 Case Study: Shai-Hulud</h3>
+            </div>
+            <div class="viz-body" style="padding: 20px; text-align: left; height: auto; display: block;">
+              <p>A deep dive into the "Shai-Hulud" wormable malware attack that targeted the NPM ecosystem in 2025.</p>
+              <ul style="margin-top: 10px; padding-left: 20px;">
+                <li>First Wave: Reconnaissance</li>
+                <li>Second Wave: Autonomous Worm</li>
+                <li>Comparative Technical Analysis</li>
+                <li>Topological Risk Implications</li>
+              </ul>
+            </div>
+            <div class="viz-footer">
+              <a href="docs/shai_hulud_incident.md" class="btn btn-primary">Read Case Study</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <footer>
-        <p>Bu çalışma, akademik araştırma amaçlı olarak <strong>Yusuf Talha Arabacı</strong> tarafından hazırlanmıştır.</p>
-        <p style="opacity: 0.6; font-size: 0.75rem;">Son Güncelleme: Kasım 2025</p>
+        <p>This work was prepared by <strong>Yusuf Talha Arabacı</strong> for academic research purposes.</p>
+        <p style="opacity: 0.6; font-size: 0.75rem;">Last Update: December 2025</p>
       </footer>
     </div>
   </body>
 </html>
-

@@ -1,103 +1,103 @@
-## analysis/ — Notebook ile çalıştırma (tek yol)
+## analysis/ — Running with Notebook (single method)
 
-Bu klasördeki analiz **yalnızca Jupyter Notebook üzerinden** çalıştırılır. Lütfen `analysis/analysis.ipynb` dosyasını açıp hücreleri sırayla çalıştırın.
+The analysis in this folder runs **only through Jupyter Notebook**. Please open the `analysis/analysis.ipynb` file and run the cells in order.
 
-## 🎨 Gephi Kullanımı
+## 🎨 Using Gephi
 
-Analiz sonucunda `results/` dizininde Gephi-uyumlu dosyalar oluşturulur:
+Analysis creates Gephi-compatible files in the `results/` directory:
 
-### 1. `gephi_nodes.csv` (Düğüm Listesi)
-12 sütun içerir (Id, Label, package, in_degree, out_degree, betweenness, risk_score, is_topN, dependents_count, downloads, rank, is_seed).
+### 1. `gephi_nodes.csv` (Node List)
+Contains 12 columns (Id, Label, package, in_degree, out_degree, betweenness, risk_score, is_topN, dependents_count, downloads, rank, is_seed).
 
-### 2. `gephi_edges.csv` (Kenar Listesi)
-3 sütun içerir (Source, Target, Type).
+### 2. `gephi_edges.csv` (Edge List)
+Contains 3 columns (Source, Target, Type).
 
-### Gephi'de Açma Adımları
+### Opening in Gephi
 
 1. **Import Nodes:**
    - File → Import spreadsheet...
-   - Dosya: `gephi_nodes.csv`
+   - File: `gephi_nodes.csv`
    - Separator: Comma
    - Import as: Nodes table
    - Force nodes to be created as new ones: ✓
 
 2. **Import Edges:**
    - File → Import spreadsheet...
-   - Dosya: `gephi_edges.csv`
+   - File: `gephi_edges.csv`
    - Separator: Comma
    - Import as: Edges table
-   - Create missing nodes: ✗ (nodes zaten var)
+   - Create missing nodes: ✗ (nodes already exist)
 
-### Görselleştirme Önerileri
+### Visualization Recommendations
 
 - **Layout:** Force Atlas 2 (Scaling: 10.0, Prevent Overlap: ✓)
-- **Node Boyutu:** Ranking → in_degree veya dependents_count
-- **Node Rengi:** Ranking → risk_score (Yeşil-Kırmızı)
+- **Node Size:** Ranking → in_degree or dependents_count
+- **Node Color:** Ranking → risk_score (Green-Red)
 
-## 🎯 Amaç
+## 🎯 Goal
 
-Yazılım tedarik zincirinde kritiklik haritalaması: NPM ekosisteminin topolojik riskini **kompleks ağ teorisi** ile analiz etmek:
+Criticality mapping in the software supply chain: Analyzing the topological risk of the NPM ecosystem using **complex network theory**:
 
-1. **Veri Toplama:** En popüler NPM paketlerini ve bağımlılıklarını çek
-2. **Ağ Kurma:** Yönlü bağımlılık grafiği oluştur (Dependent → Dependency)
-3. **Metrik Hesaplama:** In-degree, out-degree, betweenness centrality
-4. **Risk Skorlama:** Min-max normalizasyon ile Bileşik Risk Skoru (BRS) üret
-5. **Genişletme (İsteğe Bağlı):** Top N'e bağımlı olan paketleri ekle (1. basamak genişletme)
+1. **Data Collection:** Fetch the most popular NPM packages and their dependencies
+2. **Network Construction:** Create a directed dependency graph (Dependent → Dependency)
+3. **Metric Calculation:** In-degree, out-degree, betweenness centrality
+4. **Risk Scoring:** Generate Composite Risk Score (BRS) using min-max normalization
+5. **Expansion (Optional):** Add packages dependent on Top N (1st degree expansion)
 
-## 📊 Veri Kaynağı
+## 📊 Data Source
 
-### Üç Farklı Veri Kaynağı ve Limitleri
+### Three Different Data Sources and Limits
 
-#### 1. ecosyste.ms Leaderboard API (Kademe 0 - İlk Seed List)
+#### 1. ecosyste.ms Leaderboard API (Tier 0 - Initial Seed List)
 - **URL:** `https://ecosyste.ms/api/v1/registry/npm/leaderboard`
-- **Limit:** Max **2000 paket** → Bu limit **SADECE** başlangıç listesi (Kademe 0) için!
-- **Kullanım:** `top_n` ve `leaderboard_mode` parametreleri
-- **Sıralama Modları:**
-  - `downloads`: İndirme sayısına göre (varsayılan)
-  - `dependents`: En çok bağımlı olunan paketler
-  - `trending`: Ani indirme artışı yaşayan paketler
-- **Örnek:** `top_n=1000, leaderboard_mode="dependents"` → En kritik 1000 paket
+- **Limit:** Max **2000 packages** → This limit applies **ONLY** to the initial list (Tier 0)!
+- **Usage:** `top_n` and `leaderboard_mode` parameters
+- **Ranking Modes:**
+  - `downloads`: By download count (default)
+  - `dependents`: Most depended-upon packages
+  - `trending`: Packages with sudden download spikes
+- **Example:** `top_n=1000, leaderboard_mode="dependents"` → Top 1000 most critical packages
 
-**ÖNEMLİ:** Bu 2000 limiti tüm graf için değil, sadece Top N seçimi için geçerlidir!
+**IMPORTANT:** This 2000 limit is not for the entire graph, only for the Top N selection!
 
-**Leaderboard Modu Karşılaştırması:**
+**Leaderboard Mode Comparison:**
 
-| Mod | Ne Ölçer | Avantaj | Dezavantaj | Kullanım Senaryosu |
+| Mode | What it Measures | Advantage | Disadvantage | Use Case |
 |-----|----------|---------|------------|---------------------|
-| `downloads` | Haftalık indirme hacmi | Yaygın kullanım → Geniş etki | Popülerlik ≠ kritiklik | Genel ekosistem analizi |
-| `dependents` | Kaç paket buna bağımlı | Altyapı kritikliği yüksek | Volatilik düşük | **Kritiklik haritalaması** ⭐ |
-| `trending` | Ani büyüme oranı | Erken sinyal, anomali tespiti | Kısa vadeli volatil | Supply chain izleme |
+| `downloads` | Weekly download volume | Widespread usage → Broad impact | Popularity ≠ criticality | General ecosystem analysis |
+| `dependents` | How many packages depend on it | High infrastructure criticality | Low volatility | **Criticality mapping** ⭐ |
+| `trending` | Sudden growth rate | Early signal, anomaly detection | Short-term volatile | Supply chain monitoring |
 
-**Öneri:** Kritiklik analizi için `leaderboard_mode="dependents"` kullanın!
+**Recommendation:** Use `leaderboard_mode="dependents"` for criticality analysis!
 
-#### 2. NPM Registry (Kademe 1, 2, 3... - Sınırsız Dependencies)
+#### 2. NPM Registry (Tier 1, 2, 3... - Unlimited Dependencies)
 - **URL:** `https://registry.npmjs.org/{package}`
-- **Limit:** **Sınırsız!** Her paket için bağımlılık çekilebilir
-- **Kullanım:** `depth` parametresi ile kontrol edilir
-- **Versiyon:** Latest tag veya en güncel versiyon
-- **Alan:** `dependencies` (opsiyonel: `peerDependencies`)
-- **Önbellek:** `results/cache_deps.json` (tekrar sorguları önler)
+- **Limit:** **Unlimited!** Dependencies can be fetched for every package
+- **Usage:** Controlled by `depth` parameter
+- **Version:** Latest tag or most current version
+- **Field:** `dependencies` (optional: `peerDependencies`)
+- **Cache:** `results/cache_deps.json` (prevents re-queries)
 
-**depth Parametresi Nasıl Çalışır:**
+**How the depth Parameter Works:**
 ```
 top_n=1000, depth=1:
-  Kademe 0: 1000 paket (ecosyste.ms - max 2000)
-  Kademe 1: ~3K-5K paket (NPM Registry - sınırsız)
-  Toplam: ~4K-6K düğüm
+  Tier 0: 1000 packages (ecosyste.ms - max 2000)
+  Tier 1: ~3K-5K packages (NPM Registry - unlimited)
+  Total: ~4K-6K nodes
 
 top_n=1000, depth=2:
-  Kademe 0: 1000 paket (ecosyste.ms - max 2000)
-  Kademe 1: ~3K-5K paket (NPM Registry - sınırsız)
-  Kademe 2: ~8K-15K paket (NPM Registry - sınırsız)
-  Toplam: ~12K-20K düğüm
+  Tier 0: 1000 packages (ecosyste.ms - max 2000)
+  Tier 1: ~3K-5K packages (NPM Registry - unlimited)
+  Tier 2: ~8K-15K packages (NPM Registry - unlimited)
+  Total: ~12K-20K nodes
 
 top_n=1000, depth=7:
-  Kademe 0: 1000 paket (ecosyste.ms - max 2000)
-  Kademe 1-7: ~50K-100K paket (NPM Registry - sınırsız)
-  Toplam: ~50K-100K düğüm (!!!) - Önerilmez
+  Tier 0: 1000 packages (ecosyste.ms - max 2000)
+  Tier 1-7: ~50K-100K packages (NPM Registry - unlimited)
+  Total: ~50K-100K nodes (!!!) - Not Recommended
 ```
 
-**Sonuç:** 1000 paket ile depth=7 → 10K-50K düğüm mümkündür!
+**Result:** With 1000 packages and depth=7 → 10K-50K nodes are possible!
 
 #### 3. Libraries.io API (Dependents - Rate Limited)
 - **URL:** `https://libraries.io/api/npm/{package}/dependents`
@@ -853,7 +853,7 @@ analysis/
 Detaylı akademik bağlam için:
 - `../academic/topolojik-risk-degerlendirmesi.md`
 - `../academic/literature.md`
-- `../academic/Readme.md`
+- `../references/Readme.md`
 
 ## 🚨 Sınırlamalar ve Gelecek Çalışmalar
 
