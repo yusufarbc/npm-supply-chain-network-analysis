@@ -2,10 +2,11 @@ import networkx as nx
 import pandas as pd
 import numpy as np
 from datetime import datetime, timezone
+from networkx.algorithms.community import louvain_communities
 
 def calculate_risk_scores(G, betweenness_k=100):
     """
-    Calculates BRS with Abandonware, Clustering, and Downloads.
+    Calculates BRS with Abandonware, Clustering, Downloads, and Community Detection.
     """
     print("Calculating network metrics...")
     
@@ -105,29 +106,46 @@ def calculate_risk_scores(G, betweenness_k=100):
     for k, v in clustering.items():
         norm_clustering_risk[k] = 1.0 - v # Invert
 
-    # --- BRS Calculation (Updated Formula - Balanced) ---
-    # Weights:
-    # STRUCTURAL RISK SCORE (Updated)
-    # Focus: Topological importance and structural fragility.
-    # Removed: Staleness, Maintainer Risk (Lifecycle metrics).
-    
+    # 5. Community Detection (Louvain)
+    print("Detecting communities (Louvain)...")
+    try:
+        # Louvain requires undirected graph
+        G_undirected = G.to_undirected()
+        communities = louvain_communities(G_undirected, seed=42)
+        
+        # Create a map: node -> community_id
+        community_map = {}
+        for idx, community in enumerate(communities):
+            for node in community:
+                community_map[node] = idx
+    except Exception as e:
+        print(f"Community detection failed: {e}. Assigning all to 0.")
+        community_map = {n: 0 for n in G.nodes()}
+
+    # --- BRS Calculation (NEW FORMULA - Topology-Weighted) ---
+    # Based on the validation finding that Betweenness and In-Degree are the
+    # primary drivers of LCC collapse (cascade impact).
+    # This formula heavily weights these two structural metrics.
     # WEIGHTS:
-    # Betweenness: 40% (Critical Bridges - highest impact on fragmentation)
-    # In-Degree:   20% (Major Hubs - Local Graph)
-    # Dependents:  10% (Major Hubs - Global Ecosystem)
-    # Out-Degree:  10% (Complexity/Dependency Chain Risk)
-    # Clustering:  10% (Local Fragility)
-    # Downloads:   10% (Usage Popularity - retained as minor proxy for impact)
+    # Betweenness: 50% (Critical Bridges)
+    # In-Degree:   30% (Major Hubs)
+    # Out-Degree:  10% (Complexity/Attack Surface)
+    # Dependents:  5%  (Global Popularity)
+    # Downloads:   5%  (Usage Popularity)
 
     risk_scores = {}
     for node in G.nodes():
+        # Note: The user's formula used short names like 'norm_in'. We map these
+        # to the actual variable names used in this script (e.g., 'in_degree_norm').
+        # The DataFrame columns are named like `betweenness_norm`, `in_degree_norm`, etc.
+        # The dictionaries used here are `norm_bet`, `norm_in`, etc.
+        
         score = (
-            0.40 * norm_bet.get(node, 0) +          # Critical Bridges
-            0.20 * norm_in.get(node, 0) +           # Local Hubs
-            0.10 * norm_deps.get(node, 0) +         # Global Hubs (Added back)
-            0.10 * norm_out.get(node, 0) +          # Complexity
-            0.10 * norm_clustering_risk.get(node, 0) + # Fragility
-            0.10 * norm_downloads.get(node, 0)      # Popularity
+            0.50 * norm_bet.get(node, 0) +
+            0.30 * norm_in.get(node, 0) +
+            0.10 * norm_out.get(node, 0) +
+            0.05 * norm_deps.get(node, 0) +
+            0.05 * norm_downloads.get(node, 0)
         )
         risk_scores[node] = score
 
@@ -135,6 +153,7 @@ def calculate_risk_scores(G, betweenness_k=100):
     df = pd.DataFrame({
         'package': list(G.nodes()),
         'risk_score': [risk_scores[n] for n in G.nodes()],
+        'community_group': [community_map.get(n, 0) for n in G.nodes()], # NEW: Community ID
         'in_degree': [in_degree[n] for n in G.nodes()],
         'out_degree': [out_degree[n] for n in G.nodes()],
         'betweenness': [betweenness[n] for n in G.nodes()],

@@ -21,6 +21,30 @@ def export_results(risk_df, G, impact_df=None, output_dir='../results'):
         impact_df.to_csv(f'{output_dir}/impact_scores.csv', index=False)
         print(f" - Saved {output_dir}/impact_scores.csv")
 
+    # 1d. Top 20 Lists for Each Metric
+    top_lists_dir = os.path.join(output_dir, 'top_lists')
+    os.makedirs(top_lists_dir, exist_ok=True)
+    
+    metrics_to_export = [
+        ('risk_score', 'top20_risk_score.csv', False), # False = Descending (High is good/bad)
+        ('in_degree', 'top20_in_degree.csv', False),
+        ('out_degree', 'top20_out_degree.csv', False),
+        ('betweenness', 'top20_betweenness.csv', False),
+        ('dependents_count', 'top20_dependents.csv', False),
+        ('downloads', 'top20_downloads.csv', False),
+        ('staleness_days', 'top20_staleness.csv', False),
+        ('clustering', 'top20_clustering.csv', False) 
+    ]
+    
+    print(f"Exporting Top 20 lists to {top_lists_dir}...")
+    for col, filename, ascending in metrics_to_export:
+        if col in risk_df.columns:
+            top_20 = risk_df.sort_values(col, ascending=ascending).head(20)
+            # Select only relevant columns for the top list
+            cols_to_keep = ['package', col, 'risk_score']
+            top_20[cols_to_keep].to_csv(os.path.join(top_lists_dir, filename), index=False)
+            print(f"   - {filename}")
+
     # 2. Gephi Nodes
     # Create numeric ID map for Gephi (safer than string IDs)
     # Sort by rank/risk for consistent IDs
@@ -72,6 +96,52 @@ def export_results(risk_df, G, impact_df=None, output_dir='../results'):
     gephi_edges['Type'] = 'Directed'
     gephi_edges.to_csv(f'{output_dir}/gephi_edges.csv', index=False)
     print(f" - Saved {output_dir}/gephi_edges.csv")
+
+    # 3b. Global Network Statistics Report
+    print("Calculating global network statistics...")
+    stats_file = os.path.join(output_dir, 'network_stats.txt')
+    
+    try:
+        # Basic stats
+        num_nodes = G.number_of_nodes()
+        num_edges = G.number_of_edges()
+        density = nx.density(G)
+        
+        # Connectivity
+        is_strongly_connected = nx.is_strongly_connected(G)
+        is_weakly_connected = nx.is_weakly_connected(G)
+        num_weakly_connected_components = nx.number_weakly_connected_components(G)
+        num_strongly_connected_components = nx.number_strongly_connected_components(G)
+        
+        # Assortativity (Degree correlation)
+        try:
+            degree_assortativity = nx.degree_assortativity_coefficient(G)
+        except:
+            degree_assortativity = float('nan')
+        
+        # Transitivity (Global Clustering)
+        transitivity = nx.transitivity(G)
+        
+        # Average Clustering
+        avg_clustering = nx.average_clustering(G)
+        
+        with open(stats_file, 'w') as f:
+            f.write("=== NPM Supply Chain Network Statistics ===\n")
+            f.write(f"Nodes: {num_nodes}\n")
+            f.write(f"Edges: {num_edges}\n")
+            f.write(f"Density: {density:.6f}\n")
+            f.write(f"Is Strongly Connected: {is_strongly_connected}\n")
+            f.write(f"Is Weakly Connected: {is_weakly_connected}\n")
+            f.write(f"Number of Weakly Connected Components: {num_weakly_connected_components}\n")
+            f.write(f"Number of Strongly Connected Components: {num_strongly_connected_components}\n")
+            f.write(f"Degree Assortativity: {degree_assortativity:.6f}\n")
+            f.write(f"Transitivity: {transitivity:.6f}\n")
+            f.write(f"Average Clustering Coefficient: {avg_clustering:.6f}\n")
+            
+        print(f" - Saved {stats_file}")
+        
+    except Exception as e:
+        print(f"Error calculating network stats: {e}")
 
     # 4. Generate README.md Report
     generate_results_readme(risk_df, G, impact_df, output_dir)

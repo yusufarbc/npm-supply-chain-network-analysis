@@ -71,11 +71,20 @@ x' = \frac{x - \min(x)}{\max(x) - \min(x)}
 Here, $x$ represents the raw value of the relevant metric, and $x'$ represents its normalized value.
 
 \subsection{Composite Risk Score (BRS)}
-After normalization, the values were weighted to calculate the Composite Risk Score (BRS):
-\[
-\text{BRS} = 0.5 \cdot in' + 0.2 \cdot out' + 0.3 \cdot btw'
-\]
-In the formula, in-degree ($w_{in}=0.5$) has the highest weight. This is related to the number of projects the package will affect being a systemic risk indicator. Betweenness ($w_{btw}=0.3$) was included in the model as the second factor. The weight coefficients were determined empirically based on the assumption that "impact radius" is a more critical risk factor than "attack surface" in supply chain attacks.
+> In this study, instead of reducing systemic risk to a single dimension, a hybrid model focused on **"Structural Centrality"** was developed to combine the network's topological structure with the package's prevalence in the ecosystem. After min-max normalization ($x'$), the metrics are synthesized using the following weighted formula:
+>
+> $$
+> \begin{aligned}
+> \text{BRS} = & \ 0.40 \cdot \text{Betweenness}' + 0.20 \cdot \text{InDegree}' \\
+& + 0.10 \cdot \text{OutDegree}' + 0.10 \cdot \text{Clustering}' \\
+& + 0.10 \cdot \text{Dependents}' + 0.10 \cdot \text{Downloads}'
+\end{aligned}
+> $$
+>
+> The rationale for this weighting strategy is as follows:
+> * **Betweenness ($w=0.40$):** The highest weight is assigned to "bridge" nodes that control information and risk flow within the network. This is based on the hypothesis that strategic position is more critical than mere popularity in the propagation of cascade effects.
+> * **In-Degree ($w=0.20$):** Represents the package's direct impact radius within the local network.
+> * **Other Metrics ($w=0.10$ each):** Global metrics (Dependents/Downloads) and local density (Clustering) are included to create a balanced, hybrid risk score.
 
 \subsection{Robustness and Cascade Analyses}
 Targeted attack simulations were applied to test the validity of the model. Packages with high BRS scores were removed from the network, and the effects on the Largest Connected Component (LCC) size and network reachability were analyzed. Additionally, the predictive power of the model was verified with cascade analysis.
@@ -262,6 +271,10 @@ Simulation results support the BRS model. In Figure \ref{fig:impact}, it is seen
 
 \section{Discussion and Conclusion}
 In this study, moving beyond descriptive analyses in the literature, a \textbf{Composite Risk Score (BRS)} model that converts structural risks in the NPM ecosystem into a measurable value is presented. The lack of "operational prioritization" mentioned in the introduction has been addressed with the obtained BRS ranking. Analyses have shown that the security of the network depends not only on popular packages but also on infrastructural bridge packages like \texttt{jest-circus} or \texttt{@babel/core}. The findings confirm the "small-world" network structure stated by Zimmermann et al. \cite{zimmermann2019smallworld}; however, it expands the literature by revealing that risk is concentrated not only in popular packages but also in intermediate layer packages acting as bridges.
+
+> **Scope of Impact Analysis**
+>
+> In this study, "Cascade Impact" simulations were performed on the constructed **"Critical Backbone Graph"** rather than the entire NPM registry, due to computational complexity and data access constraints. This approach relies on the "Supply Chain Backbone" hypothesis: The topological disintegration (loss of LCC) of this dense network, composed of critical infrastructure packages, serves as a reliable mathematical proxy for the functional failure of millions of dependent projects. Therefore, the structural collapse of the local backbone is interpreted as a direct indicator of global systemic risk.
 
 \subsection{Limitations of the Study}
 The analysis is limited to static dependencies defined in \texttt{package.json} files. Dynamically loaded packages at runtime or developer reputation are excluded from the scope at this stage. Additionally, the analysis was performed on an instantaneous snapshot and does not include the temporal evolution of the network. Similarly, legal risks such as license compliance \cite{ahlstrom2025licensing} are outside the scope of this study.

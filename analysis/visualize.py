@@ -208,42 +208,31 @@ def plot_brs_components(risk_df, output_dir='../results/plots'):
     """
     Stacked bar chart showing the contribution of each component to BRS for top packages.
     Demonstrates how different factors contribute to overall risk.
-    Updated for Balanced Model.
+    Updated for Structural Model.
     """
     ensure_plot_dir(output_dir)
     
-    # Select top 15 packages
-    top_df = risk_df.head(15).copy()
+    # Select top 20 packages
+    top_df = risk_df.head(20).copy()
     
     # Normalize components (weights must match metrics.py)
-    # Popularity (30%)
-    c_in_degree = top_df['in_degree_norm'].values * 0.10
+    # Structural (80%)
+    c_betweenness = top_df['betweenness_norm'].values * 0.40
+    c_in_degree = top_df['in_degree_norm'].values * 0.20
+    c_out_degree = top_df['out_degree_norm'].values * 0.10
+    c_clustering = top_df['clustering_risk_norm'].values * 0.10
+    
+    # Popularity (20%)
     c_dependents = top_df['dependents_count_norm'].values * 0.10
     c_downloads = top_df['downloads_norm'].values * 0.10
     
-    # Structure (40%)
-    c_betweenness = top_df['betweenness_norm'].values * 0.20
-    c_clustering = top_df['clustering_risk_norm'].values * 0.10
-    c_out_degree = top_df['out_degree_norm'].values * 0.10
-    
-    # Lifecycle (30%)
-    c_staleness = top_df['staleness_norm'].values * 0.20
-    # Maintainer risk is often 0 or low variance, but let's include if available
-    if 'maintainer_risk_norm' in top_df.columns:
-        c_maintainer = top_df['maintainer_risk_norm'].values * 0.10
-    else:
-        # Fallback if not normalized in df, though metrics.py should have it. 
-        # If missing, we just skip or assume 0 for plot safety
-        c_maintainer = np.zeros(len(top_df))
-
     components = {
-        'In-Degree (10%)': c_in_degree,
+        'Betweenness (40%)': c_betweenness,
+        'In-Degree (20%)': c_in_degree,
         'Dependents (10%)': c_dependents,
-        'Downloads (10%)': c_downloads,
-        'Betweenness (20%)': c_betweenness,
-        'Clustering (10%)': c_clustering,
         'Out-Degree (10%)': c_out_degree,
-        'Staleness (20%)': c_staleness
+        'Clustering (10%)': c_clustering,
+        'Downloads (10%)': c_downloads
     }
     
     fig, ax = plt.subplots(figsize=(16, 9))
@@ -254,13 +243,12 @@ def plot_brs_components(risk_df, output_dir='../results/plots'):
     bottom = np.zeros(len(top_df))
     # Colors for each component
     colors = [
-        '#2ECC71', # In-Degree (Green)
+        '#2980B9', # Betweenness (Blue) - Primary
+        '#2ECC71', # In-Degree (Green) - Secondary
         '#F39C12', # Dependents (Orange)
-        '#F1C40F', # Downloads (Yellow)
-        '#2980B9', # Betweenness (Blue)
-        '#8E44AD', # Clustering (Purple)
         '#16A085', # Out-Degree (Teal)
-        '#C0392B'  # Staleness (Red)
+        '#8E44AD', # Clustering (Purple)
+        '#F1C40F'  # Downloads (Yellow)
     ]
     
     for idx, (component, values) in enumerate(components.items()):
@@ -268,7 +256,7 @@ def plot_brs_components(risk_df, output_dir='../results/plots'):
         bottom += values
     
     ax.set_ylabel('BRS Contribution (Weighted Score)')
-    ax.set_title('BRS Composition: Top 15 Critical Packages (Balanced Model)')
+    ax.set_title('BRS Composition: Top 20 Critical Packages (Structural Model)')
     ax.set_xticks(x)
     ax.set_xticklabels(top_df['package'], rotation=45, ha='right')
     ax.legend(loc='upper right', bbox_to_anchor=(1.15, 1), title="Risk Components")
@@ -521,9 +509,9 @@ def plot_top20_brs_component_lines(risk_df, impact_df, output_dir='../results/pl
     ).fillna(0)
     
     # Prepare metrics for plotting - all already normalized
-    # Updated for Balanced Model
+    # Updated for Structural Model
     metrics_to_plot = ['in_degree_norm', 'betweenness_norm', 'dependents_count_norm', 
-                       'downloads_norm', 'staleness_norm', 'risk_score']
+                       'downloads_norm', 'out_degree_norm', 'clustering_risk_norm', 'risk_score']
     
     # Also normalize cascade impact to 0-1 scale for fair comparison
     cascade_norm = (top20_with_impact['cascade_impact'] - top20_with_impact['cascade_impact'].min()) / \
@@ -538,7 +526,8 @@ def plot_top20_brs_component_lines(risk_df, impact_df, output_dir='../results/pl
         'betweenness_norm': '#2980B9',    # Blue - Structural importance
         'dependents_count_norm': '#F39C12', # Orange - Ecosystem impact
         'downloads_norm': '#F1C40F',      # Yellow - Usage intensity
-        'staleness_norm': '#C0392B',      # Red - Abandonware risk
+        'out_degree_norm': '#16A085',     # Teal - Complexity
+        'clustering_risk_norm': '#8E44AD', # Purple - Fragility
         'risk_score': '#2D3436'           # Dark gray - BRS composite
     }
     
@@ -547,7 +536,8 @@ def plot_top20_brs_component_lines(risk_df, impact_df, output_dir='../results/pl
         'betweenness_norm': 'Betweenness (Structural Role)',
         'dependents_count_norm': 'Dependents Count (Ecosystem Impact)',
         'downloads_norm': 'Downloads (Usage Intensity)',
-        'staleness_norm': 'Staleness (Abandonware Risk)',
+        'out_degree_norm': 'Out-Degree (Complexity)',
+        'clustering_risk_norm': 'Clustering Risk (Fragility)',
         'risk_score': 'BRS (Composite Risk Score)'
     }
     
@@ -626,4 +616,65 @@ def plot_top20_brs_component_lines(risk_df, impact_df, output_dir='../results/pl
     plt.savefig(f'{output_dir}/top20_brs_component_lines.png', dpi=300, bbox_inches='tight')
     plt.show()
     print(f" - Saved {output_dir}/top20_brs_component_lines.png")
+
+def plot_brs_vs_global_reach(risk_df, output_dir='../results/plots'):
+    """
+    Scatter plot comparing BRS vs Global Dependents (Log Scale).
+    Validates if BRS correlates with global ecosystem importance.
+    """
+    ensure_plot_dir(output_dir)
+    
+    plt.figure(figsize=(12, 8))
+    
+    # Use log scale for dependents because it follows power law
+    # Filter out 0 dependents to avoid log(0) error
+    plot_df = risk_df[risk_df['dependents_count'] > 0].copy()
+    
+    # Create scatter plot
+    scatter = sns.scatterplot(
+        data=plot_df, 
+        x='risk_score', 
+        y='dependents_count',
+        hue='type', # Color by package type (seed vs discovered) if available
+        style='type',
+        palette='deep',
+        s=80,
+        alpha=0.7,
+        edgecolor='w'
+    )
+    
+    plt.yscale('log')
+    
+    # Add regression line (log-linear)
+    # We need to calculate it manually for log scale visualization
+    try:
+        x = plot_df['risk_score']
+        y = np.log10(plot_df['dependents_count'])
+        m, b = np.polyfit(x, y, 1)
+        plt.plot(x, 10**(m*x + b), color='red', alpha=0.5, linestyle='--', label='Trend Line')
+    except:
+        pass
+
+    # Annotate top 5 BRS packages
+    top_brs = plot_df.sort_values('risk_score', ascending=False).head(5)
+    for _, row in top_brs.iterrows():
+        plt.text(
+            row['risk_score'], 
+            row['dependents_count'], 
+            f"  {row['package']}", 
+            fontsize=9, 
+            va='center',
+            fontweight='bold'
+        )
+
+    plt.title('Validation: BRS vs. Global Ecosystem Reach (Dependents)', fontsize=14)
+    plt.xlabel('Behavioral Risk Score (BRS)', fontsize=12)
+    plt.ylabel('Global Dependents Count (Log Scale)', fontsize=12)
+    plt.legend(title='Package Type')
+    plt.grid(True, which="both", ls="-", alpha=0.2)
+    
+    plt.tight_layout()
+    plt.savefig(f'{output_dir}/brs_vs_global_reach.png', dpi=300)
+    plt.show()
+    print(f" - Saved {output_dir}/brs_vs_global_reach.png")
 

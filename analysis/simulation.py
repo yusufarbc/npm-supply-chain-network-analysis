@@ -16,19 +16,24 @@ def simulate_attacks(G, risk_df, num_removals=50):
     }
     
     # Initial LCC
-    initial_lcc = len(max(nx.connected_components(G.to_undirected()), key=len))
+    # Optimization: Create undirected graph ONCE
+    G_undirected_base = G.to_undirected()
+    initial_lcc = len(max(nx.connected_components(G_undirected_base), key=len))
     results['targeted_lcc'].append(initial_lcc)
     results['random_lcc'].append(initial_lcc)
     
     print(f"Running simulations (Targeted vs Random) for {num_removals} steps...")
     
     # Targeted Simulation
-    G_target = G.copy()
+    # Optimization: Work on undirected copy directly since LCC doesn't care about direction usually
+    # (or if it does, we should have used strongly_connected_components, but standard robustness uses LCC on undirected)
+    G_target = G_undirected_base.copy()
+    
     for node in tqdm(targets_targeted, desc="Targeted Attack"):
         if node in G_target:
             G_target.remove_node(node)
         if len(G_target) > 0:
-            lcc = len(max(nx.connected_components(G_target.to_undirected()), key=len))
+            lcc = len(max(nx.connected_components(G_target), key=len))
         else:
             lcc = 0
         results['targeted_lcc'].append(lcc)
@@ -42,12 +47,12 @@ def simulate_attacks(G, risk_df, num_removals=50):
     print(f"Running {random_runs} random simulations to average...")
     
     for run in range(random_runs):
-        G_random = G.copy()
+        G_random = G_undirected_base.copy()
         # Resample random targets for each run
         current_random_targets = random.sample(list(G.nodes()), min(len(G), num_removals))
         
         # Initial state for this run
-        lcc = len(max(nx.connected_components(G_random.to_undirected()), key=len))
+        lcc = len(max(nx.connected_components(G_random), key=len))
         avg_random_lcc[0] += lcc
         
         for i, node in enumerate(current_random_targets):
@@ -55,7 +60,7 @@ def simulate_attacks(G, risk_df, num_removals=50):
                 G_random.remove_node(node)
             
             if len(G_random) > 0:
-                lcc = len(max(nx.connected_components(G_random.to_undirected()), key=len))
+                lcc = len(max(nx.connected_components(G_random), key=len))
             else:
                 lcc = 0
             avg_random_lcc[i+1] += lcc
@@ -70,7 +75,9 @@ def calculate_single_node_impact(G, risk_df, sample_size=100):
     Calculates the impact of removing a single node on the LCC size.
     Returns a DataFrame with risk scores and impact values.
     """
-    initial_lcc = len(max(nx.connected_components(G.to_undirected()), key=len))
+    # Optimization: Use undirected graph base
+    G_undirected_base = G.to_undirected()
+    initial_lcc = len(max(nx.connected_components(G_undirected_base), key=len))
     
     # Select top N nodes by risk score to analyze
     # (Analyzing all nodes might be too slow for large graphs)
@@ -86,12 +93,12 @@ def calculate_single_node_impact(G, risk_df, sample_size=100):
             continue
             
         # Create a temporary view/copy with the node removed
-        # Note: G.copy() is safer but slower. For 1500 nodes it's fine.
-        G_temp = G.copy()
+        # Optimization: Copy undirected graph directly
+        G_temp = G_undirected_base.copy()
         G_temp.remove_node(node)
         
         if len(G_temp) > 0:
-            new_lcc = len(max(nx.connected_components(G_temp.to_undirected()), key=len))
+            new_lcc = len(max(nx.connected_components(G_temp), key=len))
         else:
             new_lcc = 0
             

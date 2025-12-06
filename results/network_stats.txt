@@ -1,0 +1,11 @@
+=== NPM Supply Chain Network Statistics ===
+Nodes: 2183
+Edges: 5417
+Density: 0.001137
+Is Strongly Connected: False
+Is Weakly Connected: False
+Number of Weakly Connected Components: 159
+Number of Strongly Connected Components: 2178
+Degree Assortativity: -0.083775
+Transitivity: 0.064768
+Average Clustering Coefficient: 0.100154

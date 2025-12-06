@@ -7,10 +7,20 @@ The analysis in this folder runs **only through Jupyter Notebook**. Please open 
 Analysis creates Gephi-compatible files in the `results/` directory:
 
 ### 1. `gephi_nodes.csv` (Node List)
-Contains 12 columns (Id, Label, package, in_degree, out_degree, betweenness, risk_score, is_topN, dependents_count, downloads, rank, is_seed).
+Contains columns like `Id`, `Label`, `RiskScore`, `InDegree`, `OutDegree`, `Betweenness`, `DependentsCount`, `Downloads`, `CommunityGroup`.
 
 ### 2. `gephi_edges.csv` (Edge List)
 Contains 3 columns (Source, Target, Type).
+
+### 3. Top 20 Lists (`results/top_lists/`)
+CSV files containing the top 20 packages for each metric:
+- `top20_risk_score.csv`
+- `top20_betweenness.csv`
+- `top20_in_degree.csv`
+- ...and others.
+
+### 4. Network Statistics (`results/network_stats.txt`)
+A text report containing global network metrics such as Density, Transitivity, Assortativity, and Component counts.
 
 ### Opening in Gephi
 
@@ -31,8 +41,8 @@ Contains 3 columns (Source, Target, Type).
 ### Visualization Recommendations
 
 - **Layout:** Force Atlas 2 (Scaling: 10.0, Prevent Overlap: ✓)
-- **Node Size:** Ranking → in_degree or dependents_count
-- **Node Color:** Ranking → risk_score (Green-Red)
+- **Node Size:** Ranking → InDegree or Betweenness
+- **Node Color:** Partition → CommunityGroup (for clusters) OR Ranking → RiskScore (Green-Red)
 
 ## 🎯 Goal
 
@@ -40,8 +50,8 @@ Criticality mapping in the software supply chain: Analyzing the topological risk
 
 1. **Data Collection:** Fetch the most popular NPM packages and their dependencies
 2. **Network Construction:** Create a directed dependency graph (Dependent → Dependency)
-3. **Metric Calculation:** In-degree, out-degree, betweenness centrality
-4. **Risk Scoring:** Generate Composite Risk Score (BRS) using min-max normalization
+3. **Metric Calculation:** In-degree, out-degree, betweenness centrality, clustering, community detection
+4. **Risk Scoring:** Generate Behavioral Risk Score (BRS) using weighted structural metrics
 5. **Expansion (Optional):** Add packages dependent on Top N (1st degree expansion)
 
 ## 📊 Data Source

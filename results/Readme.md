@@ -14,154 +14,154 @@ Packages with the highest Composite Risk Score (BRS).
 
 | Package | Risk Score | In-Degree | Betweenness |
 | :--- | :--- | :--- | :--- |
-| es-abstract | 0.7610 | 17.0000 | 0.0011 |
-| reflect.getprototypeof | 0.6051 | 2.0000 | 0.0005 |
-| side-channel | 0.5871 | 4.0000 | 0.0003 |
-| setprototypeof | 0.5862 | 1.0000 | 0.0000 |
-| require-directory | 0.5843 | 0.0000 | 0.0000 |
-| unpipe | 0.5840 | 1.0000 | 0.0000 |
-| merge2 | 0.5820 | 1.0000 | 0.0000 |
-| utils-merge | 0.5820 | 0.0000 | 0.0000 |
-| array-union | 0.5819 | 0.0000 | 0.0000 |
-| util-deprecate | 0.5809 | 1.0000 | 0.0000 |
-| retry | 0.5809 | 2.0000 | 0.0000 |
-| default-gateway | 0.5809 | 1.0000 | 0.0001 |
-| escape-string-regexp | 0.5807 | 4.0000 | 0.0000 |
-| gensync | 0.5804 | 1.0000 | 0.0000 |
-| has-value | 0.5804 | 1.0000 | 0.0000 |
-| path-parse | 0.5801 | 1.0000 | 0.0000 |
-| set-blocking | 0.5799 | 1.0000 | 0.0000 |
-| has-values | 0.5792 | 1.0000 | 0.0000 |
-| asynckit | 0.5792 | 1.0000 | 0.0000 |
-| to-fast-properties | 0.5791 | 1.0000 | 0.0000 |
+| jest | 0.5975 | 2.0000 | 0.0009 |
+| @jest/core | 0.5265 | 2.0000 | 0.0007 |
+| tslib | 0.3945 | 156.0000 | 0.0000 |
+| es-abstract | 0.3799 | 17.0000 | 0.0004 |
+| cypress | 0.3427 | 1.0000 | 0.0004 |
+| @babel/helper-plugin-utils | 0.3041 | 110.0000 | 0.0000 |
+| @smithy/types | 0.2578 | 94.0000 | 0.0000 |
+| jest-snapshot | 0.2244 | 6.0000 | 0.0002 |
+| request | 0.2242 | 1.0000 | 0.0002 |
+| puppeteer | 0.2220 | 1.0000 | 0.0002 |
+| call-bind | 0.2139 | 36.0000 | 0.0001 |
+| debug | 0.2051 | 51.0000 | 0.0000 |
+| express | 0.2036 | 2.0000 | 0.0001 |
+| jest-config | 0.2025 | 2.0000 | 0.0001 |
+| d3 | 0.2019 | 1.0000 | 0.0002 |
+| get-intrinsic | 0.1937 | 22.0000 | 0.0001 |
+| @aws-sdk/types | 0.1922 | 57.0000 | 0.0000 |
+| @aws-sdk/client-s3 | 0.1898 | 1.0000 | 0.0001 |
+| firebase-admin | 0.1866 | 1.0000 | 0.0002 |
+| google-auth-library | 0.1833 | 3.0000 | 0.0002 |
 
 ## 🔗 Top 20 Most Depended-upon Packages (In-Degree)
 Packages that have the most direct dependents in this network.
 
 | Package | In-Degree | Out-Degree | Risk Score |
 | :--- | :--- | :--- | :--- |
-| tslib | 156.0000 | 0.0000 | 0.4968 |
-| @babel/helper-plugin-utils | 110.0000 | 0.0000 | 0.4844 |
-| @smithy/types | 94.0000 | 1.0000 | 0.4248 |
-| @aws-sdk/types | 57.0000 | 2.0000 | 0.4151 |
-| debug | 51.0000 | 1.0000 | 0.5013 |
-| @smithy/protocol-http | 45.0000 | 2.0000 | 0.3857 |
-| @types/node | 42.0000 | 1.0000 | 0.4945 |
-| call-bound | 41.0000 | 2.0000 | 0.4713 |
-| postcss-value-parser | 39.0000 | 0.0000 | 0.5396 |
-| call-bind | 36.0000 | 4.0000 | 0.5748 |
-| @smithy/util-utf8 | 35.0000 | 2.0000 | 0.4153 |
-| @smithy/node-config-provider | 34.0000 | 4.0000 | 0.3778 |
-| es-errors | 33.0000 | 0.0000 | 0.4850 |
-| chalk | 32.0000 | 0.0000 | 0.5006 |
-| @aws-sdk/core | 32.0000 | 13.0000 | 0.3099 |
-| @babel/types | 32.0000 | 2.0000 | 0.4440 |
-| @smithy/util-middleware | 29.0000 | 2.0000 | 0.3707 |
-| define-properties | 29.0000 | 3.0000 | 0.5486 |
-| @smithy/smithy-client | 29.0000 | 7.0000 | 0.3065 |
-| @csstools/css-tokenizer | 28.0000 | 0.0000 | 0.4359 |
+| tslib | 156.0000 | 0.0000 | 0.3945 |
+| @babel/helper-plugin-utils | 110.0000 | 0.0000 | 0.3041 |
+| @smithy/types | 94.0000 | 1.0000 | 0.2578 |
+| @aws-sdk/types | 57.0000 | 2.0000 | 0.1922 |
+| debug | 51.0000 | 1.0000 | 0.2051 |
+| @smithy/protocol-http | 45.0000 | 2.0000 | 0.1633 |
+| @types/node | 42.0000 | 1.0000 | 0.1806 |
+| call-bound | 41.0000 | 2.0000 | 0.1261 |
+| postcss-value-parser | 39.0000 | 0.0000 | 0.1668 |
+| call-bind | 36.0000 | 4.0000 | 0.2139 |
+| @smithy/util-utf8 | 35.0000 | 2.0000 | 0.1524 |
+| @smithy/node-config-provider | 34.0000 | 4.0000 | 0.1486 |
+| es-errors | 33.0000 | 0.0000 | 0.1078 |
+| chalk | 32.0000 | 0.0000 | 0.1557 |
+| @babel/types | 32.0000 | 2.0000 | 0.1675 |
+| @aws-sdk/core | 32.0000 | 13.0000 | 0.1695 |
+| @smithy/smithy-client | 29.0000 | 7.0000 | 0.1479 |
+| define-properties | 29.0000 | 3.0000 | 0.1462 |
+| @smithy/util-middleware | 29.0000 | 2.0000 | 0.1310 |
+| @csstools/css-tokenizer | 28.0000 | 0.0000 | 0.1233 |
 
 ## 📦 Top 20 Most Dependent Packages (Out-Degree)
 Packages that have the most dependencies (highest complexity).
 
 | Package | Out-Degree | In-Degree | Risk Score |
 | :--- | :--- | :--- | :--- |
-| telecom-mas-agent | 83.0000 | 1.0000 | 0.5158 |
-| @babel/preset-env | 70.0000 | 3.0000 | 0.4937 |
-| postcss-preset-env | 69.0000 | 1.0000 | 0.3818 |
-| @aws-sdk/client-s3 | 55.0000 | 1.0000 | 0.3772 |
-| es-abstract | 54.0000 | 17.0000 | 0.7610 |
-| react-scripts | 48.0000 | 0.0000 | 0.4862 |
-| @aws-sdk/client-s3-control | 45.0000 | 1.0000 | 0.2888 |
-| @aws-sdk/client-lambda | 44.0000 | 1.0000 | 0.3150 |
-| @aws-sdk/client-dynamodb | 42.0000 | 1.0000 | 0.3439 |
-| cypress | 42.0000 | 1.0000 | 0.3805 |
-| @aws-sdk/client-cloudfront | 41.0000 | 1.0000 | 0.3188 |
-| @aws-sdk/client-rds | 41.0000 | 1.0000 | 0.3198 |
-| @aws-sdk/client-cloudwatch | 41.0000 | 1.0000 | 0.3200 |
-| @aws-sdk/client-ec2 | 41.0000 | 1.0000 | 0.3293 |
-| @aws-sdk/client-sqs | 41.0000 | 1.0000 | 0.3369 |
-| @aws-sdk/client-iam | 40.0000 | 1.0000 | 0.3392 |
-| @aws-sdk/client-cloudformation | 40.0000 | 1.0000 | 0.3270 |
-| @aws-sdk/client-ses | 40.0000 | 1.0000 | 0.3358 |
-| @aws-sdk/client-cloudhsm | 39.0000 | 1.0000 | 0.2616 |
-| @aws-sdk/client-kms | 39.0000 | 1.0000 | 0.3163 |
+| telecom-mas-agent | 83.0000 | 1.0000 | 0.1482 |
+| @babel/preset-env | 70.0000 | 3.0000 | 0.1797 |
+| postcss-preset-env | 69.0000 | 1.0000 | 0.1678 |
+| @aws-sdk/client-s3 | 55.0000 | 1.0000 | 0.1898 |
+| es-abstract | 54.0000 | 17.0000 | 0.3799 |
+| react-scripts | 48.0000 | 0.0000 | 0.1376 |
+| @aws-sdk/client-s3-control | 45.0000 | 1.0000 | 0.1119 |
+| @aws-sdk/client-lambda | 44.0000 | 1.0000 | 0.1332 |
+| cypress | 42.0000 | 1.0000 | 0.3427 |
+| @aws-sdk/client-dynamodb | 42.0000 | 1.0000 | 0.1364 |
+| @aws-sdk/client-rds | 41.0000 | 1.0000 | 0.1146 |
+| @aws-sdk/client-cloudwatch | 41.0000 | 1.0000 | 0.1169 |
+| @aws-sdk/client-ec2 | 41.0000 | 1.0000 | 0.1194 |
+| @aws-sdk/client-cloudfront | 41.0000 | 1.0000 | 0.1116 |
+| @aws-sdk/client-sqs | 41.0000 | 1.0000 | 0.1228 |
+| @aws-sdk/client-ses | 40.0000 | 1.0000 | 0.1179 |
+| @aws-sdk/client-iam | 40.0000 | 1.0000 | 0.1196 |
+| @aws-sdk/client-cloudformation | 40.0000 | 1.0000 | 0.1135 |
+| @aws-sdk/client-cloudsearch | 39.0000 | 1.0000 | 0.0823 |
+| @aws-sdk/client-sns | 39.0000 | 1.0000 | 0.1130 |
 
 ## 🌉 Top 20 Bridges (Betweenness Centrality)
 Packages that act as bridges or bottlenecks in the network.
 
 | Package | Betweenness | In-Degree | Risk Score |
 | :--- | :--- | :--- | :--- |
-| es-abstract | 0.0011 | 17.0000 | 0.7610 |
-| reflect.getprototypeof | 0.0005 | 2.0000 | 0.6051 |
-| side-channel | 0.0003 | 4.0000 | 0.5871 |
-| get-intrinsic | 0.0002 | 22.0000 | 0.5616 |
-| which-builtin-type | 0.0002 | 1.0000 | 0.5763 |
-| @aws-sdk/nested-clients | 0.0002 | 4.0000 | 0.3376 |
-| execa | 0.0002 | 3.0000 | 0.4285 |
-| qs | 0.0001 | 8.0000 | 0.5251 |
-| @jest/fake-timers | 0.0001 | 4.0000 | 0.4162 |
-| default-gateway | 0.0001 | 1.0000 | 0.5809 |
-| @aws-sdk/core | 0.0001 | 32.0000 | 0.3099 |
-| es-iterator-helpers | 0.0001 | 1.0000 | 0.5514 |
-| cross-spawn | 0.0001 | 4.0000 | 0.5715 |
-| typed-array-length | 0.0001 | 1.0000 | 0.5471 |
-| string.prototype.matchall | 0.0001 | 2.0000 | 0.5560 |
-| typed-array-byte-offset | 0.0001 | 1.0000 | 0.5418 |
-| jest-message-util | 0.0001 | 10.0000 | 0.4338 |
-| super-regex | 0.0001 | 2.0000 | 0.4185 |
-| unbox-primitive | 0.0001 | 1.0000 | 0.5465 |
-| side-channel-map | 0.0001 | 2.0000 | 0.4389 |
+| jest | 0.0009 | 2.0000 | 0.5975 |
+| @jest/core | 0.0007 | 2.0000 | 0.5265 |
+| cypress | 0.0004 | 1.0000 | 0.3427 |
+| es-abstract | 0.0004 | 17.0000 | 0.3799 |
+| puppeteer | 0.0002 | 1.0000 | 0.2220 |
+| request | 0.0002 | 1.0000 | 0.2242 |
+| firebase-admin | 0.0002 | 1.0000 | 0.1866 |
+| jest-snapshot | 0.0002 | 6.0000 | 0.2244 |
+| d3 | 0.0002 | 1.0000 | 0.2019 |
+| google-auth-library | 0.0002 | 3.0000 | 0.1833 |
+| @puppeteer/browsers | 0.0001 | 2.0000 | 0.1614 |
+| jwks-rsa | 0.0001 | 1.0000 | 0.1630 |
+| jest-config | 0.0001 | 2.0000 | 0.2025 |
+| aws-sdk | 0.0001 | 1.0000 | 0.1684 |
+| express | 0.0001 | 2.0000 | 0.2036 |
+| winston | 0.0001 | 1.0000 | 0.1608 |
+| jest-cli | 0.0001 | 1.0000 | 0.1626 |
+| jsonwebtoken | 0.0001 | 3.0000 | 0.1598 |
+| util | 0.0001 | 1.0000 | 0.1501 |
+| got | 0.0001 | 1.0000 | 0.1581 |
 
 ## 🌍 Top 20 Ecosystem Critical (Dependents Count)
 Packages with the highest number of dependents in the entire NPM ecosystem.
 
 | Package | Dependents Count | In-Degree | Risk Score |
 | :--- | :--- | :--- | :--- |
-| supports-color | 5,765,200 | 3.0000 | 0.5244 |
-| fs.realpath | 5,532,257 | 0.0000 | 0.5761 |
-| fill-range | 5,461,792 | 1.0000 | 0.4938 |
-| to-regex-range | 5,300,496 | 1.0000 | 0.5394 |
-| fsevents | 5,289,351 | 1.0000 | 0.5007 |
-| resolve | 5,229,428 | 7.0000 | 0.5112 |
-| statuses | 5,106,018 | 4.0000 | 0.4274 |
-| setprototypeof | 5,068,682 | 1.0000 | 0.5862 |
-| unpipe | 5,053,604 | 1.0000 | 0.5840 |
-| fresh | 5,019,855 | 2.0000 | 0.4852 |
-| send | 4,993,661 | 2.0000 | 0.4697 |
-| serve-static | 4,975,561 | 1.0000 | 0.4458 |
-| fast-deep-equal | 4,968,905 | 6.0000 | 0.5776 |
-| fast-json-stable-stringify | 4,957,551 | 3.0000 | 0.5611 |
-| utils-merge | 4,948,638 | 0.0000 | 0.5820 |
-| finalhandler | 4,946,523 | 1.0000 | 0.3578 |
-| readdirp | 4,905,460 | 1.0000 | 0.4029 |
-| yargs | 4,893,685 | 2.0000 | 0.4934 |
-| camelcase | 4,809,686 | 5.0000 | 0.4829 |
-| uri-js | 4,745,435 | 0.0000 | 0.5764 |
+| supports-color | 5,765,200 | 3.0000 | 0.1047 |
+| fs.realpath | 5,532,257 | 0.0000 | 0.0937 |
+| fill-range | 5,461,792 | 1.0000 | 0.1035 |
+| to-regex-range | 5,300,496 | 1.0000 | 0.1002 |
+| fsevents | 5,289,351 | 1.0000 | 0.0925 |
+| resolve | 5,229,428 | 7.0000 | 0.1127 |
+| statuses | 5,106,018 | 4.0000 | 0.1022 |
+| setprototypeof | 5,068,682 | 1.0000 | 0.0956 |
+| unpipe | 5,053,604 | 1.0000 | 0.0945 |
+| fresh | 5,019,855 | 2.0000 | 0.0968 |
+| send | 4,993,661 | 2.0000 | 0.1103 |
+| serve-static | 4,975,561 | 1.0000 | 0.0986 |
+| fast-deep-equal | 4,968,905 | 6.0000 | 0.1057 |
+| fast-json-stable-stringify | 4,957,551 | 3.0000 | 0.0992 |
+| utils-merge | 4,948,638 | 0.0000 | 0.0919 |
+| finalhandler | 4,946,523 | 1.0000 | 0.1024 |
+| readdirp | 4,905,460 | 1.0000 | 0.0962 |
+| yargs | 4,893,685 | 2.0000 | 0.1199 |
+| camelcase | 4,809,686 | 5.0000 | 0.1048 |
+| uri-js | 4,745,435 | 0.0000 | 0.0944 |
 
 ## 💥 Top 20 Cascade Impact (Network Damage)
 Packages that cause the largest reduction in network connectivity (LCC) when removed.
 
 | Package | Cascade Impact | Risk Score |
 | :--- | :--- | :--- |
-| escape-string-regexp | 7.0000 | 0.5807 |
-| source-map-resolve | 6.0000 | 0.5781 |
-| indent-string | 3.0000 | 0.5732 |
-| cross-spawn | 3.0000 | 0.5715 |
-| renderkid | 3.0000 | 0.5731 |
-| websocket-driver | 3.0000 | 0.5746 |
-| is-plain-obj | 2.0000 | 0.5742 |
-| redent | 2.0000 | 0.5777 |
-| is-wsl | 2.0000 | 0.5733 |
-| shebang-command | 2.0000 | 0.5773 |
-| saxes | 2.0000 | 0.5772 |
-| gzip-size | 2.0000 | 0.5728 |
-| loose-envify | 2.0000 | 0.5739 |
-| es-abstract | 2.0000 | 0.7610 |
-| makeerror | 2.0000 | 0.5742 |
-| damerau-levenshtein | 1.0000 | 0.5732 |
-| to-object-path | 1.0000 | 0.5742 |
-| json-schema | 1.0000 | 0.5739 |
-| define-lazy-prop | 1.0000 | 0.5738 |
-| tmpl | 1.0000 | 0.5734 |
+| workbox-build | 19.0000 | 0.3074 |
+| cypress | 17.0000 | 0.3009 |
+| @types/node | 15.0000 | 0.3526 |
+| postcss-preset-env | 14.0000 | 0.3495 |
+| react-scripts | 14.0000 | 0.3166 |
+| jsdom | 8.0000 | 0.2995 |
+| eslint | 8.0000 | 0.3208 |
+| @babel/types | 7.0000 | 0.3924 |
+| @babel/helper-plugin-utils | 7.0000 | 0.4254 |
+| execa | 7.0000 | 0.2960 |
+| cssnano-preset-default | 6.0000 | 0.3084 |
+| browserslist | 4.0000 | 0.4419 |
+| yargs | 4.0000 | 0.2989 |
+| readable-stream | 4.0000 | 0.2964 |
+| chalk | 4.0000 | 0.3208 |
+| minimatch | 4.0000 | 0.3212 |
+| express | 4.0000 | 0.3117 |
+| postcss | 3.0000 | 0.3146 |
+| jest-snapshot | 3.0000 | 0.3011 |
+| webpack-dev-server | 3.0000 | 0.3087 |
 

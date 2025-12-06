@@ -109,14 +109,20 @@ x' = \frac{x - \min(x)}{\max(x) - \min(x)}
 Burada $x$, ilgili metriğin ham değerini; $x'$ ise normalize edilmiş değerini ifade eder.
 
 \subsection{Bileşik Risk Skoru (BRS)}
-Normalizasyon sonrası değerler ağırlıklandırılarak Bileşik Risk Skoru (BRS) hesaplanmıştır:
-\[
-\text{BRS} = 0.5 \cdot in' + 0.2 \cdot out' + 0.3 \cdot btw'
-\]
-Formülde in-degree ($w_{in}=0.5$) en yüksek ağırlığa sahiptir. 
-Bu durum, paketin etkileyeceği proje sayısının sistemik risk göstergesi olmasıyla ilişkilidir. 
-Betweenness ($w_{btw}=0.3$) ikinci faktör olarak modele dahil edilmiştir. 
-Ağırlık katsayıları, tedarik zinciri saldırılarında "etki alanı"nın (impact radius), "saldırı yüzeyi"nden daha kritik bir risk faktörü olduğu varsayımına dayanılarak ampirik olarak belirlenmiştir.
+> In this study, instead of reducing systemic risk to a single dimension, a hybrid model focused on **"Structural Centrality"** was developed to combine the network's topological structure with the package's prevalence in the ecosystem. After min-max normalization ($x'$), the metrics are synthesized using the following weighted formula:
+>
+> $$
+> \begin{aligned}
+> \text{BRS} = & \ 0.40 \cdot \text{Betweenness}' + 0.20 \cdot \text{InDegree}' \\
+& + 0.10 \cdot \text{OutDegree}' + 0.10 \cdot \text{Clustering}' \\
+& + 0.10 \cdot \text{Dependents}' + 0.10 \cdot \text{Downloads}'
+\end{aligned}
+> $$
+>
+> The rationale for this weighting strategy is as follows:
+> * **Betweenness ($w=0.40$):** The highest weight is assigned to "bridge" nodes that control information and risk flow within the network. This is based on the hypothesis that strategic position is more critical than mere popularity in the propagation of cascade effects.
+> * **In-Degree ($w=0.20$):** Represents the package's direct impact radius within the local network.
+> * **Other Metrics ($w=0.10$ each):** Global metrics (Dependents/Downloads) and local density (Clustering) are included to create a balanced, hybrid risk score.
 
 \subsection{Sağlamlık ve Kaskad Analizleri}
 Model geçerliliğinin testi için hedefli saldırı simülasyonları uygulanmıştır. 
@@ -305,6 +311,10 @@ Simülasyon sonuçları BRS modelini desteklemektedir. Şekil \ref{fig:impact}'d
 
 \section{Tartışma ve Sonuç}
 Bu çalışmada, literatürdeki betimsel analizlerin ötesine geçilerek, NPM ekosistemindeki yapısal riskleri ölçülebilir bir değere dönüştüren \textbf{Bileşik Risk Skoru (BRS)} modeli sunulmuştur. Giriş bölümünde belirtilen "operasyonel önceliklendirme" eksikliği, elde edilen BRS sıralaması ile giderilmiştir. Analizler, ağın güvenliğinin sadece popüler paketlere değil, \texttt{jest-circus} veya \texttt{@babel/core} gibi altyapısal köprü paketlere de bağlı olduğunu göstermiştir. Elde edilen bulgular, Zimmermann ve arkadaşlarının \cite{zimmermann2019smallworld} belirttikleri "küçük dünya" ağ yapısını doğrulamakta; ancak riskin sadece popüler paketlerde değil, köprü (bridge) niteliğindeki ara katman paketlerinde de yoğunlaştığını ortaya koyarak literatürü genişletmektedir.
+
+> **Scope of Impact Analysis**
+>
+> In this study, "Cascade Impact" simulations were performed on the constructed **"Critical Backbone Graph"** rather than the entire NPM registry, due to computational complexity and data access constraints. This approach relies on the "Supply Chain Backbone" hypothesis: The topological disintegration (loss of LCC) of this dense network, composed of critical infrastructure packages, serves as a reliable mathematical proxy for the functional failure of millions of dependent projects. Therefore, the structural collapse of the local backbone is interpreted as a direct indicator of global systemic risk.
 
 \subsection{Çalışmanın Kısıtları}
 Analiz, \texttt{package.json} dosyalarında tanımlı statik bağımlılıklar ile sınırlandırılmıştır. Çalışma zamanında (runtime) dinamik olarak yüklenen paketler veya geliştirici hesaplarının güvenilirliği (reputation) bu aşamada kapsam dışı bırakılmıştır. Ayrıca analiz, anlık bir kesit (snapshot) üzerinden yapılmış olup, ağın zamansal evrimini içermemektedir. Benzer şekilde, lisans uyumluluğu gibi yasal riskler \cite{ahlstrom2025licensing} de bu çalışmanın kapsamı dışındadır.

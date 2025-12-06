@@ -1,6 +1,7 @@
 import networkx as nx
 import time
 from tqdm.notebook import tqdm
+from collections import deque
 from data_loader import fetch_npm_dependencies
 
 def build_dependency_graph(seed_packages, max_depth=2, api_delay=0.1):
@@ -9,7 +10,7 @@ def build_dependency_graph(seed_packages, max_depth=2, api_delay=0.1):
     """
     G = nx.DiGraph()
     visited = set()
-    queue = [] # Queue stores tuples: (package_name, current_depth)
+    queue = deque() # Optimization: Use deque for O(1) pops
     
     # Initialize queue with seed packages
     for pkg_data in seed_packages:
@@ -30,7 +31,7 @@ def build_dependency_graph(seed_packages, max_depth=2, api_delay=0.1):
     # We use a progress bar, but total is unknown due to BFS expansion
     with tqdm(desc="Crawling Dependencies") as pbar:
         while queue:
-            current_pkg, depth = queue.pop(0)
+            current_pkg, depth = queue.popleft() # Optimization: popleft is O(1)
             pbar.update(1)
             
             # Fetch dependencies and metadata

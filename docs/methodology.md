@@ -26,26 +26,31 @@ Three fundamental metrics were used to determine the importance of packages with
 | **Out-Degree** | Number of external packages a package depends on. | **Attack Surface:** Shows how exposed the package is to external threats. |
 | **Betweenness** | Frequency of the package being on shortest paths between other nodes in the network. | **Bridge Role:** Shows the package's potential to control network traffic and propagate risk (strategic position). |
 
-## 3. Composite Risk Score (CRS)
+## 3. Behavioral Risk Score (BRS)
 
-A single metric is insufficient to express complex supply chain risks. Therefore, a **Composite Risk Score** was developed through weighted combination of metrics.
+A single metric is insufficient to express complex supply chain risks. Therefore, a **Behavioral Risk Score (BRS)** was developed through weighted combination of structural and popularity metrics.
 
 ### Normalization
-Each metric is normalized to the $[0,1]$ range using the Min-Max method before calculation:
+Each metric is normalized to the $[0,1]$ range using the Min-Max method before calculation. Skewed metrics like Downloads and Dependents use Log-Normalization.
 
 $$ x' = \frac{x - \min(x)}{\max(x) - \min(x)} $$
 
-### Formula
-$$ \text{CRS} = 0.5 \cdot \text{In-Degree}' + 0.2 \cdot \text{Out-Degree}' + 0.3 \cdot \text{Betweenness}' $$
+### Formula (Structural Model)
+The model focuses on **topological importance** and **structural fragility**.
+
+$$ \text{BRS} = 0.4 \cdot \text{Betweenness}' + 0.2 \cdot \text{In-Degree}' + 0.1 \cdot \text{Dependents}' + 0.1 \cdot \text{Out-Degree}' + 0.1 \cdot \text{Clustering}' + 0.1 \cdot \text{Downloads}' $$
 
 ### Weight Rationale
-*   **In-Degree ($0.5$):** Highest weight. In supply chain attacks, "impact radius" is the most critical risk factor.
-*   **Betweenness ($0.3$):** Second factor. Critical for capturing "bridge" packages that control network flow even if not popular.
-*   **Out-Degree ($0.2$):** Represents attack surface.
+*   **Betweenness (40%):** Highest weight. Identifies "bridge" packages that connect different parts of the ecosystem. Their removal causes the most fragmentation.
+*   **In-Degree (20%):** Represents local popularity within the analyzed graph backbone.
+*   **Dependents (10%):** Represents global popularity in the wider NPM ecosystem.
+*   **Out-Degree (10%):** Represents complexity and attack surface (dependency chain risk).
+*   **Clustering (10%):** Inverse clustering coefficient. Low clustering indicates a structural hole (bridge role), increasing risk.
+*   **Downloads (10%):** Usage intensity proxy.
 
 ## 4. Robustness and Cascade Analysis
 
 The model's validity was tested through **targeted attack simulations**:
-*   Packages with high CRS scores are sequentially removed from the network.
-*   At each step, the network's **Largest Connected Component (LCC)** size and reachability are measured.
-*   Results show that the CRS score is successful in predicting systemic collapse.
+*   Packages with high BRS scores are sequentially removed from the network.
+*   At each step, the network's **Largest Connected Component (LCC)** size is measured.
+*   **Result:** Targeted attacks using BRS cause an **exponential decay** in network connectivity, whereas random attacks show a linear or negligible decline, proving the scale-free nature of the network.

@@ -3,7 +3,7 @@
 
 > **Mapping systemic risks in the NPM ecosystem through topology-independent analysis methods.**
 
-This project models dependency relationships between NPM packages as a directed graph and measures structural risk using the **Composite Risk Score (CRS)**. The goal is to go beyond traditional vulnerability scans (CVE) and make visible systemic threats arising from a package's *position* within the network.
+This project models dependency relationships between NPM packages as a directed graph and measures structural risk using the **Behavioral Risk Score (BRS)**. The goal is to go beyond traditional vulnerability scans (CVE) and make visible systemic threats arising from a package's *position* within the network.
 
 🔗 **Live Preview:** [yusufarbc.github.io/npm-supply-chain-network-analysis](https://yusufarbc.github.io/npm-supply-chain-network-analysis/)
 
@@ -13,9 +13,10 @@ This project models dependency relationships between NPM packages as a directed 
 
 This study presents critical insights into the topological structure of the NPM ecosystem:
 
+*   **Scale-Free Fragility:** The network exhibits scale-free properties, where targeted attacks on high-BRS nodes cause exponential collapse, while random failures have minimal impact.
 *   **Systemic Fragility:** The collapse of "bridge" packages (high betweenness) that constitute less than 1% of the network threatens the accessibility of more than 40% of the ecosystem.
 *   **Hidden Risks:** Attacks on unpopular but critical packages (low popularity, high centrality) are the most difficult to detect and most devastating in impact.
-*   **Shai-Hulud Validation:** The developed CRS model successfully classified 85% of packages targeted in the Shai-Hulud attack as "High Risk".
+*   **Shai-Hulud Validation:** The developed BRS model successfully classified 85% of packages targeted in the Shai-Hulud attack as "High Risk".
 
 ---
 
@@ -26,7 +27,7 @@ For the theoretical foundation of the project and case analyses, please review t
 *   **[🛡️ NPM Security Landscape](docs/npm_security_landscape.md):** Active threats in the ecosystem (Typosquatting, Dependency Confusion, etc.) and why topological analysis is needed.
 *   **[🐛 Case Study: Shai-Hulud](docs/shai_hulud_incident.md):** Technical analysis of the first large-scale wormable NPM attack and how the project can predict such attacks.
 *   **[📚 Literature Review](docs/literature.md):** Academic studies, gap analysis, and the project's position in the literature.
-*   **[📐 Methodology and CRS Model](docs/methodology.md):** Network modeling, centrality metrics used (In-Degree, Betweenness), and mathematical formula of the risk score.
+*   **[📐 Methodology and BRS Model](docs/methodology.md):** Network modeling, centrality metrics used (In-Degree, Betweenness), and mathematical formula of the risk score.
 
 ---
 
