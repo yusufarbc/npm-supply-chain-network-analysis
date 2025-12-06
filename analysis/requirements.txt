@@ -8,6 +8,6 @@ seaborn>=0.13.0
 tqdm>=4.66.0
 ipywidgets>=8.0.0
 
-# Notebook kullanımını kolaylaştırmak için (opsiyonel)
+# For easier Notebook usage (optional)
 notebook>=7,<8
 ipykernel>=6.25,<7

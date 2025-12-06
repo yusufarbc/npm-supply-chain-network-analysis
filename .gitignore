@@ -35,3 +35,10 @@ academic/*.fdb_latexmk
 academic/*.bbl
 academic/*.blg
 
+
+# Analysis Results
+results/
+*.zip
+*.csv
+*.json
+!results/Readme.md

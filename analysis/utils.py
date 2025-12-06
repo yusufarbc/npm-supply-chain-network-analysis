@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import networkx as nx
+import shutil
 
 def export_results(risk_df, G, impact_df=None, output_dir='../results'):
     # Ensure results directory exists (at project root)
@@ -41,9 +42,17 @@ def export_results(risk_df, G, impact_df=None, output_dir='../results'):
         if col in risk_df.columns:
             top_20 = risk_df.sort_values(col, ascending=ascending).head(20)
             # Select only relevant columns for the top list
-            cols_to_keep = ['package', col, 'risk_score']
+            if col == 'risk_score':
+                cols_to_keep = ['package', 'risk_score']
+            else:
+                cols_to_keep = ['package', col, 'risk_score']
+            
             top_20[cols_to_keep].to_csv(os.path.join(top_lists_dir, filename), index=False)
             print(f"   - {filename}")
+            
+    # Create ZIP archive of top lists
+    shutil.make_archive(os.path.join(output_dir, 'top_lists'), 'zip', top_lists_dir)
+    print(f" - Saved {output_dir}/top_lists.zip")
 
     # 2. Gephi Nodes
     # Create numeric ID map for Gephi (safer than string IDs)
