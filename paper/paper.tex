@@ -19,53 +19,53 @@
 
 \begin{document}
 
-\title{Topological Risk Analysis and Criticality Mapping in the npm Supply Chain}
+\title{Topological Risk Analysis and Criticality Mapping\\ in the npm Software Supply Chain}
 
-\author{\IEEEauthorblockN{Yusuf Arbaç}
-\IEEEauthorblockA{\textit{Dept. of Computer Engineering} \\
-\textit{Fırat University}\\
-Elazığ, Turkey \\
-yusufarbac@firat.edu.tr}
+\author{\IEEEauthorblockN{Yusuf Talha ARABACI}
+\IEEEauthorblockA{\textit{Department of Software Engineering} \\
+\textit{Karabuk University}\\
+Karabuk, Turkey \\
+yusuftalhaarabaci@hotmail.com}
 }
 
 \maketitle
 
 \begin{abstract}
-The Node Package Manager (NPM) ecosystem, while accelerating software development, has evolved into a complex network where localized risks can trigger cascading failures. Traditional security analyses often focus on code-level vulnerabilities, overlooking systemic risks embedded in the topological structure of the dependency graph. This paper introduces the Behavioral Risk Score (BRS), a novel, multi-metric model designed to identify structurally critical packages independent of code content. By constructing a dependency graph of 2,183 packages and 5,417 dependencies, we analyze the network's topological properties. The BRS model synthesizes six weighted metrics—including betweenness centrality, degree, clustering coefficient, and ecosystem-wide dependents count—into a single, actionable score. Our findings reveal that the network exhibits a scale-free topology, with risk concentrated in a small number of critical nodes. We identify `es-abstract` as the package with the highest BRS, highlighting its role as a structural linchpin. We also demonstrate a key distinction: a package's structural importance within a local backbone model does not always correlate with its broader ecosystem impact. This study provides a new, topology-based methodology for prioritizing security resources, arguing that focusing on the structurally critical nodes that form the ecosystem's backbone is a more efficient strategy for mitigating systemic risk.
+The Node Package Manager (npm) ecosystem, while essential for modern software development, forms a complex dependency network where localized failures can precipitate cascading effects across the supply chain. Conventional security analyses, which often inspect package source code for vulnerabilities, tend to overlook systemic risks embedded in the topological structure of the dependency graph. This paper introduces the Behavioral Risk Score (BRS), a content-independent, multi-metric model for identifying structurally critical packages. We constructed a dependency graph of 1,506 packages and 3,058 dependencies and analyzed its topological properties. The BRS model synthesizes weighted metrics—including betweenness centrality, degree centrality, and clustering coefficient—into a single score. Our analysis reveals that the network exhibits a scale-free topology, where risk is concentrated within a small number of nodes. The package `@babel/helper-plugin-utils` was identified as having the highest BRS, indicating its role as a structural linchpin. The results also demonstrate a distinction between a package's structural importance within our constructed graph and its broader ecosystem impact. This study proposes a topology-based methodology for prioritizing security resources, arguing that focusing on structurally critical nodes is a more efficient strategy for mitigating systemic risk.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Software supply chain security, NPM, dependency network, topological analysis, risk scoring, cascade effect.
+Software supply chain security, npm, dependency network, topological analysis, risk scoring, network robustness.
 \end{IEEEkeywords}
 
 \section{Introduction}
-Modern software engineering practices are heavily reliant on centralized package managers like NPM, which provide a vast repository of reusable code libraries \cite{wyss2025npm}. This modularity accelerates development but also introduces systemic risks, creating a fragile supply chain where a single point of failure can propagate throughout the ecosystem \cite{duan2020measuring}. The NPM ecosystem, with its millions of packages and complex dependency relationships, presents a large and attractive attack surface \cite{wang2023threat}. Vulnerabilities can spread uncontrollably through the dependency graph \cite{liu2022demystifying, zerouali2022impact}, and disruptions in package maintenance further compound the risk \cite{rahman2024update, cogo2020maintenance}.
+Modern software engineering is heavily reliant on centralized package managers such as npm, which host vast repositories of reusable code libraries \cite{wyss2025npm}. This modularity accelerates development but also creates a fragile software supply chain where a single point of failure can propagate throughout the ecosystem \cite{duan2020measuring}. With millions of packages and complex inter-dependencies, the npm ecosystem presents a large attack surface \cite{wang2023threat}. Vulnerabilities can spread uncontrollably through the dependency graph \cite{liu2022demystifying, zerouali2022impact}, and disruptions in package maintenance further compound these systemic risks \cite{rahman2024update, cogo2020maintenance}.
 
-The literature confirms that the NPM network exhibits "small-world" characteristics, where a few key packages or maintainers have a disproportionate influence \cite{zimmermann2019smallworld, oldnall2017complex}. This structure makes the ecosystem vulnerable to a range of supply chain attacks, from typosquatting to the compromise of trusted packages \cite{ohm2020backstabber}. While various defense mechanisms based on machine learning, dynamic analysis, and metadata scanning have been proposed \cite{sejfia2022amalfi, zheng2024oscar, halder2024metadata}, the sheer scale of the ecosystem makes comprehensive scanning of every package unfeasible.
+The literature confirms that the npm network exhibits "small-world" characteristics, wherein a few key packages or maintainers have a disproportionate influence \cite{zimmermann2019smallworld, oldnall2017complex}. This topological structure makes the ecosystem vulnerable to a range of supply chain attacks, from typosquatting to the compromise of trusted, popular packages \cite{ohm2020backstabber}. Although various defense mechanisms based on machine learning, dynamic analysis, and metadata scanning have been proposed \cite{sejfia2022amalfi, zheng2024oscar, halder2024metadata}, the sheer scale of the ecosystem makes comprehensive code-level scanning of every package unfeasible.
 
-Existing research often analyzes risk based on known vulnerabilities or package maintenance status. However, there is a gap in approaches that quantify systemic risk arising from the network's topological architecture. This study addresses this gap by introducing a model that is independent of package content and focuses solely on structural dependencies. We propose the \textbf{Behavioral Risk Score (BRS)}, a composite metric that weights various centrality measures to identify and prioritize structurally critical packages. Our goal is to provide a quantitative and actionable framework for security resource allocation, enabling a more strategic defense against systemic supply chain threats.
+Existing research often quantifies risk based on known vulnerabilities or package maintenance status. A gap exists, however, in approaches that quantify systemic risk arising from the network's topological architecture alone. This study addresses this gap by introducing a model that is independent of package content, focusing exclusively on structural dependencies. We propose the \textbf{Behavioral Risk Score (BRS)}, a composite metric that weights various centrality measures to identify and prioritize structurally critical packages. Our objective is to provide a quantitative framework for security resource allocation, enabling a more strategic defense against systemic supply chain threats.
 
 \section{Methodology}
 \subsection{Dataset and Network Construction}
-In this study, a sampling strategy centered on systemic impact rather than just download counts was adopted. Accordingly, the top 1,000 packages with the most dependents according to \texttt{ecosyste.ms} data were determined as the seed set, and all their dependencies up to a depth of 7 were included in the analysis. After a data preprocessing step where circular references were removed, a directed graph of **1,506 nodes (packages)** and **3,058 edges (dependencies)** was obtained. The Python NetworkX library was utilized for all network modeling and analysis.
+A sampling strategy centered on systemic impact, rather than raw download counts, was adopted. Accordingly, the top 1,000 packages with the highest dependent counts were selected from the \texttt{ecosyste.ms} dataset to form the seed set. All dependencies of this seed set, up to a depth of seven, were included in the analysis. Following a data preprocessing step where circular references were removed, a directed graph of \textbf{1,506 nodes (packages)} and \textbf{3,058 edges (dependencies)} was constructed. The Python NetworkX library was used for all network modeling and analysis.
 
 \subsection{The Behavioral Risk Score (BRS) Model}
-The BRS model is a composite score designed to provide a holistic view of a package's structural risk. It synthesizes multiple metrics to combine the network's topological structure with the package's prevalence in the ecosystem.
+The BRS is a composite score designed to provide a holistic view of a package's structural risk. It synthesizes multiple metrics to combine the network's topological structure with the package's prevalence in the ecosystem.
 
 First, the following centrality metrics are calculated for each package:
 \begin{itemize}
-    \item \textbf{In-Degree:} Represents the number of direct dependent packages. It is an indicator of popularity and direct sphere of influence.
-    \item \textbf{Out-Degree:} Shows the number of external dependencies. A high out-degree indicates a large attack surface.
-    \item \textbf{Betweenness Centrality:} The frequency of a package appearing on the shortest paths between other packages. It reflects the package's "bridge" role and strategic position in the network.
-    \item \textbf{Clustering Coefficient:} Measures how connected a package's neighbors are to each other. A low value suggests a role as a "bridge" between different groups of packages.
+    \item \textbf{In-Degree:} The number of incoming dependencies. It is an indicator of a package's popularity and direct impact.
+    \item \textbf{Out-Degree:} The number of outgoing dependencies. A high out-degree may indicate an increased attack surface.
+    \item \textbf{Betweenness Centrality:} The frequency with which a package appears on the shortest paths between other packages, indicating its role as a "bridge" in the network.
+    \item \textbf{Clustering Coefficient:} A measure of how connected a package's neighbors are to each other. A low value suggests a role as a bridge between distinct clusters.
 \end{itemize}
-In addition to these topological metrics, we also consider \textbf{Dependents Count} and \textbf{Download Count} from the wider ecosystem as proxies for global adoption.
+In addition to these topological metrics, we include the total \textbf{Dependents Count} and \textbf{Download Count} from the wider ecosystem as proxies for global adoption.
 
-Before calculating the risk score, the metrics are normalized to the $[0,1]$ range using the Min-Max method:
+Before inclusion in the BRS, each metric is normalized to a $[0,1]$ range using the Min-Max method:
 \begin{equation}
 x' = \frac{x - \min(x)}{\max(x) - \min(x)}
 \end{equation}
-Here, $x$ represents the raw value of the metric, and $x'$ represents the normalized value.
+where $x$ is the raw value of the metric and $x'$ is its normalized value.
 
 The final BRS is calculated as a weighted sum of the normalized metrics:
 $$
@@ -76,49 +76,51 @@ $$
 \end{aligned}
 $$
 
-The rationale for this weighting strategy is as follows:
+The rationale for this weighting is as follows:
 \begin{itemize}
-    \item \textbf{Betweenness ($w=0.40$)}: The highest weight is assigned to "bridge" nodes that control information and risk flow within the network. This is based on the hypothesis that strategic position is more critical than mere popularity in the propagation of cascade effects.
-    \item \textbf{In-Degree ($w=0.20$)}: Represents the package's direct impact radius within the local network.
-    \item \textbf{Other Metrics ($w=0.10$ each)}: Global metrics (Dependents/Downloads) and local structural metrics (Out-Degree, Clustering) are included to create a balanced, hybrid risk score.
+    \item \textbf{Betweenness ($w=0.40$)}: The highest weight is assigned to "bridge" nodes that control information and risk flow. This is based on the hypothesis that a package's strategic position is more critical than its popularity in the propagation of cascading failures.
+    \item \textbf{In-Degree ($w=0.20$)}: Represents the package's direct impact radius.
+    \item \textbf{Other Metrics ($w=0.10$ each)}: Global metrics (Dependents, Downloads) and local structural metrics (Out-Degree, Clustering) are included to create a balanced, hybrid risk score.
 \end{itemize}
 
 \subsection{Robustness and Cascade Analysis}
-Targeted attack simulations were used to test the model's validity. The effects on the Largest Connected Component (LCC) size and network accessibility were analyzed by removing high-BRS packages from the network. In addition, the predictive power of the model was verified by cascade analysis.
+To test the model's validity, targeted attack simulations were performed. The effects on the Largest Connected Component (LCC) size and overall network accessibility were analyzed by removing high-BRS packages. The predictive power of the model was further verified by a cascade analysis.
 
 \section{Results and Discussion}
 
 \subsection{Network Topology and Structural Characteristics}
-The clustering structure of the network topology is shown in Figure \ref{fig:network}. The degree distributions in Figure \ref{fig:histograms} show the scale-free structure of the network. The majority of nodes have a small number of connections, while a few nodes have a high number of connections. This finding indicates that the risk is concentrated in a specific section.
+The constructed dependency network exhibits a clustered topology (Figure \ref{fig:network}) and a scale-free structure. The degree distributions for both in-degree and out-degree show a heavy-tailed pattern (Figure \ref{fig:histograms}), which is characteristic of scale-free networks. This indicates that a small number of packages act as central hubs, while the majority of nodes have few connections. This structure suggests that systemic risk is not uniformly distributed but is concentrated within a subset of critical packages.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{network_full_topN.png}
-\caption{Visualization of the top 1000 package network. Dense regions indicate sub-clusters.}
+\caption{Visualization of the analyzed dependency network. Dense regions indicate distinct sub-clusters of packages.}
 \label{fig:network}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{degree_histograms.png}
-\caption{In-degree and out-degree histograms. The heavy-tailed distribution is visible.}
+\caption{In-degree and out-degree histograms, showing a heavy-tailed distribution characteristic of a scale-free network.}
 \label{fig:histograms}
 \end{figure}
 
 \subsection{Centrality Relationships}
+An analysis of centrality measures reveals an asymmetric relationship between a package's popularity (in-degree) and its structural importance as a bridge (betweenness centrality), as shown in the correlation matrix in Figure \ref{fig:scatter}. The weak correlation suggests that some packages with low popularity may still be critical to the network's integrity by connecting otherwise disparate components. Consequently, security analyses that focus exclusively on popularity metrics such as download counts are likely to overlook these structural risks.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{scatter_correlations.png}
-\caption{Correlations between centrality measures.}
+\caption{Correlations between network centrality measures.}
 \label{fig:scatter}
 \end{figure}
 
-The correlation matrix (Figure \ref{fig:scatter}) shows an asymmetric relationship between in-degree and betweenness. It was determined that some packages that are not highly popular serve as bridges. It is considered that analyzes focusing only on download numbers may be insufficient to detect structural risks.
-
 \subsection{Analysis of Critical Nodes}
+Tables \ref{tab:indegree}, \ref{tab:outdegree}, and \ref{tab:betweenness} list the top 10 packages for each respective centrality measure. Packages with a high in-degree, such as \texttt{@babel/helper-plugin-utils}, are widely used dependencies. Those with a high out-degree, such as \texttt{@babel/preset-env}, have a large number of dependencies themselves, which can indicate an increased attack surface. Packages with high betweenness centrality are critical for network integrity, acting as bridges. For example, \texttt{jest-circus} has a low in-degree of 1 but the highest betweenness score, demonstrating its importance as a structural bridge. In contrast, a package like \texttt{@babel/core} has both high popularity (in-degree) and a high betweenness score. These results show that no single metric is sufficient for a complete risk analysis and highlight the importance of identifying structurally critical bridge packages.
+
 \begin{table}[H]
 \centering
-\caption{\textsc{Top 10 In-Degree}}
+\caption{\textsc{Top 10 Packages by In-Degree Centrality}}
 \label{tab:indegree}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lrrrr}
@@ -142,7 +144,7 @@ chalk & 28 & 0 & 0.000000 & False \\
 
 \begin{table}[H]
 \centering
-\caption{\textsc{Top 10 Out-Degree}}
+\caption{\textsc{Top 10 Packages by Out-Degree Centrality}}
 \label{tab:outdegree}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lrrrr}
@@ -166,7 +168,7 @@ express & 27 & 1 & 0.000000 & True \\
 
 \begin{table}[H]
 \centering
-\caption{\textsc{Top 10 Betweenness}}
+\caption{\textsc{Top 10 Packages by Betweenness Centrality}}
 \label{tab:betweenness}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lrrrr}
@@ -188,19 +190,19 @@ babel-plugin-istanbul & 0.000466 & 2 & 5 & True \\
 }
 \end{table}
 
-Packages with high in-degree values in Table \ref{tab:indegree} are frequently used components. Packages with high out-degree in Table \ref{tab:outdegree} create a large attack surface. Table \ref{tab:betweenness} shows the packages that manage network traffic. For example, the \texttt{jest-circus} package has a low in-degree (1), but with its high betweenness value, it plays a critical bridge role in the network. Similarly, \texttt{@babel/core} draws attention with both its popularity and its strategic position. This proves that a single metric is not sufficient in risk analysis and the importance of detecting structural bridges.
-
 \subsection{Composite Risk Score (BRS) Ranking}
+The BRS model synthesizes popularity, attack surface, and strategic position into a single score. As shown in Figure \ref{fig:risk_scores} and Table \ref{tab:risk}, packages rank highly on the BRS scale due to their scores across these different dimensions. The resulting ranking provides a prioritized list for focusing security audit resources.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{top20_risk_scores.png}
-\caption{Top 20 packages with the highest Composite Risk Score (BRS).}
+\caption{Top 20 packages by Composite Risk Score (BRS).}
 \label{fig:risk_scores}
 \end{figure}
 
 \begin{table}[H]
 \centering
-\caption{\textsc{Top 20 Composite Risk Score (BRS)}}
+\caption{\textsc{Top 20 Packages by Composite Risk Score (BRS)}}
 \label{tab:risk}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lrrrrr}
@@ -231,48 +233,40 @@ call-bind & 0.175065 & 36 & 4 & 0.000000 & False \\
 \end{tabular}%
 }
 \end{table}
-The BRS model combines popularity, attack surface, and strategic position. As seen in Figure \ref{fig:risk_scores} and Table \ref{tab:risk}, certain packages are at the top due to both their popularity and their network position. The ranking shows the packages to be prioritized in security audits.
 
 \subsection{Systemic Impact and Cascade Analysis}
+The simulation results support the validity of the BRS model. As shown in Figure \ref{fig:impact}, the removal of high-BRS packages causes a significant decrease in the LCC size. The correlation between the BRS score and the resulting cascade effect (Figure \ref{fig:cascade}) demonstrates the utility of the metric for risk prediction.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{risk_vs_cascade.png}
-\caption{Relationship between BRS and cascade effect (accessibility).}
+\caption{Relationship between BRS and cascade effect, measured by network accessibility.}
 \label{fig:cascade}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{top20_cascade_impact.png}
-\caption{Effect of removing the top 20 packages on LCC and accessibility.}
+\caption{Effect of removing the top 20 high-BRS packages on LCC size and network accessibility.}
 \label{fig:impact}
 \end{figure}
-Simulation results support the BRS model. Figure \ref{fig:impact} shows that removing packages with high BRS scores causes a decrease in the LCC size. The correlation between the BRS score and the cascade effect (Figure \ref{fig:cascade}) shows the success of the metric in risk prediction.
 
-\section{Discussion and Conclusion}
-In this study, going beyond the descriptive analysis in the literature, the \textbf{Composite Risk Score (BRS)} model, which transforms the structural risks in the NPM ecosystem into a measurable value, was presented. The "operational prioritization" deficiency stated in the Introduction section has been addressed with the obtained BRS ranking. The analysis has shown that the security of the network depends not only on popular packages, but also on infrastructural bridge packages such as \texttt{jest-circus} or \texttt{@babel/core}. The findings confirm the "small-world" network structure stated by Zimmermann et al. \cite{zimmermann2019smallworld}; however, it expands the literature by revealing that the risk is concentrated not only in popular packages but also in intermediate layer packages with "bridge" characteristics.
+\section{Discussion}
+This study presented the Composite Risk Score (BRS), a model that transforms the structural risks in the npm ecosystem into a measurable value, moving beyond the descriptive analyses common in the literature. The BRS ranking addresses the need for operational prioritization outlined in the Introduction. The analysis shows that network security depends not only on popular packages but also on infrastructural "bridge" packages such as \texttt{jest-circus} and \texttt{@babel/core}. These findings confirm the "small-world" network structure identified by Zimmermann et al. \cite{zimmermann2019smallworld}, but extend the literature by showing that risk is concentrated not only in popular packages but also in intermediate-layer packages that function as bridges.
 
-\subsection{Scope of Impact Analysis}
-In this study, "Cascade Impact" simulations were performed on the constructed \textbf{"Critical Backbone Graph"} rather than the entire NPM registry, due to computational complexity and data access constraints. This approach relies on the "Supply Chain Backbone" hypothesis: The topological disintegration (loss of LCC) of this dense network, composed of critical infrastructure packages, serves as a reliable mathematical proxy for the functional failure of millions of dependent projects. Therefore, the structural collapse of the local backbone is interpreted as a direct indicator of global systemic risk.
+The "Cascade Impact" simulations were performed on the constructed dependency graph rather than the entire npm registry, due to computational complexity. This approach relies on the "supply chain backbone" hypothesis, wherein the topological disintegration (loss of the LCC) of this dense network of critical packages serves as a mathematical proxy for the functional failure of dependent projects. Therefore, the structural collapse of this local backbone is interpreted as a direct indicator of global systemic risk.
 
-\subsection{Limitations}
-The analysis is limited to the static dependencies defined in \texttt{package.json} files. Packages that are loaded dynamically at runtime or the reputation of developer accounts are excluded at this stage. In addition, the analysis was made on a snapshot and does not include the temporal evolution of the network. Similarly, legal risks such as license compliance \cite{ahlstrom2025licensing} are also outside the scope of this study.
+\section{Limitations}
+This analysis is limited to the static dependencies defined in \texttt{package.json} files. Packages loaded dynamically at runtime and the reputation of developer accounts were excluded. The analysis was also performed on a static snapshot of the ecosystem and does not include its temporal evolution. Finally, legal risks such as license compliance are outside the scope of this study \cite{ahlstrom2025licensing}.
 
-\subsection{Recommendations}
-The following recommendations have been developed in line with the findings:
-\begin{itemize}
-    \item \textbf{Prioritization:} Directing resources in security scans to packages with high BRS scores.
-    \item \textbf{Policy Development:} Applying security protocols \cite{torres2020intoto} and SBOM practices \cite{yu2024sbom} to critical nodes.
-    \item \textbf{Awareness:} Informing package owners about risk scores.
-\end{itemize}
-
-In future work, it is recommended to expand the model to include developer networks.
+\section{Conclusion}
+This study proposed a topology-based methodology for identifying and prioritizing structurally critical packages in the npm software supply chain. By synthesizing multiple network metrics into a Behavioral Risk Score (BRS), we provide a quantitative framework to guide security resource allocation. The findings indicate that focusing on a small number of structurally critical nodes is a more efficient strategy for mitigating systemic risk than focusing on popularity alone. Future work should expand the model to include developer social networks and package maintenance behaviors, and apply the methodology to other package ecosystems to develop more generalized supply chain security models.
 
 \section{Reproducibility}
-The source codes and datasets are shared for the reproducibility of the study:
+The source code and datasets used in this study are available to ensure reproducibility.
 \begin{itemize}
-  \item \textbf{Analysis Codes:} \texttt{analysis/analysis.ipynb} (Python 3, NetworkX, pandas).
-  \item \textbf{Data Outputs:} All intermediate results and metrics are presented in CSV/JSON format in the \texttt{results/} directory.
+  \item \textbf{Analysis Code:} The analysis is contained in \texttt{analysis/analysis.ipynb} (Python 3, NetworkX, pandas).
+  \item \textbf{Data Outputs:} All intermediate results and metrics are available in CSV format in the \texttt{results/} directory.
 \end{itemize}
 
 \input{bib.tex}
