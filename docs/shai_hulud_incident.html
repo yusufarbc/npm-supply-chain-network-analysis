@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shai-Hulud Incident - NPM Supply Chain Risk Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --border: #334155;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: var(--text-primary);
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 1rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: var(--accent-hover);
+        }
+
+        ul,
+        ol {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        blockquote {
+            border-left: 4px solid var(--border);
+            margin: 20px 0;
+            padding: 12px 20px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 0 8px 8px 0;
+            color: var(--text-primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.5);
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .nav-breadcrumb {
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        code {
+            font-family: 'Consolas', monospace;
+            font-size: 0.9em;
+            color: #e2e8f0;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="nav-breadcrumb">
+            <a href="../index.html">← Back to Dashboard</a> / <a href="overview.html">Overview</a> / Shai-Hulud Incident
+        </div>
+
+        <h1>🐛 Case Study: The Shai-Hulud Incident</h1>
+
+        <blockquote>
+            <strong>Context:</strong> This report is a concrete example of the "topological risk" concept proposed in
+            the <a href="overview.html">NPM Supply Chain Network Analysis</a> project. The Shai-Hulud attack
+            demonstrates how attackers weaponize the network structure.
+        </blockquote>
+
+        <h2>1. Introduction: A Turning Point</h2>
+        <p>The year 2025 has been recorded as a definitive breaking point in the software supply chain security
+            literature. The NPM ecosystem was subjected to the first large-scale "wormable" malware attack, named
+            "Shai-Hulud" in reference to the giant sandworms in Frank Herbert's <em>Dune</em> universe. This sequence of
+            events not only affected thousands of projects but also painfully exposed the inadequacy of existing
+            security paradigms—especially traditional scanners focusing on package content.</p>
+
+        <p>This report analyzes the two waves of the Shai-Hulud attack (September and November 2025) in technical depth
+            and demonstrates the necessity of the <strong>topological risk model (Behavioral Risk Score - BRS)</strong>
+            developed against such threats.</p>
+
+        <h2>2. First Wave: The Awakening (Shai-Hulud 1.0)</h2>
+        <p><strong>Date Range:</strong> September 5 – 23, 2025<br>
+            <strong>Code Name:</strong> "Chalk & Debug Attack"
+        </p>
+
+        <p>The first wave in September was a reconnaissance attack targeting the ecosystem's central nodes. Threat
+            actors compromised 18 critical packages such as <code>@ctrl/tinycolor</code>, <code>chalk</code>, and
+            <code>debug</code>, which exceeded 2.6 billion weekly downloads.</p>
+
+        <h3>Attack Vector and Execution</h3>
+        <p>The attack began with phishing-based compromise of critical maintainer accounts, such as Josh Junon, through
+            convincing fake domains like <code>npmjs.help</code>.</p>
+        <ul>
+            <li><strong>Mechanism:</strong> Malicious code was executed through <code>postinstall</code> scripts.</li>
+            <li><strong>Payload:</strong> A <em>crypto-clipper</em> running in the browser environment. By hooking
+                <code>fetch</code> and <code>XMLHttpRequest</code> structures, crypto wallet addresses were instantly
+                replaced with the attacker's addresses using Levenshtein distance algorithm.</li>
+            <li><strong>Impact:</strong> Although financial damage (~$503 USD) remained limited due to early detection,
+                the attack's reach potential proved the ecosystem's fragility.</li>
+        </ul>
+
+        <h2>3. Second Wave: Destruction and Propagation (Shai-Hulud 2.0)</h2>
+        <p><strong>Date Range:</strong> November 21, 2025 – Present (Active)<br>
+            <strong>Code Name:</strong> "The Second Coming"
+        </p>
+
+        <p>The second wave beginning in November transformed from a theft attempt into <strong>an autonomous cyber
+                weapon</strong>. Attackers used much more sophisticated methods to make detection difficult and ensure
+            persistence.</p>
+
+        <h3>Technical Innovations and Sophistication</h3>
+        <p>Unlike the previous version, Shai-Hulud 2.0 was equipped with these four key capabilities:</p>
+
+        <ol>
+            <li><strong>Preinstall Triggers and Bun Runtime:</strong> Malicious code activates before the package is
+                fully formed on disk (<code>preinstall</code>) and bypasses Node.js-based monitoring tools by using the
+                <strong>Bun</strong> runtime, which security tools have not yet fully adapted to.</li>
+            <li><strong>GitHub Actions and CI/CD Poisoning:</strong> Using <code>pull_request_target</code>
+                vulnerabilities, attackers infiltrated the CI/CD processes of giants like Zapier, Postman, and NextAuth,
+                adding persistent <em>self-hosted runners</em> to the system through <code>discussion.yaml</code> files.
+            </li>
+            <li><strong>Cross-Exfiltration:</strong> Instead of sending stolen data to a single center, it was
+                distributed to the repositories of other compromised victims, making forensics tracking impossible.</li>
+            <li><strong>Sabotage Mechanism (Dead Man's Switch):</strong> When the malware detects it's being analyzed or
+                blocked, it destroys files on the system using secure overwrite methods with the
+                <code>rm -rf /home</code> command.</li>
+        </ol>
+
+        <h3>Numerical Scale of Destruction (As of End of November)</h3>
+        <ul>
+            <li><strong>Infected Packages:</strong> 830+ unique NPM packages.</li>
+            <li><strong>Affected Repos:</strong> 25,000+ GitHub repositories.</li>
+            <li><strong>Leaked Critical Data:</strong> 14,000+ API keys and tokens (2,485 of which were still active at
+                the time of attack).</li>
+        </ul>
+
+        <h2>4. Comparative Technical Analysis</h2>
+
+        <p>The table below compares the two attack waves carried out by the same threat actor but evolving in terms of
+            motivation and technical capacity.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Criterion</th>
+                    <th>Shai-Hulud 1.0 (September)</th>
+                    <th>Shai-Hulud 2.0 (November - Active)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Main Target</strong></td>
+                    <td>End-user crypto wallets</td>
+                    <td>Developer identities and Cloud access</td>
+                </tr>
+                <tr>
+                    <td><strong>Entry Vector</strong></td>
+                    <td>Classic Phishing + 2FA Bypass</td>
+                    <td>GitHub Actions PR Exploit + Phishing</td>
+                </tr>
+                <tr>
+                    <td><strong>Runtime</strong></td>
+                    <td>Node.js</td>
+                    <td><strong>Bun</strong> (Faster, less detected)</td>
+                </tr>
+                <tr>
+                    <td><strong>Execution</strong></td>
+                    <td><code>postinstall</code> (Post-installation)</td>
+                    <td><code>preinstall</code> (Pre-installation - more aggressive)</td>
+                </tr>
+                <tr>
+                    <td><strong>Data Exfiltration</strong></td>
+                    <td>Simple scripts</td>
+                    <td>TruffleHog integration + Cloud SDK Full Dump</td>
+                </tr>
+                <tr>
+                    <td><strong>Propagation Model</strong></td>
+                    <td>Manual / Semi-automatic</td>
+                    <td><strong>Fully Automated Worm</strong> (Self-publishing with stolen token)</td>
+                </tr>
+                <tr>
+                    <td><strong>Persistence</strong></td>
+                    <td>None</td>
+                    <td>Self-hosted runner + Workflow manipulation</td>
+                </tr>
+                <tr>
+                    <td><strong>Sabotage</strong></td>
+                    <td>None</td>
+                    <td>"Dead man’s switch" (Data destruction)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>5. Conclusion: The Necessity of Topological Analysis</h2>
+
+        <p>The Shai-Hulud attack is the most concrete example proving the "small-world" structure of the NPM ecosystem
+            and the systemic importance of central packages (hubs). While traditional security tools focus on package
+            <em>content</em> (code analysis), attackers weaponized the network's <em>topology</em> and <em>trust
+                relationships</em> (graph structure).</p>
+
+        <p>In this context, the <strong>"NPM Supply Chain Network Analysis"</strong> project being conducted is a
+            proactive necessity rather than a reactive solution. The <strong>Behavioral Risk Score (BRS)</strong>
+            developed within the project aims to mathematically model and predict the propagation routes targeted by
+            Shai-Hulud 2.0 by identifying packages with high "betweenness centrality" and "dependent count" values.
+            Shai-Hulud is not a warning, but proof of the system's topological vulnerability.</p>
+
+    </div>
+</body>
+
+</html>

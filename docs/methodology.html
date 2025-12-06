@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Methodology - NPM Supply Chain Risk Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --border: #334155;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: var(--text-primary);
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 1rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: var(--accent-hover);
+        }
+
+        ul,
+        ol {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        blockquote {
+            border-left: 4px solid var(--border);
+            margin: 20px 0;
+            padding: 12px 20px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 0 8px 8px 0;
+            color: var(--text-primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.5);
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .nav-breadcrumb {
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .math-block {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            text-align: center;
+            margin: 24px 0;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="nav-breadcrumb">
+            <a href="../index.html">← Back to Dashboard</a> / <a href="overview.html">Overview</a> / Methodology
+        </div>
+
+        <h1>Methodology: Topological Risk Analysis and CRS Model</h1>
+
+        <h3>1. Data Collection and Network Modeling</h3>
+
+        <p>The project models the NPM ecosystem as a directed graph:</p>
+        <ul>
+            <li><strong>Nodes:</strong> NPM packages.</li>
+            <li><strong>Edges:</strong> Inter-package dependencies.</li>
+        </ul>
+
+        <h3>Sampling Strategy</h3>
+        <p>Instead of analyzing the entire NPM ecosystem (3M+ packages), a <strong>Combined Sampling Strategy</strong>
+            was followed to capture both infrastructural backbone and popular end-user packages:</p>
+        <ol>
+            <li><strong>Seed Set:</strong> The top 1,000 packages by <strong>Dependents</strong> (infrastructure) AND
+                the top 1,000 packages by <strong>Downloads</strong> (popularity) were selected from
+                <code>ecosyste.ms</code>.</li>
+            <li><strong>Merging:</strong> These lists were combined, resulting in ~1,452 unique seed packages.</li>
+            <li><strong>Depth Scanning:</strong> The dependency tree of these seeds was scanned up to depth level 7.
+            </li>
+            <li><strong>Preprocessing:</strong> Circular dependencies were cleaned and isolated nodes were filtered out.
+            </li>
+        </ol>
+        <p>As a result, a directed graph of <strong>2,183 nodes</strong> and <strong>5,417 edges</strong> (after full
+            traversal) was constructed.</p>
+
+        <h2>2. Centrality Metrics</h2>
+
+        <p>Three fundamental metrics were used to determine the importance of packages within the network:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Definition</th>
+                    <th>Risk Context Meaning</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>In-Degree</strong></td>
+                    <td>Number of packages directly dependent on a package.</td>
+                    <td><strong>Popularity and Impact Radius:</strong> Shows how many projects will be directly affected
+                        in case of a vulnerability.</td>
+                </tr>
+                <tr>
+                    <td><strong>Out-Degree</strong></td>
+                    <td>Number of external packages a package depends on.</td>
+                    <td><strong>Attack Surface:</strong> Shows how exposed the package is to external threats.</td>
+                </tr>
+                <tr>
+                    <td><strong>Betweenness</strong></td>
+                    <td>Frequency of the package being on shortest paths between other nodes.</td>
+                    <td><strong>Bridge Role:</strong> Shows the package's potential to control network traffic and
+                        propagate risk.</td>
+                </tr>
+                <tr>
+                    <td><strong>Inverted Clustering</strong></td>
+                    <td>1 - ClusteringCoefficient</td>
+                    <td><strong>Structural Holes:</strong> Low clustering suggests a node bridges distinct communities,
+                        increasing systemic risk.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>3. Behavioral Risk Score (BRS) v3</h2>
+
+        <p>A single metric is insufficient to express complex supply chain risks. Therefore, a <strong>Behavioral Risk
+                Score (BRS)</strong> was developed through weighted combination of structural and popularity metrics.
+        </p>
+
+        <h3>Normalization</h3>
+        <p>Each metric is normalized to the [0,1] range using the Min-Max method. To focus on orders of magnitude rather
+            than raw counts, skewed metrics (<strong>Dependents</strong>, <strong>Downloads</strong>,
+            <strong>Staleness</strong>) are <strong>Log-Normalized</strong> before scaling:</p>
+
+        <div class="math-block">
+            x' = [ln(1+x) - min(ln(1+x))] / [max(ln(1+x)) - min(ln(1+x))]
+        </div>
+
+        <h3>Formula (Structural Model)</h3>
+        <p>The v3 model prioritizes <strong>strategic position</strong> (Betweenness) and <strong>impact radius</strong>
+            (In-Degree), while accounting for <strong>local fragility</strong> (Inverted Clustering).</p>
+
+        <div class="math-block">
+            BRS = 0.35 · Betweenness' + 0.30 · In-Degree'<br>
+            + 0.15 · ClusteringInv' + 0.10 · Out-Degree'<br>
+            + 0.05 · Dependents' + 0.05 · Downloads'
+        </div>
+
+        <h3>Weight Rationale</h3>
+        <ul>
+            <li><strong>Betweenness (35%):</strong> High weight. Identifies "bridge" packages that connect different
+                parts of the ecosystem.</li>
+            <li><strong>In-Degree (30%):</strong> Represents direct impact radius and immediate reach within the graph.
+            </li>
+            <li><strong>Inverted Clustering (15%):</strong> Penalizes high redundancy; rewards nodes that bridge
+                structural holes.</li>
+            <li><strong>Out-Degree (10%):</strong> Represents complexity and attack surface.</li>
+            <li><strong>Dependents & Downloads (5% each):</strong> Global popularity metrics given lower weight to
+                prioritize hidden structural risks over raw fame.</li>
+        </ul>
+
+        <h2>4. Robustness and Cascade Analysis</h2>
+
+        <p>The model's validity was tested through <strong>targeted attack simulations</strong>:</p>
+        <ul>
+            <li>Packages with high BRS scores are sequentially removed from the network.</li>
+            <li>At each step, the network's <strong>Largest Connected Component (LCC)</strong> size is measured.</li>
+            <li><strong>Result:</strong> Targeted attacks using BRS cause an <strong>exponential decay</strong> in
+                network connectivity, whereas random attacks show a linear or negligible decline, proving the scale-free
+                nature of the network.</li>
+        </ul>
+
+    </div>
+</body>
+
+</html>

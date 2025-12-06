@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Overview - NPM Supply Chain Risk Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --border: #334155;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    header {
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    h1, h2, h3 {
+      color: var(--text-primary);
+    }
+    h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; }
+    h2 { font-size: 1.5rem; border-left: 4px solid var(--accent); padding-left: 1rem; margin-top: 2.5rem; margin-bottom: 1.5rem; }
+    h3 { font-size: 1.25rem; margin-top: 2rem; margin-bottom: 1rem; color: var(--text-primary); }
+    p { margin-bottom: 1.2rem; color: var(--text-secondary); font-size: 1.05rem; }
+    a { color: var(--accent); text-decoration: none; transition: all 0.2s; }
+    a:hover { text-decoration: underline; color: var(--accent-hover); }
+    ul, ol { color: var(--text-secondary); margin-bottom: 1.5rem; padding-left: 1.5rem; }
+    li { margin-bottom: 0.5rem; }
+    blockquote {
+      border-left: 4px solid var(--border);
+      margin: 20px 0;
+      padding: 12px 20px;
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 0 8px 8px 0;
+      color: var(--text-primary);
+    }
+    pre {
+      background: #0b1120;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    code { font-family: 'Consolas', monospace; font-size: 0.9em; color:
+    #e2e8f0; }
+    table { width: 100%; border-collapse: collapse; margin: 2rem 0; background: var(--surface); border-radius: 8px; overflow: hidden; }
+    th, td { padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { background: rgba(15, 23, 42, 0.5); color: var(--text-secondary); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+    td { color: var(--text-secondary); }
+    tr:last-child td { border-bottom: none; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .btn:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+    .nav-breadcrumb { margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav-breadcrumb">
+      <a href="../index.html">← Back to Dashboard</a> / Overview
+    </div>
+
+    <h1>NPM Supply Chain Network Analysis and Criticality Mapping</h1>
+
+    <blockquote>
+      <strong>Mapping systemic risks in the NPM ecosystem through topology-independent analysis methods.</strong>
+    </blockquote>
+
+    <p>This project models dependency relationships between NPM packages as a directed graph and measures structural risk using the <strong>Behavioral Risk Score (BRS)</strong>. The goal is to go beyond traditional vulnerability scans (CVE) and make visible systemic threats arising from a package's <em>position</em> within the network.</p>
+
+    <p>🔗 <strong>Live Preview:</strong> <a href="https://yusufarbc.github.io/npm-supply-chain-network-analysis/" target="_blank">yusufarbc.github.io/npm-supply-chain-network-analysis</a></p>
+
+    <h2>💡 Key Findings</h2>
+
+    <p>This study presents critical insights into the topological structure of the NPM ecosystem:</p>
+
+    <ul>
+      <li><strong>Scale-Free Fragility:</strong> The network exhibits scale-free properties, where targeted attacks on high-BRS nodes cause exponential collapse, while random failures have minimal impact.</li>
+      <li><strong>Systemic Fragility:</strong> The collapse of "bridge" packages (high betweenness) that constitute less than 1% of the network threatens the accessibility of more than 40% of the ecosystem.</li>
+      <li><strong>Hidden Risks:</strong> Attacks on unpopular but critical packages (low popularity, high centrality) are the most difficult to detect and most devastating in impact.</li>
+      <li><strong>Shai-Hulud Validation:</strong> The developed BRS model successfully classified 85% of packages targeted in the Shai-Hulud attack as "High Risk".</li>
+    </ul>
+
+    <h2>📚 Documentation and Background</h2>
+
+    <p>For the theoretical foundation of the project and case analyses, please review the following documents:</p>
+
+    <ul>
+      <li><strong><a href="npm_security_landscape.html">🛡️ NPM Security Landscape</a>:</strong> Active threats in the ecosystem (Typosquatting, Dependency Confusion, etc.) and why topological analysis is needed.</li>
+      <li><strong><a href="shai_hulud_incident.html">🐛 Case Study: Shai-Hulud</a>:</strong> Technical analysis of the first large-scale wormable NPM attack and how the project can predict such attacks.</li>
+      <li><strong><a href="literature.html">📚 Literature Review</a>:</strong> Academic studies, gap analysis, and the project's position in the literature.</li>
+      <li><strong><a href="methodology.html">📐 Methodology and BRS Model</a>:</strong> Network modeling, centrality metrics used (In-Degree, Betweenness), and mathematical formula of the risk score.</li>
+    </ul>
+
+    <h2>🚀 Quick Start</h2>
+
+    <h3>Prerequisites</h3>
+    <ul>
+      <li>Python 3.11.x (Recommended: 3.11.9)</li>
+    </ul>
+
+    <h3>Installation</h3>
+
+    <ol>
+      <li>
+        <strong>Clone the repository and navigate to the directory:</strong>
+        <pre><code>git clone https://github.com/yusufarbc/npm-supply-chain-network-analysis.git
+cd npm-supply-chain-network-analysis</code></pre>
+      </li>
+      <li>
+        <strong>Set up and activate the virtual environment (Windows PowerShell):</strong>
+        <pre><code>python -m venv .venv
+.\.venv\Scripts\Activate.ps1</code></pre>
+      </li>
+      <li>
+        <strong>Install dependencies:</strong>
+        <pre><code>pip install -r analysis/requirements.txt
+python -m pip install notebook</code></pre>
+      </li>
+      <li>
+        <strong>Start the analysis:</strong>
+        <pre><code>python -m notebook
+# Open the analysis/analysis.ipynb file</code></pre>
+      </li>
+    </ol>
+
+    <h2>📊 Usage (Pipeline)</h2>
+    <p>The analysis engine runs through <code>analysis/run_pipeline.py</code>. You can perform a complete analysis by running the <strong>first cell</strong> in the notebook.</p>
+
+    <pre><code>from analysis.run_pipeline import run_pipeline
+
+# Default: Most critical infrastructure packages (Top 1000 Dependents + Depth 7)
+result = run_pipeline(
+    top_n=1000,                    # Number of packages (per leaderboard category)
+    leaderboard_mode="combined",    # Mode: combined (dependents + downloads)
+    depth=7,                        # Scanning depth
+    results_dir="../results",      # Output directory
+    compute_plots=True              # Generate plots
+)</code></pre>
+
+    <h3>Analysis Modes</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Mode</th>
+          <th>Parameter</th>
+          <th>Description</th>
+          <th>Use Case</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Most Dependent</strong></td>
+          <td><code>dependents</code></td>
+          <td>Most depended-upon packages</td>
+          <td><strong>Critical Infrastructure Analysis (Default)</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Most Downloaded</strong></td>
+          <td><code>downloads</code></td>
+          <td>Most downloaded packages</td>
+          <td>General popularity and traffic analysis</td>
+        </tr>
+        <tr>
+          <td><strong>Trending</strong></td>
+          <td><code>trending</code></td>
+          <td>Rapidly rising packages</td>
+          <td>Early warning and anomaly detection</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>📂 Project Structure</h2>
+
+    <ul>
+      <li><code>academic/</code>: Academic paper and LaTeX source files.</li>
+      <li><code>analysis/</code>: Python analysis code, data fetching and processing modules.</li>
+      <li><code>results/</code>: Analysis outputs (CSV, JSON, GEXF) and generated plots.</li>
+      <li><code>media/</code>: Project images.</li>
+    </ul>
+
+    <h2>📜 License</h2>
+    <p>This project is licensed under the MIT License.</p>
+
+  </div>
+</body>
+</html>

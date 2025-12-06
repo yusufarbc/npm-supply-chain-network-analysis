@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NPM Security Landscape - NPM Supply Chain Risk Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --border: #334155;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: var(--text-primary);
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 1rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: var(--accent-hover);
+        }
+
+        ul,
+        ol {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        blockquote {
+            border-left: 4px solid var(--border);
+            margin: 20px 0;
+            padding: 12px 20px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 0 8px 8px 0;
+            color: var(--text-primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.5);
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .nav-breadcrumb {
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        code {
+            font-family: 'Consolas', monospace;
+            font-size: 0.9em;
+            color: #e2e8f0;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="nav-breadcrumb">
+            <a href="../index.html">← Back to Dashboard</a> / <a href="overview.html">Overview</a> / Security Landscape
+        </div>
+
+        <h1>🛡️ NPM Security Landscape: Threats and Attack Vectors</h1>
+
+        <blockquote>
+            <strong>Context:</strong> This document forms the theoretical foundation of the <a href="overview.html">NPM
+                Supply Chain Network Analysis</a> project. It explains <em>why</em> the topological risk model used in
+            the project is necessary, through the lens of active threats in the ecosystem.
+        </blockquote>
+
+        <h2>1. Introduction: Why is NPM a Primary Attack Surface?</h2>
+
+        <p>Node Package Manager (NPM) is the world's largest software registry, hosting over 3 million packages and
+            processing billions of downloads weekly. Modern software development processes heavily rely on third-party
+            code libraries (dependencies) to increase speed. However, when a single NPM package is added to a project,
+            an average of 79 transitive (indirect) packages are also implicitly included in the trust chain.</p>
+
+        <p>This "implicit trust" model makes NPM an attractive target for attackers. By compromising a single popular
+            package or a dependency deep within it, attackers gain access to a "one-to-many" distribution mechanism that
+            can affect millions of developers and end users. This document defines the active threats in the NPM
+            ecosystem and the technical defense mechanisms that should be taken against them.</p>
+
+        <hr style="border: 0; border-top: 1px solid var(--border); margin: 3rem 0;">
+
+        <h2>2. Attack Types and Technical Taxonomy</h2>
+
+        <p>The following attack vectors represent the most common and critical techniques targeting the modern software
+            supply chain.</p>
+
+        <h3>2.1. Shrinkwrapped Clones (Packaged Clones)</h3>
+        <p><strong>Risk Level:</strong> High<br>
+            <strong>Definition:</strong> When an attacker or careless developer copies a legitimate package and
+            publishes it under a new name without referencing the original package.
+        </p>
+        <ul>
+            <li><strong>How It Works?</strong> Unlike GitHub, there is no "fork" mechanism in the NPM ecosystem. When a
+                package is cloned, the link with the original source (provenance) is broken.</li>
+            <li><strong>Technical Detail:</strong>
+                <ul>
+                    <li><strong>Manifest Manipulation:</strong> The attacker modifies the <code>package.json</code> file
+                        of the copied package but retains all or part of the code.</li>
+                    <li><strong>Lockfile Exploitation:</strong> <code>package-lock.json</code> or
+                        <code>npm-shrinkwrap.json</code> files are manipulated to "pin" older versions with known
+                        security vulnerabilities in the dependency tree.</li>
+                    <li><strong>Security Risk:</strong> When a security vulnerability in the original package is
+                        discovered and patched, this fix is not reflected in the Shrinkwrapped Clone. Since tools like
+                        <code>npm audit</code> don't know the relationship between the clone and the original package,
+                        they cannot detect this vulnerability. This causes known vulnerabilities to persist in the
+                        system through "ghost" versions.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>2.2. Typosquatting (Typo Hunting)</h3>
+        <p><strong>Risk Level:</strong> Medium-High<br>
+            <strong>Definition:</strong> Publishing malicious packages with names similar to popular packages (e.g.,
+            <code>raect</code> instead of <code>react</code> or <code>clolors</code> instead of <code>colors</code>).
+        </p>
+        <ul>
+            <li><strong>How It Works?</strong> It exploits a momentary carelessness when a developer types the
+                <code>npm install</code> command.</li>
+            <li><strong>Technical Detail:</strong> Attackers choose names with low Levenshtein distance (character
+                difference between two words). When the package is installed, malware is executed through
+                <code>preinstall</code> or <code>postinstall</code> scripts in <code>package.json</code>, attempting to
+                steal environment variables or SSH keys from the system.</li>
+        </ul>
+
+        <h3>2.3. Dependency Confusion (Dependency Confusion)</h3>
+        <p><strong>Risk Level:</strong> Critical<br>
+            <strong>Definition:</strong> Publishing the same name as a private package used by companies in their
+            internal networks on the public NPM registry with a higher version number.
+        </p>
+        <ul>
+            <li><strong>How It Works?</strong> Package managers (npm, pip, etc.) by default check both private and
+                public registries. If there are two packages with the same name, they usually prefer the one with the
+                <strong>higher version number</strong>.</li>
+            <li><strong>Technical Detail:</strong>
+                <ul>
+                    <li><em>Private Package:</em> <code>@internal/auth-utils</code> (v1.0.0)</li>
+                    <li><em>Malicious Public Package:</em> <code>@internal/auth-utils</code> (v99.0.0)</li>
+                    <li>During automatic updates or installation, the system pulls the malicious package from the public
+                        registry, resulting in internal network infiltration.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>2.4. Account Takeover (ATO) & Worms (Account Hijacking)</h3>
+        <p><strong>Risk Level:</strong> Critical<br>
+            <strong>Definition:</strong> Compromise of trusted package developer accounts (due to weak passwords,
+            phishing, or leaked tokens) and injection of malicious code into their packages.
+        </p>
+        <ul>
+            <li><strong>How It Works?</strong> The attacker, assuming the identity of a legitimate developer, publishes
+                a "new and malicious" version of a trusted package.</li>
+            <li><strong>Technical Detail (Shai-Hulud Example):</strong> In an incident in September 2025, attackers
+                hijacked developer accounts through phishing. The malware called "Shai-Hulud" automatically propagated
+                itself to other packages (worm-like behavior) by stealing publishing tokens from the <code>.npmrc</code>
+                file in the compromised system, infecting hundreds of packages.</li>
+        </ul>
+
+        <h3>2.5. Protestware / Malicious Updates (Malicious Updates)</h3>
+        <p><strong>Risk Level:</strong> High<br>
+            <strong>Definition:</strong> A legitimate package owner intentionally breaking (sabotaging) the package or
+            adding malicious functionality to it.
+        </p>
+        <ul>
+            <li><strong>How It Works?</strong> As seen in the <code>node-ipc</code> or <code>faker.js</code> incidents,
+                the developer adds code that deletes files at specific IP addresses or locks the system by entering an
+                infinite loop for political or personal reasons to their popular package.</li>
+            <li><strong>Technical Detail:</strong> These attacks are usually distributed through <code>minor</code> or
+                <code>patch</code> updates (expected to be safe according to SemVer rules) and target automatic update
+                mechanisms (e.g., <code>^1.0.0</code>).</li>
+        </ul>
+
+        <hr style="border: 0; border-top: 1px solid var(--border); margin: 3rem 0;">
+
+        <h2>3. Technical Defense Strategies and Measures</h2>
+        <p>The defense-in-depth principle should be applied to narrow the attack surface.</p>
+
+        <h3>3.1. Installation and CI/CD Security</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Description and Implementation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong><code>npm ci</code> Usage</strong></td>
+                    <td>Never use <code>npm install</code> in CI/CD environments. <code>npm ci</code> (clean install)
+                        adheres to versions in <code>package-lock.json</code>, doesn't update <code>package.json</code>,
+                        and guarantees reproducibility of installation.</td>
+                </tr>
+                <tr>
+                    <td><strong>Lockfile Analysis</strong></td>
+                    <td>Lockfiles contain <code>integrity</code> hashes (SHA-512) and <code>resolved</code> URLs of
+                        packages. Tools like <code>lockfile-lint</code> should be used to check whether packages are
+                        being downloaded from untrusted sources (e.g., attacker's own server).</td>
+                </tr>
+                <tr>
+                    <td><strong>Script Disabling</strong></td>
+                    <td>If possible, use the <code>npm install --ignore-scripts</code> parameter during installation to
+                        prevent the execution of <code>preinstall</code> and <code>postinstall</code> scripts, which are
+                        most commonly used by attackers.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>3.2. Developer and Organizational Measures</h3>
+
+        <h4>Scoped Packages</h4>
+        <p>For internal company packages, <strong>Scoped Packages</strong> in the format
+            <code>@company/package-name</code> must be used. This informs the NPM registry that the package belongs to a
+            user or organization and allows the <code>.npmrc</code> file to route this scope only to the private
+            registry (e.g., Artifactory, Verdaccio) to prevent Dependency Confusion attacks.</p>
+
+        <h4>2FA and Token Security</h4>
+        <p><strong>Two-Factor Authentication (2FA)</strong> should be made mandatory for NPM accounts (especially for
+            accounts with <code>publish</code> privileges). When using Automation Tokens, granular authorizations should
+            be set to allow only necessary packages and IP addresses (CIDR whitelist).</p>
+
+        <h4>Software Composition Analysis (SCA) and Security Tools</h4>
+        <ul>
+            <li><strong>Socket.dev / OSSF Scorecard:</strong> Unlike traditional vulnerability scanners, these tools
+                analyze the "behavior" and "health" of packages. They detect anomalies such as a package suddenly
+                requesting network access, attempting to write to the file system, or adding an <code>install</code>
+                script.</li>
+            <li><strong>Snyk / npm audit:</strong> Used to scan for known CVE (Common Vulnerabilities and Exposures)
+                entries. However, it should be noted that they may not always catch hidden vulnerabilities like
+                Shrinkwrapped Clones.</li>
+        </ul>
+
+        <h3>3.3. Manifest File Inspection</h3>
+        <p>Developers should pay particular attention to the following areas in the <code>package.json</code> file:</p>
+        <ul>
+            <li><strong><code>scripts</code></strong>: Are there <code>curl</code>, <code>wget</code>, or encrypted
+                (base64) commands in the <code>preinstall</code>, <code>postinstall</code> areas?</li>
+            <li><strong><code>dependencies</code></strong>: Are there typos in names (Typosquatting)? Do version numbers
+                make sense?</li>
+        </ul>
+
+        <hr style="border: 0; border-top: 1px solid var(--border); margin: 3rem 0;">
+
+        <h2>4. Summary Table: Attack and Mitigation Matrix</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Attack Type</th>
+                    <th>Primary Vector</th>
+                    <th>Key Mitigation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Shrinkwrapped Clones</strong></td>
+                    <td>Cloned/Modified Code</td>
+                    <td>Source code analysis, OSSF Scorecard (Maintenance metrics)</td>
+                </tr>
+                <tr>
+                    <td><strong>Typosquatting</strong></td>
+                    <td>Name Similarity</td>
+                    <td>Careful package name verification, Scoped packages usage</td>
+                </tr>
+                <tr>
+                    <td><strong>Dependency Confusion</strong></td>
+                    <td>Version Priority</td>
+                    <td><code>@scope</code> usage, Private registry configuration (.npmrc)</td>
+                </tr>
+                <tr>
+                    <td><strong>Account Takeover</strong></td>
+                    <td>Identity Theft</td>
+                    <td>Mandatory 2FA, Granular Tokens</td>
+                </tr>
+                <tr>
+                    <td><strong>Malicious Updates</strong></td>
+                    <td>Automatic Updates (<code>^</code>, <code>~</code>)</td>
+                    <td>Dependency Pinning (Version Pinning), <code>npm ci</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Install Scripts</strong></td>
+                    <td><code>postinstall</code> Scripts</td>
+                    <td><code>--ignore-scripts</code>, Socket.dev behavior analysis</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</body>
+
+</html>
