@@ -334,8 +334,8 @@
         network analysis methods.
       </p>
       <div>
-        <a href="paper/paper_revised.pdf" class="btn btn-primary" style="font-size: 1rem; padding: 8px 16px;" download>
-          📄 Download Revised Paper (PDF)
+        <a href="paper/paper.pdf" class="btn btn-primary" style="font-size: 1rem; padding: 8px 16px;" download>
+          📄 Download Paper (PDF)
         </a>
       </div>
     </header>
@@ -423,6 +423,23 @@
             <span class="viz-desc">Logarithmic distribution showing the scale-free structure of the network.</span>
             <div class="btn-group">
               <a href="results/plots/degree_histograms.png" download class="btn btn-primary">PNG</a>
+            </div>
+          </div>
+        </div>
+        <!-- Ecosystem Comparison -->
+        <div class="viz-card">
+          <div class="viz-header">
+            <h3>🔄 Ecosystem vs Network</h3>
+          </div>
+          <div class="viz-body">
+            <a href="results/plots/ecosystem_vs_network.png" target="_blank">
+              <img src="results/plots/ecosystem_vs_network.png" alt="Ecosystem Comparison" loading="lazy">
+            </a>
+          </div>
+          <div class="viz-footer">
+            <span class="viz-desc">Comparison of analyzed network vs global ecosystem stats.</span>
+            <div class="btn-group">
+              <a href="results/plots/ecosystem_vs_network.png" download class="btn btn-primary">PNG</a>
             </div>
           </div>
         </div>
@@ -816,6 +833,24 @@
             <span class="viz-desc">Correlation matrix between metrics.</span>
             <div class="btn-group">
               <a href="results/plots/scatter_correlations.png" download class="btn btn-primary">PNG</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metric Heatmap -->
+        <div class="viz-card">
+          <div class="viz-header">
+            <h3>🔥 Metric Heatmap (Top 20)</h3>
+          </div>
+          <div class="viz-body">
+            <a href="results/plots/metric_heatmap_top20.png" target="_blank">
+              <img src="results/plots/metric_heatmap_top20.png" alt="Metric Heatmap" loading="lazy">
+            </a>
+          </div>
+          <div class="viz-footer">
+            <span class="viz-desc">Heatmap comparing different centrality metrics for top packages.</span>
+            <div class="btn-group">
+              <a href="results/plots/metric_heatmap_top20.png" download class="btn btn-primary">PNG</a>
             </div>
           </div>
         </div>
@@ -1516,6 +1551,68 @@
         </div>
       </div>
 
+    </section>
+
+    <section>
+      <h2>5. Data & Resources</h2>
+      <div class="stats-grid">
+        <div class="stat-card" style="text-align: left;">
+          <h3 style="margin-top: 0; font-size: 1.1rem;">📂 Graph Data</h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">
+            Full network graph in GML format, compatible with Gephi and Cytoscape.
+          </p>
+          <a href="results/network.gml" class="btn btn-outline" download>⬇️ Download GML (1.0 MB)</a>
+        </div>
+        <div class="stat-card" style="text-align: left;">
+          <h3 style="margin-top: 0; font-size: 1.1rem;">📊 Detailed Risk Scores</h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">
+            Comprehensive BRS scores, components, and metrics for all packages.
+          </p>
+          <a href="results/risk_scores.csv" class="btn btn-outline" download>⬇️ Download CSV (456 KB)</a>
+        </div>
+        <div class="stat-card" style="text-align: left;">
+          <h3 style="margin-top: 0; font-size: 1.1rem;">📋 Simplified Risk List</h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">
+            Simplified list of packages and their final BRS scores.
+          </p>
+          <a href="results/package_risk_scores.csv" class="btn btn-outline" download>⬇️ Download CSV (83 KB)</a>
+        </div>
+        <div class="stat-card" style="text-align: left;">
+          <h3 style="margin-top: 0; font-size: 1.1rem;">📉 Impact Scores</h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">
+            Cascade impact analysis results showing potential downstream damage.
+          </p>
+          <a href="results/impact_scores.csv" class="btn btn-outline" download>⬇️ Download CSV (25 KB)</a>
+        </div>
+        <div class="stat-card" style="text-align: left;">
+          <h3 style="margin-top: 0; font-size: 1.1rem;">📑 Gephi Nodes</h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">
+            Pre-processed node attributes for visualization in Gephi.
+          </p>
+          <a href="results/gephi_nodes.csv" class="btn btn-outline" download>⬇️ Download CSV (218 KB)</a>
+        </div>
+        <div class="stat-card" style="text-align: left;">
+          <h3 style="margin-top: 0; font-size: 1.1rem;">🔗 Gephi Edges</h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">
+            Edge list representing dependencies for Gephi visualization.
+          </p>
+          <a href="results/gephi_edges.csv" class="btn btn-outline" download>⬇️ Download CSV (98 KB)</a>
+        </div>
+        <div class="stat-card" style="text-align: left;">
+          <h3 style="margin-top: 0; font-size: 1.1rem;">🎲 Simulation Results</h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">
+            Raw data from robustness and cascade simulations (LCC steps).
+          </p>
+          <a href="results/sim_results.csv" class="btn btn-outline" download>⬇️ Download CSV (8 KB)</a>
+        </div>
+        <div class="stat-card" style="text-align: left;">
+          <h3 style="margin-top: 0; font-size: 1.1rem;">🏆 Top Lists Archive</h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">
+            ZIP archive containing Top 20 rankings for all individual metrics.
+          </p>
+          <a href="results/top_lists.zip" class="btn btn-outline" download>⬇️ Download ZIP</a>
+        </div>
+      </div>
     </section>
 
     <footer>
