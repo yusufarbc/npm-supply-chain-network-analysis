@@ -14,154 +14,154 @@ Packages with the highest Composite Risk Score (BRS).
 
 | Package | Risk Score | In-Degree | Betweenness |
 | :--- | :--- | :--- | :--- |
-| es-abstract | 0.6691 | 17.0000 | 0.0004 |
-| tslib | 0.3945 | 156.0000 | 0.0000 |
-| get-intrinsic | 0.3799 | 22.0000 | 0.0002 |
-| @babel/core | 0.3417 | 12.0000 | 0.0002 |
-| side-channel | 0.3339 | 4.0000 | 0.0002 |
-| qs | 0.3325 | 8.0000 | 0.0002 |
-| jest-circus | 0.3265 | 1.0000 | 0.0002 |
-| jest-runner | 0.3058 | 2.0000 | 0.0001 |
-| babel-jest | 0.3046 | 2.0000 | 0.0001 |
-| @babel/helper-plugin-utils | 0.3041 | 110.0000 | 0.0000 |
-| browserslist | 0.2827 | 16.0000 | 0.0001 |
-| @smithy/types | 0.2578 | 94.0000 | 0.0000 |
-| @babel/traverse | 0.2525 | 20.0000 | 0.0001 |
-| @babel/helper-compilation-targets | 0.2379 | 7.0000 | 0.0001 |
-| jest-snapshot | 0.2281 | 6.0000 | 0.0001 |
-| debug | 0.2255 | 51.0000 | 0.0000 |
-| readable-stream | 0.2233 | 7.0000 | 0.0001 |
-| gaxios | 0.2040 | 4.0000 | 0.0001 |
-| @babel/helper-create-regexp-features-plugin | 0.2032 | 9.0000 | 0.0001 |
-| call-bind | 0.2031 | 36.0000 | 0.0000 |
+| es-abstract | 0.6637 | 17.0000 | 0.0003 |
+| tslib | 0.5368 | 156.0000 | 0.0000 |
+| jest-snapshot | 0.4629 | 6.0000 | 0.0002 |
+| @babel/helper-plugin-utils | 0.4530 | 110.0000 | 0.0000 |
+| @babel/traverse | 0.4481 | 20.0000 | 0.0002 |
+| @babel/core | 0.4428 | 12.0000 | 0.0002 |
+| workbox-build | 0.4320 | 1.0000 | 0.0001 |
+| @babel/preset-env | 0.4198 | 3.0000 | 0.0001 |
+| get-intrinsic | 0.4046 | 22.0000 | 0.0001 |
+| @smithy/types | 0.3923 | 94.0000 | 0.0000 |
+| debug | 0.3807 | 51.0000 | 0.0000 |
+| @jest/transform | 0.3776 | 6.0000 | 0.0001 |
+| call-bind | 0.3666 | 36.0000 | 0.0001 |
+| browserslist | 0.3665 | 16.0000 | 0.0001 |
+| @jest/types | 0.3623 | 26.0000 | 0.0001 |
+| @babel/types | 0.3487 | 32.0000 | 0.0000 |
+| @types/node | 0.3327 | 42.0000 | 0.0000 |
+| @babel/helper-compilation-targets | 0.3312 | 7.0000 | 0.0001 |
+| @jest/core | 0.3308 | 2.0000 | 0.0001 |
+| @aws-sdk/credential-provider-node | 0.3271 | 18.0000 | 0.0001 |
 
 ## 🔗 Top 20 Most Depended-upon Packages (In-Degree)
 Packages that have the most direct dependents in this network.
 
 | Package | In-Degree | Out-Degree | Risk Score |
 | :--- | :--- | :--- | :--- |
-| tslib | 156.0000 | 0.0000 | 0.3945 |
-| @babel/helper-plugin-utils | 110.0000 | 0.0000 | 0.3041 |
-| @smithy/types | 94.0000 | 1.0000 | 0.2578 |
-| @aws-sdk/types | 57.0000 | 2.0000 | 0.1922 |
-| debug | 51.0000 | 1.0000 | 0.2255 |
-| @smithy/protocol-http | 45.0000 | 2.0000 | 0.1633 |
-| @types/node | 42.0000 | 1.0000 | 0.1788 |
-| call-bound | 41.0000 | 2.0000 | 0.1726 |
-| postcss-value-parser | 39.0000 | 0.0000 | 0.1668 |
-| call-bind | 36.0000 | 4.0000 | 0.2031 |
-| @smithy/util-utf8 | 35.0000 | 2.0000 | 0.1506 |
-| @smithy/node-config-provider | 34.0000 | 4.0000 | 0.1465 |
-| es-errors | 33.0000 | 0.0000 | 0.1078 |
-| chalk | 32.0000 | 0.0000 | 0.1557 |
-| @babel/types | 32.0000 | 2.0000 | 0.1882 |
-| @aws-sdk/core | 32.0000 | 13.0000 | 0.1465 |
-| define-properties | 29.0000 | 3.0000 | 0.1437 |
-| @smithy/smithy-client | 29.0000 | 7.0000 | 0.1372 |
-| @smithy/util-middleware | 29.0000 | 2.0000 | 0.1310 |
-| @csstools/css-tokenizer | 28.0000 | 0.0000 | 0.1233 |
+| tslib | 156.0000 | 0.0000 | 0.5368 |
+| @babel/helper-plugin-utils | 110.0000 | 0.0000 | 0.4530 |
+| @smithy/types | 94.0000 | 1.0000 | 0.3923 |
+| @aws-sdk/types | 57.0000 | 2.0000 | 0.3255 |
+| debug | 51.0000 | 1.0000 | 0.3807 |
+| @smithy/protocol-http | 45.0000 | 2.0000 | 0.2890 |
+| @types/node | 42.0000 | 1.0000 | 0.3327 |
+| call-bound | 41.0000 | 2.0000 | 0.3095 |
+| postcss-value-parser | 39.0000 | 0.0000 | 0.3165 |
+| call-bind | 36.0000 | 4.0000 | 0.3666 |
+| @smithy/util-utf8 | 35.0000 | 2.0000 | 0.2881 |
+| @smithy/node-config-provider | 34.0000 | 4.0000 | 0.2820 |
+| es-errors | 33.0000 | 0.0000 | 0.2493 |
+| @babel/types | 32.0000 | 2.0000 | 0.3487 |
+| chalk | 32.0000 | 0.0000 | 0.2930 |
+| @aws-sdk/core | 32.0000 | 13.0000 | 0.3080 |
+| @smithy/util-middleware | 29.0000 | 2.0000 | 0.2536 |
+| define-properties | 29.0000 | 3.0000 | 0.3010 |
+| @smithy/smithy-client | 29.0000 | 7.0000 | 0.3151 |
+| @csstools/css-tokenizer | 28.0000 | 0.0000 | 0.2733 |
 
 ## 📦 Top 20 Most Dependent Packages (Out-Degree)
 Packages that have the most dependencies (highest complexity).
 
 | Package | Out-Degree | In-Degree | Risk Score |
 | :--- | :--- | :--- | :--- |
-| telecom-mas-agent | 83.0000 | 1.0000 | 0.1482 |
-| @babel/preset-env | 70.0000 | 3.0000 | 0.1797 |
-| postcss-preset-env | 69.0000 | 1.0000 | 0.1678 |
-| @aws-sdk/client-s3 | 55.0000 | 1.0000 | 0.1366 |
-| es-abstract | 54.0000 | 17.0000 | 0.6691 |
-| react-scripts | 48.0000 | 0.0000 | 0.1376 |
-| @aws-sdk/client-s3-control | 45.0000 | 1.0000 | 0.0869 |
-| @aws-sdk/client-lambda | 44.0000 | 1.0000 | 0.1148 |
-| @aws-sdk/client-dynamodb | 42.0000 | 1.0000 | 0.1129 |
-| cypress | 42.0000 | 1.0000 | 0.1272 |
-| @aws-sdk/client-cloudfront | 41.0000 | 1.0000 | 0.0999 |
-| @aws-sdk/client-ec2 | 41.0000 | 1.0000 | 0.1050 |
-| @aws-sdk/client-sqs | 41.0000 | 1.0000 | 0.1088 |
-| @aws-sdk/client-rds | 41.0000 | 1.0000 | 0.1003 |
-| @aws-sdk/client-cloudwatch | 41.0000 | 1.0000 | 0.1004 |
-| @aws-sdk/client-ses | 40.0000 | 1.0000 | 0.1077 |
-| @aws-sdk/client-cloudformation | 40.0000 | 1.0000 | 0.1033 |
-| @aws-sdk/client-iam | 40.0000 | 1.0000 | 0.1094 |
-| @aws-sdk/client-secrets-manager | 39.0000 | 1.0000 | 0.1047 |
-| @aws-sdk/client-kms | 39.0000 | 1.0000 | 0.0976 |
+| telecom-mas-agent | 83.0000 | 1.0000 | 0.2976 |
+| @babel/preset-env | 70.0000 | 3.0000 | 0.4198 |
+| postcss-preset-env | 69.0000 | 1.0000 | 0.3172 |
+| @aws-sdk/client-s3 | 55.0000 | 1.0000 | 0.2867 |
+| es-abstract | 54.0000 | 17.0000 | 0.6637 |
+| react-scripts | 48.0000 | 0.0000 | 0.2865 |
+| @aws-sdk/client-s3-control | 45.0000 | 1.0000 | 0.2300 |
+| @aws-sdk/client-lambda | 44.0000 | 1.0000 | 0.2567 |
+| cypress | 42.0000 | 1.0000 | 0.3173 |
+| @aws-sdk/client-dynamodb | 42.0000 | 1.0000 | 0.2549 |
+| @aws-sdk/client-cloudwatch | 41.0000 | 1.0000 | 0.2408 |
+| @aws-sdk/client-cloudfront | 41.0000 | 1.0000 | 0.2393 |
+| @aws-sdk/client-rds | 41.0000 | 1.0000 | 0.2404 |
+| @aws-sdk/client-ec2 | 41.0000 | 1.0000 | 0.2451 |
+| @aws-sdk/client-sqs | 41.0000 | 1.0000 | 0.2488 |
+| @aws-sdk/client-cloudformation | 40.0000 | 1.0000 | 0.2425 |
+| @aws-sdk/client-ses | 40.0000 | 1.0000 | 0.2469 |
+| @aws-sdk/client-iam | 40.0000 | 1.0000 | 0.2486 |
+| @aws-sdk/client-sns | 39.0000 | 1.0000 | 0.2419 |
+| @aws-sdk/client-cloudsearch | 39.0000 | 1.0000 | 0.2112 |
 
 ## 🌉 Top 20 Bridges (Betweenness Centrality)
 Packages that act as bridges or bottlenecks in the network.
 
 | Package | Betweenness | In-Degree | Risk Score |
 | :--- | :--- | :--- | :--- |
-| es-abstract | 0.0004 | 17.0000 | 0.6691 |
-| get-intrinsic | 0.0002 | 22.0000 | 0.3799 |
-| side-channel | 0.0002 | 4.0000 | 0.3339 |
-| qs | 0.0002 | 8.0000 | 0.3325 |
-| jest-circus | 0.0002 | 1.0000 | 0.3265 |
-| @babel/core | 0.0002 | 12.0000 | 0.3417 |
-| babel-jest | 0.0001 | 2.0000 | 0.3046 |
-| jest-runner | 0.0001 | 2.0000 | 0.3058 |
-| browserslist | 0.0001 | 16.0000 | 0.2827 |
-| @babel/helper-compilation-targets | 0.0001 | 7.0000 | 0.2379 |
-| readable-stream | 0.0001 | 7.0000 | 0.2233 |
-| super-regex | 0.0001 | 2.0000 | 0.1714 |
-| @babel/traverse | 0.0001 | 20.0000 | 0.2525 |
-| gaxios | 0.0001 | 4.0000 | 0.2040 |
-| jest-snapshot | 0.0001 | 6.0000 | 0.2281 |
-| svgo | 0.0001 | 2.0000 | 0.1999 |
-| is-data-view | 0.0001 | 4.0000 | 0.1519 |
-| @babel/helper-create-regexp-features-plugin | 0.0001 | 9.0000 | 0.2032 |
-| babel-preset-current-node-syntax | 0.0001 | 2.0000 | 0.2017 |
-| babel-plugin-istanbul | 0.0001 | 2.0000 | 0.1862 |
+| es-abstract | 0.0003 | 17.0000 | 0.6637 |
+| jest-snapshot | 0.0002 | 6.0000 | 0.4629 |
+| @babel/core | 0.0002 | 12.0000 | 0.4428 |
+| @babel/traverse | 0.0002 | 20.0000 | 0.4481 |
+| workbox-build | 0.0001 | 1.0000 | 0.4320 |
+| @jest/transform | 0.0001 | 6.0000 | 0.3776 |
+| get-intrinsic | 0.0001 | 22.0000 | 0.4046 |
+| jest | 0.0001 | 2.0000 | 0.3217 |
+| @babel/preset-env | 0.0001 | 3.0000 | 0.4198 |
+| browserslist | 0.0001 | 16.0000 | 0.3665 |
+| @babel/helper-compilation-targets | 0.0001 | 7.0000 | 0.3312 |
+| @jest/types | 0.0001 | 26.0000 | 0.3623 |
+| reflect.getprototypeof | 0.0001 | 2.0000 | 0.2970 |
+| @jest/core | 0.0001 | 2.0000 | 0.3308 |
+| @babel/generator | 0.0001 | 3.0000 | 0.3040 |
+| @aws-sdk/credential-provider-node | 0.0001 | 18.0000 | 0.3271 |
+| side-channel | 0.0001 | 4.0000 | 0.2980 |
+| jest-message-util | 0.0001 | 10.0000 | 0.3132 |
+| jest-haste-map | 0.0001 | 6.0000 | 0.3003 |
+| call-bind | 0.0001 | 36.0000 | 0.3666 |
 
 ## 🌍 Top 20 Ecosystem Critical (Dependents Count)
 Packages with the highest number of dependents in the entire NPM ecosystem.
 
 | Package | Dependents Count | In-Degree | Risk Score |
 | :--- | :--- | :--- | :--- |
-| supports-color | 5,765,200 | 3.0000 | 0.1047 |
-| fs.realpath | 5,532,257 | 0.0000 | 0.0937 |
-| fill-range | 5,461,792 | 1.0000 | 0.1106 |
-| to-regex-range | 5,300,496 | 1.0000 | 0.1040 |
-| fsevents | 5,289,351 | 1.0000 | 0.0925 |
-| resolve | 5,229,428 | 7.0000 | 0.1127 |
-| statuses | 5,106,018 | 4.0000 | 0.1022 |
-| setprototypeof | 5,068,682 | 1.0000 | 0.0956 |
-| unpipe | 5,053,604 | 1.0000 | 0.0945 |
-| fresh | 5,019,855 | 2.0000 | 0.0968 |
-| send | 4,993,661 | 2.0000 | 0.1103 |
-| serve-static | 4,975,561 | 1.0000 | 0.0986 |
-| fast-deep-equal | 4,968,905 | 6.0000 | 0.1057 |
-| fast-json-stable-stringify | 4,957,551 | 3.0000 | 0.0992 |
-| utils-merge | 4,948,638 | 0.0000 | 0.0919 |
-| finalhandler | 4,946,523 | 1.0000 | 0.1024 |
-| readdirp | 4,905,460 | 1.0000 | 0.0962 |
-| yargs | 4,893,685 | 2.0000 | 0.1067 |
-| camelcase | 4,809,686 | 5.0000 | 0.1048 |
-| uri-js | 4,745,435 | 0.0000 | 0.0944 |
+| supports-color | 5,765,200 | 3.0000 | 0.2547 |
+| fs.realpath | 5,532,257 | 0.0000 | 0.2437 |
+| fill-range | 5,461,792 | 1.0000 | 0.2643 |
+| to-regex-range | 5,300,496 | 1.0000 | 0.2563 |
+| fsevents | 5,289,351 | 1.0000 | 0.2425 |
+| resolve | 5,229,428 | 7.0000 | 0.2727 |
+| statuses | 5,106,018 | 4.0000 | 0.2022 |
+| setprototypeof | 5,068,682 | 1.0000 | 0.2456 |
+| unpipe | 5,053,604 | 1.0000 | 0.2445 |
+| fresh | 5,019,855 | 2.0000 | 0.1718 |
+| send | 4,993,661 | 2.0000 | 0.2537 |
+| serve-static | 4,975,561 | 1.0000 | 0.2036 |
+| fast-deep-equal | 4,968,905 | 6.0000 | 0.2507 |
+| fast-json-stable-stringify | 4,957,551 | 3.0000 | 0.2242 |
+| utils-merge | 4,948,638 | 0.0000 | 0.2419 |
+| finalhandler | 4,946,523 | 1.0000 | 0.2310 |
+| readdirp | 4,905,460 | 1.0000 | 0.2462 |
+| yargs | 4,893,685 | 2.0000 | 0.2676 |
+| camelcase | 4,809,686 | 5.0000 | 0.2548 |
+| uri-js | 4,745,435 | 0.0000 | 0.2444 |
 
 ## 💥 Top 20 Cascade Impact (Network Damage)
 Packages that cause the largest reduction in network connectivity (LCC) when removed.
 
 | Package | Cascade Impact | Risk Score |
 | :--- | :--- | :--- |
-| telecom-mas-agent | 31.0000 | 0.1482 |
-| workbox-build | 19.0000 | 0.1282 |
-| @types/node | 15.0000 | 0.1788 |
-| postcss-preset-env | 14.0000 | 0.1678 |
-| react-scripts | 14.0000 | 0.1376 |
-| eslint | 8.0000 | 0.1328 |
-| regexpu-core | 8.0000 | 0.1558 |
-| @babel/helper-plugin-utils | 7.0000 | 0.3041 |
-| jest-haste-map | 7.0000 | 0.1630 |
-| @babel/types | 7.0000 | 0.1882 |
-| micromatch | 5.0000 | 0.1373 |
-| express | 4.0000 | 0.1273 |
-| jest-resolve | 4.0000 | 0.1456 |
-| super-regex | 4.0000 | 0.1714 |
-| readable-stream | 4.0000 | 0.2233 |
-| browserslist | 4.0000 | 0.2827 |
-| minimatch | 4.0000 | 0.1633 |
-| chalk | 4.0000 | 0.1557 |
-| @jest/types | 3.0000 | 0.1907 |
-| tslib | 3.0000 | 0.3945 |
+| d3 | 32.0000 | 0.2725 |
+| telecom-mas-agent | 31.0000 | 0.2976 |
+| workbox-build | 19.0000 | 0.4320 |
+| cypress | 17.0000 | 0.3173 |
+| @types/node | 15.0000 | 0.3327 |
+| react-scripts | 14.0000 | 0.2865 |
+| postcss-preset-env | 14.0000 | 0.3172 |
+| eslint | 8.0000 | 0.2810 |
+| jsdom | 8.0000 | 0.2838 |
+| regexpu-core | 8.0000 | 0.2856 |
+| @babel/types | 7.0000 | 0.3487 |
+| execa | 7.0000 | 0.2768 |
+| @babel/helper-plugin-utils | 7.0000 | 0.4530 |
+| jest-haste-map | 7.0000 | 0.3003 |
+| cssnano-preset-default | 6.0000 | 0.2725 |
+| micromatch | 5.0000 | 0.2850 |
+| browserslist | 4.0000 | 0.3665 |
+| readable-stream | 4.0000 | 0.2685 |
+| minimatch | 4.0000 | 0.3033 |
+| braces | 4.0000 | 0.2676 |
 

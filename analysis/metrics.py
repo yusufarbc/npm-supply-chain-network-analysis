@@ -122,27 +122,23 @@ def calculate_risk_scores(G, betweenness_k=100):
         print(f"Community detection failed: {e}. Assigning all to 0.")
         community_map = {n: 0 for n in G.nodes()}
 
-    # --- BRS Calculation (NEW FORMULA - Topology-Weighted) ---
-    # Based on the validation finding that Betweenness and In-Degree are the
-    # primary drivers of LCC collapse (cascade impact).
-    # This formula heavily weights these two structural metrics.
-    # WEIGHTS:
-    # Betweenness: 50% (Critical Bridges)
+    # --- BRS Calculation (REVISED FORMULA - Step 2) ---
+    # Re-introducing Clustering Coefficient to capture local fragility and
+    # adjusting weights based on user analysis to improve predictive power.
+    # WEIGHTS (v3):
+    # Betweenness: 35% (High-precision, but slightly reduced weight)
     # In-Degree:   30% (Major Hubs)
+    # Clustering:  15% (Local Fragility / Structural Holes)
     # Out-Degree:  10% (Complexity/Attack Surface)
     # Dependents:  5%  (Global Popularity)
     # Downloads:   5%  (Usage Popularity)
 
     risk_scores = {}
     for node in G.nodes():
-        # Note: The user's formula used short names like 'norm_in'. We map these
-        # to the actual variable names used in this script (e.g., 'in_degree_norm').
-        # The DataFrame columns are named like `betweenness_norm`, `in_degree_norm`, etc.
-        # The dictionaries used here are `norm_bet`, `norm_in`, etc.
-        
         score = (
-            0.50 * norm_bet.get(node, 0) +
+            0.35 * norm_bet.get(node, 0) +
             0.30 * norm_in.get(node, 0) +
+            0.15 * norm_clustering_risk.get(node, 0) +
             0.10 * norm_out.get(node, 0) +
             0.05 * norm_deps.get(node, 0) +
             0.05 * norm_downloads.get(node, 0)
