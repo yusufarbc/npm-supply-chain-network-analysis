@@ -1,5 +1,7 @@
 # Methodology: Topological Risk Analysis and CRS Model
 
+> 🏠 [Return to Home](../README.md)
+
 ### 1. Data Collection and Network Modeling
 
 The project models the NPM ecosystem as a directed graph:

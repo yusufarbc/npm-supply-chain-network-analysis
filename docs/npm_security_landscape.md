@@ -1,6 +1,6 @@
 # 🛡️ NPM Security Landscape: Threats and Attack Vectors
 
-> **Context:** This document forms the theoretical foundation of the [NPM Supply Chain Network Analysis](./README.md) project. It explains *why* the topological risk model used in the project is necessary, through the lens of active threats in the ecosystem.
+> **Context:** This document forms the theoretical foundation of the [NPM Supply Chain Network Analysis](../README.md) project. It explains *why* the topological risk model used in the project is necessary, through the lens of active threats in the ecosystem.
 
 ## 1. Introduction: Why is NPM a Primary Attack Surface?
 

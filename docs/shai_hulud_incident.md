@@ -1,6 +1,6 @@
 ﻿# 🐛 Case Study: The Shai-Hulud Incident
 
-> **Context:** This report is a concrete example of the "topological risk" concept proposed in the [NPM Supply Chain Network Analysis](./README.md) project. The Shai-Hulud attack demonstrates how attackers weaponize the network structure.
+> **Context:** This report is a concrete example of the "topological risk" concept proposed in the [NPM Supply Chain Network Analysis](../README.md) project. The Shai-Hulud attack demonstrates how attackers weaponize the network structure.
 
 ## 1. Introduction: A Turning Point
 The year 2025 has been recorded as a definitive breaking point in the software supply chain security literature. The NPM ecosystem was subjected to the first large-scale "wormable" malware attack, named "Shai-Hulud" in reference to the giant sandworms in Frank Herbert's *Dune* universe. This sequence of events not only affected thousands of projects but also painfully exposed the inadequacy of existing security paradigms—especially traditional scanners focusing on package content.

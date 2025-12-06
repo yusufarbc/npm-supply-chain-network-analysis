@@ -2,7 +2,7 @@
 
 > **Context:** This document summarizes academic studies on the NPM ecosystem and software supply chain security, key findings, and the project's position within this literature.
 >
-> 🏠 [Return to Home](./README.md)
+> 🏠 [Return to Home](../README.md)
 
 ## 1. General Background and Gap Analysis
 
