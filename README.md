@@ -73,8 +73,8 @@ from analysis.run_pipeline import run_pipeline
 
 # Default: Most critical infrastructure packages (Top 1000 Dependents + Depth 7)
 result = run_pipeline(
-    top_n=1000,                    # Number of packages to analyze
-    leaderboard_mode="dependents",  # Mode: dependents, downloads, trending
+    top_n=1000,                    # Number of packages (per leaderboard category)
+    leaderboard_mode="combined",    # Mode: combined (dependents + downloads)
     depth=7,                        # Scanning depth
     results_dir="../results",      # Output directory
     compute_plots=True              # Generate plots

@@ -36,7 +36,7 @@ This study compiles and synthesizes key works, findings, and gaps in the field o
 - **OSCAR (2024):** Strong F1 in sandbox + fuzz + hooked tracing; 10,404 NPM, 1,235 PyPI malicious packages in industrial deployment.
 - **ACME (2021):** Signature generation with AST clustering; extract signatures from clusters and scan registry.
 
-> **Main Message:** Detection pipelines are maturing; however, producing a priority scanning queue with a **topological pre-filter** (CRS) is critical for limited analyst capacity.
+> **Main Message:** Detection pipelines are maturing; however, producing a priority scanning queue with a **topological pre-filter** (BRS) is critical for limited analyst capacity.
 
 ## 5. Maintenance/Recency and Operational Signals
 
@@ -58,9 +58,9 @@ This study compiles and synthesizes key works, findings, and gaps in the field o
 
 | Area | Current Gap | Project's Contribution |
 |------|---------------|------------------|
-| **Prioritization** | Lack of operational prioritization criteria at ecosystem level. | **Composite Risk Score (CRS)** = 0.5·in' + 0.2·out' + 0.3·btw' |
-| **Detection** | Detection pipeline not connected with transitive propagation/high-fidelity resolution. | Directed graph built with official rules + CRS pre-filter → **Priority scanning queue** |
-| **Policy** | Policy/integrity and community health signals not operationalized. | CRS target lists + TOOD/PFET → **Targeted intervention plans** |
+| **Prioritization** | Lack of operational prioritization criteria at ecosystem level. | **Behavioral Risk Score (BRS)** = 0.35·btw' + 0.30·in' + 0.15·inv_clust' + ... |
+| **Detection** | Detection pipeline not connected with transitive propagation/high-fidelity resolution. | Directed graph built with official rules + BRS pre-filter → **Priority scanning queue** |
+| **Policy** | Policy/integrity and community health signals not operationalized. | BRS target lists + TOOD/PFET → **Targeted intervention plans** |
 
 ---
 

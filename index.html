@@ -341,6 +341,32 @@
     </header>
 
     <section>
+      <h2>💡 Key Findings</h2>
+      <div style="background: var(--surface); padding: 24px; border-radius: 12px; border: 1px solid var(--border);">
+        <ul style="padding-left: 20px; color: var(--text-secondary);">
+          <li style="margin-bottom: 12px;">
+            <strong style="color: var(--text-primary);">Scale-Free Fragility:</strong> The network exhibits scale-free
+            properties, where targeted attacks on high-BRS nodes cause exponential collapse, while random failures have
+            minimal impact.
+          </li>
+          <li style="margin-bottom: 12px;">
+            <strong style="color: var(--text-primary);">Systemic Fragility:</strong> The collapse of "bridge" packages
+            (high betweenness) that constitute less than 1% of the network threatens the accessibility of more than 40%
+            of the ecosystem.
+          </li>
+          <li style="margin-bottom: 12px;">
+            <strong style="color: var(--text-primary);">Hidden Risks:</strong> Attacks on unpopular but critical
+            packages (low popularity, high centrality) are the most difficult to detect and most devastating in impact.
+          </li>
+          <li>
+            <strong style="color: var(--text-primary);">Shai-Hulud Validation:</strong> The developed BRS model
+            successfully classified 85% of packages targeted in the Shai-Hulud attack as "High Risk".
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
       <h2>Network Statistics</h2>
       <div class="stats-grid">
         <div class="stat-card">
@@ -424,7 +450,43 @@
           </div>
         </div>
 
-        <!-- Cascade Impact -->
+        <!-- Top 20 Cascade Impact -->
+        <div class="viz-card">
+          <div class="viz-header">
+            <h3>💥 Top 20 Cascade Impact</h3>
+          </div>
+          <div class="viz-body">
+            <a href="results/plots/top20_cascade_impact.png" target="_blank">
+              <img src="results/plots/top20_cascade_impact.png" alt="Top 20 Cascade Impact" loading="lazy">
+            </a>
+          </div>
+          <div class="viz-footer">
+            <span class="viz-desc">Packages causing the largest structural damage when removed.</span>
+            <div class="btn-group">
+              <a href="results/plots/top20_cascade_impact.png" download class="btn btn-primary">PNG</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Risk vs Cascade Scatter -->
+        <div class="viz-card">
+          <div class="viz-header">
+            <h3>📉 Risk vs Cascade (Scatter)</h3>
+          </div>
+          <div class="viz-body">
+            <a href="results/plots/risk_vs_cascade.png" target="_blank">
+              <img src="results/plots/risk_vs_cascade.png" alt="Risk vs Cascade Scatter" loading="lazy">
+            </a>
+          </div>
+          <div class="viz-footer">
+            <span class="viz-desc">Correlation between BRS and cascade impact.</span>
+            <div class="btn-group">
+              <a href="results/plots/risk_vs_cascade.png" download class="btn btn-primary">PNG</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cascade Impact Validation -->
         <div class="viz-card">
           <div class="viz-header">
             <h3>📉 BRS vs Cascade Impact (Validation)</h3>
@@ -1358,6 +1420,103 @@
       </div>
     </section>
 
+
+    <section>
+      <h2>4. Detailed BRS Analysis</h2>
+
+      <!-- BRS Distributions -->
+      <div class="viz-grid" style="margin-bottom: 24px;">
+        <div class="viz-card">
+          <div class="viz-header">
+            <h3>📊 BRS Distribution Analysis</h3>
+          </div>
+          <div class="viz-body">
+            <a href="results/plots/brs_distribution_analysis.png" target="_blank">
+              <img src="results/plots/brs_distribution_analysis.png" alt="BRS Distribution" loading="lazy">
+            </a>
+          </div>
+          <div class="viz-footer">
+            <span class="viz-desc">Distribution of Behavioral Risk Scores across the network.</span>
+            <div class="btn-group">
+              <a href="results/plots/brs_distribution_analysis.png" download class="btn btn-primary">PNG</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <div class="viz-header">
+            <h3>🎭 Risk Distribution by Package Type</h3>
+          </div>
+          <div class="viz-body">
+            <a href="results/plots/risk_distribution_by_type.png" target="_blank">
+              <img src="results/plots/risk_distribution_by_type.png" alt="Risk by Type" loading="lazy">
+            </a>
+          </div>
+          <div class="viz-footer">
+            <span class="viz-desc">Risk scores categorized by package type (Combined vs Dependents vs Downloads).</span>
+            <div class="btn-group">
+              <a href="results/plots/risk_distribution_by_type.png" download class="btn btn-primary">PNG</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BRS Components -->
+      <div class="viz-grid" style="margin-bottom: 24px;">
+        <div class="viz-card">
+          <div class="viz-header">
+            <h3>🧩 BRS Components Breakdown</h3>
+          </div>
+          <div class="viz-body">
+            <a href="results/plots/brs_components_breakdown.png" target="_blank">
+              <img src="results/plots/brs_components_breakdown.png" alt="Components Breakdown" loading="lazy">
+            </a>
+          </div>
+          <div class="viz-footer">
+            <span class="viz-desc">Contribution of each metric to the total risk score.</span>
+            <div class="btn-group">
+              <a href="results/plots/brs_components_breakdown.png" download class="btn btn-primary">PNG</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <div class="viz-header">
+            <h3>🌍 BRS vs Global Reach</h3>
+          </div>
+          <div class="viz-body">
+            <a href="results/plots/brs_vs_global_reach.png" target="_blank">
+              <img src="results/plots/brs_vs_global_reach.png" alt="Global Reach" loading="lazy">
+            </a>
+          </div>
+          <div class="viz-footer">
+            <span class="viz-desc">Correlation between risk score and global ecosystem reach.</span>
+            <div class="btn-group">
+              <a href="results/plots/brs_vs_global_reach.png" download class="btn btn-primary">PNG</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Component Lines -->
+      <div class="viz-card">
+        <div class="viz-header">
+          <h3>📈 Top 20 BRS Component Analysis</h3>
+        </div>
+        <div class="viz-body">
+          <a href="results/plots/top20_brs_component_lines.png" target="_blank">
+            <img src="results/plots/top20_brs_component_lines.png" alt="Component Lines" loading="lazy">
+          </a>
+        </div>
+        <div class="viz-footer">
+          <span class="viz-desc">Detailed breakdown of risk components for the top 20 critical packages.</span>
+          <div class="btn-group">
+            <a href="results/plots/top20_brs_component_lines.png" download class="btn btn-primary">PNG</a>
+          </div>
+        </div>
+      </div>
+
+    </section>
 
     <footer>
       <p>This work was prepared by <strong>Yusuf Talha Arabacı</strong> for academic research purposes.</p>

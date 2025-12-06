@@ -165,13 +165,13 @@ Analiz pipeline'ı şu adımlardan oluşur:
 └──────────────────┬──────────────────────────┘
                    ↓
 ┌─────────────────────────────────────────────┐
-│  5. Risk Skorlama (Min-Max Normalizasyon)   │
-│     Risk = 0.5×In + 0.2×Out + 0.3×Between   │
+│  5. Risk Skorlama (V3 Model)                │
+│     Risk = 0.35×Btw + 0.30×In + 0.15×Clust  │
+│          + 0.10×Out + 0.10×Global           │
 │     • En kritik paketleri tespit et         │
-│     • Leaderboard moduna göre yorumlama:    │
-│       - dependents: Yapısal kritiklik       │
-│       - downloads: Etki yüzeyi              │
-│       - trending: Erken risk sinyali        │
+│     • Combined: Altyapı + Popülerlik        │
+│       - Dependents, Downloads, Staleness    │
+│         (Log-Normalize edilir)              │
 └──────────────────┬──────────────────────────┘
                    ↓
 ┌─────────────────────────────────────────────┐
@@ -699,40 +699,6 @@ def minmax_normalize(values: Dict[str, float]) -> Dict[str, float]:
     return {
         k: (v - vmin) / (vmax - vmin)
         for k, v in values.items()
-    }
-```
-
-**Sonuç:** Her metrik [0, 1] aralığına ölçeklenir.
-
-### 5. Risk Skoru Hesaplama
-
-```python
-# analysis_helpers.py: compute_risk_scores()
-ALPHA = 0.5   # In-degree ağırlığı
-BETA = 0.2    # Out-degree ağırlığı
-GAMMA = 0.3   # Betweenness ağırlığı
-
-risk[pkg] = (
-    ALPHA * in_norm[pkg] +
-    BETA * out_norm[pkg] +
-    GAMMA * btw_norm[pkg]
-)
-```
-
-**Risk Skoru Formülü:**
-$$
-\text{Risk}(p) = 0.5 \cdot \text{InDeg}'(p) + 0.2 \cdot \text{OutDeg}'(p) + 0.3 \cdot \text{Betw}'(p)
-$$
-
-**Yorumlama:**
-- **Yüksek in-degree** (0.5): Çok paket buna bağımlı → Kritik
-- **Yüksek out-degree** (0.2): Çok bağımlılığı var → Kararsız
-- **Yüksek betweenness** (0.3): Ağın köprüsü → Kaldırılırsa sistem parçalanır
-
-### 6. Kaskad Etki Analizi
-
-```python
-# analysis_helpers.py: estimate_cascade_impact()
 def estimate_cascade_impact(G: nx.DiGraph, seed_nodes: List[str]) -> Dict[str, int]:
     """Bir paket kaldırılırsa kaç düğüme ulaşılamaz?"""
     G_rev = G.reverse()  # Kenarları ters çevir
@@ -839,25 +805,29 @@ analysis/
 - **Derece (Degree):** Bağlantı sayısı
 - **Merkeziyet (Centrality):** Ağdaki önem
 
-### Metrik Seçimi Gerekçeleri
+### Metrik Seçimi Gerekçeleri (BRS v3)
 
-#### 1. In-Degree (Ağırlık: 0.5)
+#### 1. Betweenness Centrality (Ağırlık: 0.35)
+**Neden en yüksek?**
+- Ağın stratejik "köprülerini" belirler.
+- Bu paketlerin çökmesi ağın iletişimini ve akışını keser.
+- En kritik yapısal risk faktörü.
+
+#### 2. In-Degree (Ağırlık: 0.30)
 **Neden önemli?**
-- Çok pakete hizmet eden paketler kritik altyapı
-- Tek başarısızlık noktası (single point of failure)
-- Örnek: lodash, react (yüzlerce pakete bağımlı)
+- Doğrudan etki alanını (impact radius) gösterir.
+- Bir zarar durumunda kaç paketin anında etkileneceğini belirtir.
+- "Hub" rolü.
 
-#### 2. Betweenness (Ağırlık: 0.3)
-**Neden önemli?**
-- Ağın köprüsü olan paketler
-- Kaldırılınca graf parçalanır
-- Transitif bağımlılık riski
+#### 3. Inverted Clustering (Ağırlık: 0.15)
+**Neden eklendi?**
+- Düşük kümelenme katsayısı (Structural Hole) risklidir.
+- Paket, birbirine bağlı olmayan toplulukları bağlıyorsa (broker), riski artırır.
 
-#### 3. Out-Degree (Ağırlık: 0.2)
+#### 4. Out-Degree (Ağırlık: 0.10)
 **Neden daha düşük?**
-- Çok bağımlılık = Kararsızlık
-- Ama direkt etki daha düşük
-- Örnek: webpack (12 bağımlılık ama kritik değil)
+- Saldırı yüzeyini temsil eder.
+- Yüksek bağımlılık karmaşıklık yaratır ancak sistemik etkisi Betweenness'tan azdır.
 
 ### Literatür Referansları
 Detaylı akademik bağlam için:
