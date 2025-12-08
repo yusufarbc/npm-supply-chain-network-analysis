@@ -1,9 +1,9 @@
 # NPM Supply Chain Network Analysis and Criticality Mapping
 
 
-> **Mapping systemic risks in the NPM ecosystem through topology-independent analysis methods.**
+> **Mapping systemic risks in the NPM ecosystem using topological analysis methods independent of package content.**
 
-This project models dependency relationships between NPM packages as a directed graph and measures structural risk using the **Behavioral Risk Score (BRS)**. The goal is to go beyond traditional vulnerability scans (CVE) and make visible systemic threats arising from a package's *position* within the network.
+While centralized package managers like NPM accelerate software development, the intricate web of dependencies has created a fragile ecosystem. Current security approaches often fail to detect systemic risks stemming from the network's architecture. This project maps these risks by modeling the NPM ecosystem as a directed graph and introducing the **Behavioral Risk Score (BRS)** to identify critical "bridge" nodes that form the backbone of the supply chain.
 
 🔗 **Live Preview:** [yusufarbc.github.io/npm-supply-chain-network-analysis](https://yusufarbc.github.io/npm-supply-chain-network-analysis/)
 
@@ -13,10 +13,10 @@ This project models dependency relationships between NPM packages as a directed 
 
 This study presents critical insights into the topological structure of the NPM ecosystem:
 
-*   **Scale-Free Fragility:** The network exhibits scale-free properties, where targeted attacks on high-BRS nodes cause exponential collapse, while random failures have minimal impact.
-*   **Systemic Fragility:** The collapse of "bridge" packages (high betweenness) that constitute less than 1% of the network threatens the accessibility of more than 40% of the ecosystem.
-*   **Hidden Risks:** Attacks on unpopular but critical packages (low popularity, high centrality) are the most difficult to detect and most devastating in impact.
-*   **Shai-Hulud Validation:** The developed BRS model successfully classified 85% of packages targeted in the Shai-Hulud attack as "High Risk".
+*   **Scale-Free Topology:** The network exhibits scale-free properties, meaning risk is concentrated in a small number of critical nodes that form the ecosystem's backbone.
+*   **Bridge Nodes:** Packages with high *Betweenness Centrality* act as "bridges". Their compromise can propagate risks across disparate sub-clusters, even if they aren't the most downloaded.
+*   **Asymmetric Risk:** There is a weak correlation between popularity (downloads) and structural importance. Security focusing only on popularity misses hidden structural risks.
+*   **Robustness:** Targeted removal of high-BRS nodes leads to a destructive collapse in network integrity (exponential decay in connectivity), validating the BRS model.
 
 ---
 
@@ -93,10 +93,11 @@ result = run_pipeline(
 
 ## 📂 Project Structure
 
-*   `academic/`: Academic paper and LaTeX source files.
+*   `paper/`: Academic paper and LaTeX source files.
 *   `analysis/`: Python analysis code, data fetching and processing modules.
 *   `results/`: Analysis outputs (CSV, JSON, GEXF) and generated plots.
-*   `media/`: Project images.
+*   `docs/`: Web documentation and HTML pages.
+*   `css/`: Shared styles for web pages.
 
 ---
 
