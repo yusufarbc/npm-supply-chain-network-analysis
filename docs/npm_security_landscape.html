@@ -8,158 +8,49 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
     <style>
-        :root {
-            --bg: #0f172a;
-            --surface: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent: #38bdf8;
-            --accent-hover: #0ea5e9;
-            --border: #334155;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 24px;
-        }
-
-        h1,
-        h2,
-        h3,
-        h4 {
-            color: var(--text-primary);
-        }
-
-        h1 {
-            font-size: 2.25rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        h2 {
-            font-size: 1.5rem;
-            border-left: 4px solid var(--accent);
-            padding-left: 1rem;
-            margin-top: 2.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        h3 {
-            font-size: 1.25rem;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        h4 {
-            font-size: 1.1rem;
-            margin-top: 1.5rem;
-            margin-bottom: 0.8rem;
-            font-weight: 600;
-        }
-
-        p {
-            margin-bottom: 1.2rem;
-            color: var(--text-secondary);
-            font-size: 1.05rem;
-        }
-
-        a {
+        /* Page specific overrides */
+        code {
+            font-family: 'Consolas', monospace;
+            font-size: 0.9em;
             color: var(--accent);
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        a:hover {
-            text-decoration: underline;
-            color: var(--accent-hover);
-        }
-
-        ul,
-        ol {
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            padding-left: 1.5rem;
-        }
-
-        li {
-            margin-bottom: 0.5rem;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 2px 4px;
+            border-radius: 4px;
         }
 
         blockquote {
             border-left: 4px solid var(--border);
             margin: 20px 0;
             padding: 12px 20px;
-            background: rgba(30, 41, 59, 0.5);
+            background: rgba(30, 41, 59, 0.05);
             border-radius: 0 8px 8px 0;
             color: var(--text-primary);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-            background: var(--surface);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        th,
-        td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            text-align: left;
-        }
-
-        th {
-            background: rgba(15, 23, 42, 0.5);
-            color: var(--text-secondary);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-        }
-
-        td {
-            color: var(--text-secondary);
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        .nav-breadcrumb {
-            margin-bottom: 2rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        code {
-            font-family: 'Consolas', monospace;
-            font-size: 0.9em;
-            color: #e2e8f0;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 2px 4px;
-            border-radius: 4px;
         }
     </style>
 </head>
 
 <body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../index.html" class="nav-logo">
+                🛡️ NPM Risk Analysis
+            </a>
+            <div class="nav-links">
+                <a href="../index.html" class="nav-link">Dashboard</a>
+                <a href="overview.html" class="nav-link">Overview</a>
+                <a href="literature.html" class="nav-link">Literature Review</a>
+                <a href="methodology.html" class="nav-link">Methodology</a>
+                <a href="npm_security_landscape.html" class="nav-link active">Security Landscape</a>
+                <a href="shai_hulud_incident.html" class="nav-link">Incident Case</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
         <div class="nav-breadcrumb">
-            <a href="../index.html">← Back to Dashboard</a> / <a href="overview.html">Overview</a> / Security Landscape
+            <a href="../index.html">← Back to Dashboard</a> / Security Landscape
         </div>
 
         <h1>🛡️ NPM Security Landscape: Threats and Attack Vectors</h1>
@@ -203,12 +94,14 @@
                         of the copied package but retains all or part of the code.</li>
                     <li><strong>Lockfile Exploitation:</strong> <code>package-lock.json</code> or
                         <code>npm-shrinkwrap.json</code> files are manipulated to "pin" older versions with known
-                        security vulnerabilities in the dependency tree.</li>
+                        security vulnerabilities in the dependency tree.
+                    </li>
                     <li><strong>Security Risk:</strong> When a security vulnerability in the original package is
                         discovered and patched, this fix is not reflected in the Shrinkwrapped Clone. Since tools like
                         <code>npm audit</code> don't know the relationship between the clone and the original package,
                         they cannot detect this vulnerability. This causes known vulnerabilities to persist in the
-                        system through "ghost" versions.</li>
+                        system through "ghost" versions.
+                    </li>
                 </ul>
             </li>
         </ul>
@@ -220,11 +113,13 @@
         </p>
         <ul>
             <li><strong>How It Works?</strong> It exploits a momentary carelessness when a developer types the
-                <code>npm install</code> command.</li>
+                <code>npm install</code> command.
+            </li>
             <li><strong>Technical Detail:</strong> Attackers choose names with low Levenshtein distance (character
                 difference between two words). When the package is installed, malware is executed through
                 <code>preinstall</code> or <code>postinstall</code> scripts in <code>package.json</code>, attempting to
-                steal environment variables or SSH keys from the system.</li>
+                steal environment variables or SSH keys from the system.
+            </li>
         </ul>
 
         <h3>2.3. Dependency Confusion (Dependency Confusion)</h3>
@@ -235,7 +130,8 @@
         <ul>
             <li><strong>How It Works?</strong> Package managers (npm, pip, etc.) by default check both private and
                 public registries. If there are two packages with the same name, they usually prefer the one with the
-                <strong>higher version number</strong>.</li>
+                <strong>higher version number</strong>.
+            </li>
             <li><strong>Technical Detail:</strong>
                 <ul>
                     <li><em>Private Package:</em> <code>@internal/auth-utils</code> (v1.0.0)</li>
@@ -271,7 +167,8 @@
                 infinite loop for political or personal reasons to their popular package.</li>
             <li><strong>Technical Detail:</strong> These attacks are usually distributed through <code>minor</code> or
                 <code>patch</code> updates (expected to be safe according to SemVer rules) and target automatic update
-                mechanisms (e.g., <code>^1.0.0</code>).</li>
+                mechanisms (e.g., <code>^1.0.0</code>).
+            </li>
         </ul>
 
         <hr style="border: 0; border-top: 1px solid var(--border); margin: 3rem 0;">
@@ -315,7 +212,8 @@
         <p>For internal company packages, <strong>Scoped Packages</strong> in the format
             <code>@company/package-name</code> must be used. This informs the NPM registry that the package belongs to a
             user or organization and allows the <code>.npmrc</code> file to route this scope only to the private
-            registry (e.g., Artifactory, Verdaccio) to prevent Dependency Confusion attacks.</p>
+            registry (e.g., Artifactory, Verdaccio) to prevent Dependency Confusion attacks.
+        </p>
 
         <h4>2FA and Token Security</h4>
         <p><strong>Two-Factor Authentication (2FA)</strong> should be made mandatory for NPM accounts (especially for

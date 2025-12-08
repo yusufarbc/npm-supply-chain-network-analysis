@@ -8,141 +8,41 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
     <style>
-        :root {
-            --bg: #0f172a;
-            --surface: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent: #38bdf8;
-            --accent-hover: #0ea5e9;
-            --border: #334155;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 24px;
-        }
-
-        h1,
-        h2,
-        h3 {
-            color: var(--text-primary);
-        }
-
-        h1 {
-            font-size: 2.25rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        h2 {
-            font-size: 1.5rem;
-            border-left: 4px solid var(--accent);
-            padding-left: 1rem;
-            margin-top: 2.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        h3 {
-            font-size: 1.25rem;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin-bottom: 1.2rem;
-            color: var(--text-secondary);
-            font-size: 1.05rem;
-        }
-
-        a {
-            color: var(--accent);
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        a:hover {
-            text-decoration: underline;
-            color: var(--accent-hover);
-        }
-
-        ul,
-        ol {
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            padding-left: 1.5rem;
-        }
-
-        li {
-            margin-bottom: 0.5rem;
-        }
-
+        /* Page specific overrides or extra styles */
         blockquote {
             border-left: 4px solid var(--border);
             margin: 20px 0;
             padding: 12px 20px;
-            background: rgba(30, 41, 59, 0.5);
+            background: rgba(30, 41, 59, 0.05);
+            /* Lighter background for light theme */
             border-radius: 0 8px 8px 0;
             color: var(--text-primary);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-            background: var(--surface);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        th,
-        td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            text-align: left;
-        }
-
-        th {
-            background: rgba(15, 23, 42, 0.5);
-            color: var(--text-secondary);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-        }
-
-        td {
-            color: var(--text-secondary);
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        .nav-breadcrumb {
-            margin-bottom: 2rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
         }
     </style>
 </head>
 
 <body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../index.html" class="nav-logo">
+                🛡️ NPM Risk Analysis
+            </a>
+            <div class="nav-links">
+                <a href="../index.html" class="nav-link">Dashboard</a>
+                <a href="overview.html" class="nav-link">Overview</a>
+                <a href="literature.html" class="nav-link active">Literature Review</a>
+                <a href="methodology.html" class="nav-link">Methodology</a>
+                <a href="npm_security_landscape.html" class="nav-link">Security Landscape</a>
+                <a href="shai_hulud_incident.html" class="nav-link">Incident Case</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
         <div class="nav-breadcrumb">
-            <a href="../index.html">← Back to Dashboard</a> / <a href="overview.html">Overview</a> / Literature Review
+            <a href="../index.html">← Back to Dashboard</a> / Literature Review
         </div>
 
         <h1>📚 Literature Review and Academic Background</h1>
@@ -162,7 +62,8 @@
         <ul>
             <li><strong>Threat Taxonomies:</strong> Threat taxonomies and case compilations classify cross-ecosystem
                 installation/runtime techniques well: <em>Backstabber’s Knife Collection</em> (2015–2019, 174 cases) and
-                <em>Hitchhiker’s Guide</em> provide the baseline.</li>
+                <em>Hitchhiker’s Guide</em> provide the baseline.
+            </li>
             <li><strong>NPM-Focused Risks:</strong> Practical risks and phenomena focused on NPM (Wyss; Kang Yip) are
                 detailed. However, this literature does not directly translate the question "which nodes should be
                 invested in first at the ecosystem level?" into operational prioritization.</li>
@@ -172,7 +73,7 @@
                 usage intensity into a single composite "criticality" metric remains missing.</li>
         </ul>
 
-        <p><strong>Our Contribution:</strong> A <strong>Composite Criticality Score (CCS/BRS)</strong> that fuses
+        <p><strong>Our Contribution:</strong> A <strong>Composite Criticality Score (BRS)</strong> that fuses
             topological measures + usage intensity + maintenance/freshness signals on a directed graph established with
             official resolution rules on the download-based core (Top 1000) of the last 12 months, and operational
             priority lists based on it.</p>
@@ -238,7 +139,7 @@
         </ul>
 
         <blockquote>
-            <strong>Main Message:</strong> When recency and maintenance signals are used together with CRS, they produce
+            <strong>Main Message:</strong> When recency and maintenance signals are used together with BRS, they produce
             actionable <strong>investment plans</strong>.
         </blockquote>
 
@@ -254,7 +155,7 @@
 
         <blockquote>
             <strong>Main Message:</strong> Policy/integrity pipeline emphasizes the role of registry managers and
-            signing infrastructure; <strong>target lists</strong> with CRS feed this pipeline.
+            signing infrastructure; <strong>target lists</strong> with BRS feed this pipeline.
         </blockquote>
 
         <h2>7. Synthesis: Gap → Contribution Mapping</h2>

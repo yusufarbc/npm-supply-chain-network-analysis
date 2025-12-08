@@ -8,135 +8,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
     <style>
-        :root {
-            --bg: #0f172a;
-            --surface: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent: #38bdf8;
-            --accent-hover: #0ea5e9;
-            --border: #334155;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 24px;
-        }
-
-        h1,
-        h2,
-        h3 {
-            color: var(--text-primary);
-        }
-
-        h1 {
-            font-size: 2.25rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        h2 {
-            font-size: 1.5rem;
-            border-left: 4px solid var(--accent);
-            padding-left: 1rem;
-            margin-top: 2.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        h3 {
-            font-size: 1.25rem;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin-bottom: 1.2rem;
-            color: var(--text-secondary);
-            font-size: 1.05rem;
-        }
-
-        a {
-            color: var(--accent);
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        a:hover {
-            text-decoration: underline;
-            color: var(--accent-hover);
-        }
-
-        ul,
-        ol {
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            padding-left: 1.5rem;
-        }
-
-        li {
-            margin-bottom: 0.5rem;
-        }
-
-        blockquote {
-            border-left: 4px solid var(--border);
-            margin: 20px 0;
-            padding: 12px 20px;
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: 0 8px 8px 0;
-            color: var(--text-primary);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-            background: var(--surface);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        th,
-        td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            text-align: left;
-        }
-
-        th {
-            background: rgba(15, 23, 42, 0.5);
-            color: var(--text-secondary);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-        }
-
-        td {
-            color: var(--text-secondary);
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        .nav-breadcrumb {
-            margin-bottom: 2rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
+        /* Page specific overrides */
         .math-block {
             background: var(--surface);
             padding: 20px;
@@ -151,12 +25,28 @@
 </head>
 
 <body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../index.html" class="nav-logo">
+                🛡️ NPM Risk Analysis
+            </a>
+            <div class="nav-links">
+                <a href="../index.html" class="nav-link">Dashboard</a>
+                <a href="overview.html" class="nav-link">Overview</a>
+                <a href="literature.html" class="nav-link">Literature Review</a>
+                <a href="methodology.html" class="nav-link active">Methodology</a>
+                <a href="npm_security_landscape.html" class="nav-link">Security Landscape</a>
+                <a href="shai_hulud_incident.html" class="nav-link">Incident Case</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
         <div class="nav-breadcrumb">
-            <a href="../index.html">← Back to Dashboard</a> / <a href="overview.html">Overview</a> / Methodology
+            <a href="../index.html">← Back to Dashboard</a> / Methodology
         </div>
 
-        <h1>Methodology: Topological Risk Analysis and CRS Model</h1>
+        <h1>Methodology: Topological Risk Analysis and BRS Model</h1>
 
         <h3>1. Data Collection and Network Modeling</h3>
 
@@ -172,7 +62,8 @@
         <ol>
             <li><strong>Seed Set:</strong> The top 1,000 packages by <strong>Dependents</strong> (infrastructure) AND
                 the top 1,000 packages by <strong>Downloads</strong> (popularity) were selected from
-                <code>ecosyste.ms</code>.</li>
+                <code>ecosyste.ms</code>.
+            </li>
             <li><strong>Merging:</strong> These lists were combined, resulting in ~1,452 unique seed packages.</li>
             <li><strong>Depth Scanning:</strong> The dependency tree of these seeds was scanned up to depth level 7.
             </li>
@@ -197,26 +88,27 @@
             <tbody>
                 <tr>
                     <td><strong>In-Degree</strong></td>
-                    <td>Number of packages directly dependent on a package.</td>
-                    <td><strong>Popularity and Impact Radius:</strong> Shows how many projects will be directly affected
-                        in case of a vulnerability.</td>
+                    <td>The count of incoming dependencies.</td>
+                    <td><strong>Direct Impact Radius:</strong> Indicates popularity and the immediate number of projects
+                        affected by a vulnerability ($w=0.30$).</td>
                 </tr>
                 <tr>
                     <td><strong>Out-Degree</strong></td>
-                    <td>Number of external packages a package depends on.</td>
-                    <td><strong>Attack Surface:</strong> Shows how exposed the package is to external threats.</td>
+                    <td>The count of outgoing dependencies.</td>
+                    <td><strong>Attack Surface:</strong> A high out-degree suggests an expanded surface for upstream
+                        attacks ($w=0.10$).</td>
                 </tr>
                 <tr>
                     <td><strong>Betweenness</strong></td>
-                    <td>Frequency of the package being on shortest paths between other nodes.</td>
-                    <td><strong>Bridge Role:</strong> Shows the package's potential to control network traffic and
-                        propagate risk.</td>
+                    <td>Frequency of the node appearing on shortest paths between others.</td>
+                    <td><strong>Bridge Role:</strong> Quantifies the package's role as a network "bridge" controlling
+                        information and risk flow ($w=0.35$).</td>
                 </tr>
                 <tr>
                     <td><strong>Inverted Clustering</strong></td>
-                    <td>1 - ClusteringCoefficient</td>
-                    <td><strong>Structural Holes:</strong> Low clustering suggests a node bridges distinct communities,
-                        increasing systemic risk.</td>
+                    <td>$1 - \text{ClusteringCoefficient}$</td>
+                    <td><strong>Local Fragility:</strong> Captures structural holes. Nodes bridging distinct clusters
+                        without redundant connections pose higher risk ($w=0.15$).</td>
                 </tr>
             </tbody>
         </table>
@@ -230,7 +122,8 @@
         <h3>Normalization</h3>
         <p>Each metric is normalized to the [0,1] range using the Min-Max method. To focus on orders of magnitude rather
             than raw counts, skewed metrics (<strong>Dependents</strong>, <strong>Downloads</strong>,
-            <strong>Staleness</strong>) are <strong>Log-Normalized</strong> before scaling:</p>
+            <strong>Staleness</strong>) are <strong>Log-Normalized</strong> before scaling:
+        </p>
 
         <div class="math-block">
             x' = [ln(1+x) - min(ln(1+x))] / [max(ln(1+x)) - min(ln(1+x))]

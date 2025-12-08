@@ -8,319 +8,26 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0f172a;
-      --surface: #1e293b;
-      --surface-hover: #334155;
-      --border: #334155;
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --accent: #38bdf8;
-      --accent-hover: #0ea5e9;
-      --success: #22c55e;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: var(--bg);
-      color: var(--text-primary);
-      font-family: 'Inter', sans-serif;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    a {
-      color: var(--accent);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    a:hover {
-      color: var(--accent-hover);
-      text-decoration: underline;
-    }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 40px 24px;
-    }
-
-    /* Header */
-    header {
-      margin-bottom: 48px;
-      text-align: center;
-    }
-
-    .badge-group {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      background: rgba(56, 189, 248, 0.1);
-      color: var(--accent);
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      padding: 4px 12px;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin: 0 0 16px 0;
-      background: linear-gradient(to right, #fff, #94a3b8);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .lead {
-      font-size: 1.125rem;
-      color: var(--text-secondary);
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    /* Sections */
-    section {
-      margin-bottom: 64px;
-    }
-
-    h2 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 24px;
-      color: var(--text-primary);
-      border-left: 4px solid var(--accent);
-      padding-left: 16px;
-    }
-
-    /* Stats */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-    }
-
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      transition: transform 0.2s;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--accent);
-    }
-
-    .stat-value {
-      display: block;
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1.2;
-    }
-
-    .stat-label {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-top: 8px;
-      display: block;
-    }
-
-    /* Visualizations */
-    .viz-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 24px;
-    }
-
-    .viz-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .viz-header {
-      padding: 16px 24px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(15, 23, 42, 0.5);
-    }
-
-    .viz-header h3 {
-      margin: 0;
-      font-size: 1rem;
-      font-weight: 600;
-    }
-
-    .viz-body {
-      padding: 24px;
-      background: #0b1120;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 300px;
-      flex-grow: 1;
-    }
-
-    .viz-body img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-      transition: transform 0.3s ease;
-    }
-
-    .viz-body img:hover {
-      transform: scale(1.02);
-    }
-
-    .viz-footer {
-      padding: 16px 24px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(15, 23, 42, 0.5);
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .viz-desc {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin-right: 16px;
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .btn-group {
-      display: flex;
-      gap: 8px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      text-decoration: none;
-      transition: all 0.2s;
-      border: 1px solid transparent;
-      white-space: nowrap;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #0f172a;
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-hover);
-      text-decoration: none;
-    }
-
-    .btn-outline {
-      background: transparent;
-      border-color: var(--border);
-      color: var(--text-secondary);
-    }
-
-    .btn-outline:hover {
-      border-color: var(--text-secondary);
-      color: var(--text-primary);
-      text-decoration: none;
-    }
-
-    /* Tables */
-    .table-container {
-      overflow-x: auto;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      margin-top: 20px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-    }
-
-    th,
-    td {
-      padding: 12px 20px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
-
-    th {
-      background: rgba(15, 23, 42, 0.5);
-      color: var(--text-secondary);
-      font-weight: 600;
-      text-transform: uppercase;
-      font-size: 0.75rem;
-      letter-spacing: 0.05em;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    tr:hover td {
-      background: var(--surface-hover);
-    }
-
-    /* Footer */
-    footer {
-      margin-top: 80px;
-      padding-top: 40px;
-      border-top: 1px solid var(--border);
-      text-align: center;
-      color: var(--text-secondary);
-      font-size: 0.875rem;
-    }
-
-    @media (max-width: 768px) {
-      h1 {
-        font-size: 2rem;
-      }
-
-      .viz-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
+  <nav class="navbar">
+    <div class="nav-content">
+      <a href="index.html" class="nav-logo">
+        🛡️ NPM Risk Analysis
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link active">Dashboard</a>
+        <a href="docs/overview.html" class="nav-link">Overview</a>
+        <a href="docs/literature.html" class="nav-link">Literature Review</a>
+        <a href="docs/methodology.html" class="nav-link">Methodology</a>
+        <a href="docs/npm_security_landscape.html" class="nav-link">Security Landscape</a>
+        <a href="docs/shai_hulud_incident.html" class="nav-link">Incident Case</a>
+      </div>
+    </div>
+  </nav>
+
   <div class="container">
     <header>
       <div class="badge-group">
@@ -328,44 +35,40 @@
         <span class="badge">Network Analysis</span>
         <span class="badge">Cyber Security</span>
       </div>
-      <h1 style="margin-bottom: 8px;">NPM Supply Chain Risk Analysis</h1>
-      <p class="lead" style="margin-bottom: 24px;">
-        This project maps structural risks and critical dependencies in the NPM package ecosystem using topological
-        network analysis methods.
+      <h1 style="margin-bottom: 16px;">NPM Supply Chain Risk Analysis</h1>
+      <p class="lead" style="margin-bottom: 32px;">
+        Visualizing systemic risks and critical dependencies in the NPM supply chain.
       </p>
-      <div>
-        <a href="paper/paper.pdf" class="btn btn-primary" style="font-size: 1rem; padding: 8px 16px;" download>
+      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+        <a href="https://github.com/yusufarbc/npm-supply-chain-network-analysis" target="_blank"
+          class="btn btn-secondary" style="font-size: 1rem; padding: 12px 24px;">
+          <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor" style="margin-right: 8px;">
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+            </path>
+          </svg>
+          GitHub Repo
+        </a>
+        <a href="paper/paper.pdf" class="btn btn-primary" style="font-size: 1rem; padding: 12px 24px;" download>
           📄 Download Paper (PDF)
         </a>
       </div>
     </header>
 
-    <section>
-      <h2>💡 Key Findings</h2>
-      <div style="background: var(--surface); padding: 24px; border-radius: 12px; border: 1px solid var(--border);">
-        <ul style="padding-left: 20px; color: var(--text-secondary);">
-          <li style="margin-bottom: 12px;">
-            <strong style="color: var(--text-primary);">Scale-Free Fragility:</strong> The network exhibits scale-free
-            properties, where targeted attacks on high-BRS nodes cause exponential collapse, while random failures have
-            minimal impact.
-          </li>
-          <li style="margin-bottom: 12px;">
-            <strong style="color: var(--text-primary);">Systemic Fragility:</strong> The collapse of "bridge" packages
-            (high betweenness) that constitute less than 1% of the network threatens the accessibility of more than 40%
-            of the ecosystem.
-          </li>
-          <li style="margin-bottom: 12px;">
-            <strong style="color: var(--text-primary);">Hidden Risks:</strong> Attacks on unpopular but critical
-            packages (low popularity, high centrality) are the most difficult to detect and most devastating in impact.
-          </li>
-          <li>
-            <strong style="color: var(--text-primary);">Shai-Hulud Validation:</strong> The developed BRS model
-            successfully classified 85% of packages targeted in the Shai-Hulud attack as "High Risk".
-          </li>
-        </ul>
+    <section style="margin-bottom: 24px;">
+      <div
+        style="background: var(--surface); padding: 24px; border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h2 style="margin-top: 0; margin-bottom: 8px; font-size: 1.25rem;">📊 Data-Driven Insights</h2>
+          <p style="margin: 0; color: var(--text-secondary);">
+            This dashboard visualizes the topological structure of the NPM ecosystem.
+            For detailed background, methodology, and installation instructions, please refer to the
+            <a href="docs/overview.html"><strong>Project Overview & Guide</strong></a>.
+          </p>
+        </div>
+        <a href="docs/overview.html" class="btn btn-outline">Read Full Guide →</a>
       </div>
     </section>
-
     <section>
       <h2>Network Statistics</h2>
       <div class="stats-grid">
@@ -387,7 +90,6 @@
         </div>
       </div>
     </section>
-
     <section>
       <h2>1. Network Structure and Topology</h2>
       <div class="viz-grid">
@@ -445,7 +147,6 @@
         </div>
       </div>
     </section>
-
     <section>
       <h2>2. Risk and Criticality Analysis</h2>
       <div class="viz-grid">
@@ -521,7 +222,147 @@
           </div>
         </div>
       </div>
+    </section>
 
+    <section>
+      <h2>3. Centrality Metrics</h2>
+      <div class="viz-grid">
+        <!-- Correlations -->
+        <div class="viz-card">
+          <div class="viz-header">
+            <h3>🔄 Metric Correlations</h3>
+          </div>
+          <div class="viz-body">
+            <a href="results/plots/scatter_correlations.png" target="_blank">
+              <img src="results/plots/scatter_correlations.png" alt="Correlations" loading="lazy">
+            </a>
+          </div>
+          <div class="viz-footer">
+            <span class="viz-desc">Correlation matrix between metrics.</span>
+            <div class="btn-group">
+              <a href="results/plots/scatter_correlations.png" download class="btn btn-primary">PNG</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metric Heatmap -->
+        <div class="viz-card">
+          <div class="viz-header">
+            <h3>🔥 Metric Heatmap (Top 20)</h3>
+          </div>
+          <div class="viz-body">
+            <a href="results/plots/metric_heatmap_top20.png" target="_blank">
+              <img src="results/plots/metric_heatmap_top20.png" alt="Metric Heatmap" loading="lazy">
+            </a>
+          </div>
+          <div class="viz-footer">
+            <span class="viz-desc">Heatmap comparing different centrality metrics for top packages.</span>
+            <div class="btn-group">
+              <a href="results/plots/metric_heatmap_top20.png" download class="btn btn-primary">PNG</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>4. Detailed BRS Analysis</h2>
+
+      <!-- BRS Distributions -->
+      <div class="viz-grid" style="margin-bottom: 24px;">
+        <div class="viz-card">
+          <div class="viz-header">
+            <h3>📊 BRS Distribution Analysis</h3>
+          </div>
+          <div class="viz-body">
+            <a href="results/plots/brs_distribution_analysis.png" target="_blank">
+              <img src="results/plots/brs_distribution_analysis.png" alt="BRS Distribution" loading="lazy">
+            </a>
+          </div>
+          <div class="viz-footer">
+            <span class="viz-desc">Distribution of Behavioral Risk Scores across the network.</span>
+            <div class="btn-group">
+              <a href="results/plots/brs_distribution_analysis.png" download class="btn btn-primary">PNG</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <div class="viz-header">
+            <h3>🎭 Risk Distribution by Package Type</h3>
+          </div>
+          <div class="viz-body">
+            <a href="results/plots/risk_distribution_by_type.png" target="_blank">
+              <img src="results/plots/risk_distribution_by_type.png" alt="Risk by Type" loading="lazy">
+            </a>
+          </div>
+          <div class="viz-footer">
+            <span class="viz-desc">Risk scores categorized by package type (Combined vs Dependents vs Downloads).</span>
+            <div class="btn-group">
+              <a href="results/plots/risk_distribution_by_type.png" download class="btn btn-primary">PNG</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BRS Components -->
+      <div class="viz-grid" style="margin-bottom: 24px;">
+        <div class="viz-card">
+          <div class="viz-header">
+            <h3>🧩 BRS Components Breakdown</h3>
+          </div>
+          <div class="viz-body">
+            <a href="results/plots/brs_components_breakdown.png" target="_blank">
+              <img src="results/plots/brs_components_breakdown.png" alt="Components Breakdown" loading="lazy">
+            </a>
+          </div>
+          <div class="viz-footer">
+            <span class="viz-desc">Contribution of each metric to the total risk score.</span>
+            <div class="btn-group">
+              <a href="results/plots/brs_components_breakdown.png" download class="btn btn-primary">PNG</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <div class="viz-header">
+            <h3>🌍 BRS vs Global Reach</h3>
+          </div>
+          <div class="viz-body">
+            <a href="results/plots/brs_vs_global_reach.png" target="_blank">
+              <img src="results/plots/brs_vs_global_reach.png" alt="Global Reach" loading="lazy">
+            </a>
+          </div>
+          <div class="viz-footer">
+            <span class="viz-desc">Correlation between risk score and global ecosystem reach.</span>
+            <div class="btn-group">
+              <a href="results/plots/brs_vs_global_reach.png" download class="btn btn-primary">PNG</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Component Lines -->
+      <div class="viz-card">
+        <div class="viz-header">
+          <h3>📈 Top 20 BRS Component Analysis</h3>
+        </div>
+        <div class="viz-body">
+          <a href="results/plots/top20_brs_component_lines.png" target="_blank">
+            <img src="results/plots/top20_brs_component_lines.png" alt="Component Lines" loading="lazy">
+          </a>
+        </div>
+        <div class="viz-footer">
+          <span class="viz-desc">Detailed breakdown of risk components for the top 20 critical packages.</span>
+          <div class="btn-group">
+            <a href="results/plots/top20_brs_component_lines.png" download class="btn btn-primary">PNG</a>
+          </div>
+        </div>
+      </div>
+
+    </section>
+    <section>
+      <h2> Detailed Data Tables</h2>
       <h3 style="margin-top: 40px;">🚨 Top 20 Critical Packages (Behavioral Risk Score)</h3>
       <div class="table-container">
         <table>
@@ -700,802 +541,6 @@
         </table>
       </div>
 
-      <h3 style="margin-top: 40px;">💥 Top 20 Cascade Impact (Network Damage)</h3>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Package</th>
-              <th>Cascade Impact</th>
-              <th>Risk Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>d3</td>
-              <td>32</td>
-              <td>0.2725</td>
-            </tr>
-            <tr>
-              <td>telecom-mas-agent</td>
-              <td>31</td>
-              <td>0.2976</td>
-            </tr>
-            <tr>
-              <td>workbox-build</td>
-              <td>19</td>
-              <td>0.4320</td>
-            </tr>
-            <tr>
-              <td>cypress</td>
-              <td>17</td>
-              <td>0.3173</td>
-            </tr>
-            <tr>
-              <td>@types/node</td>
-              <td>15</td>
-              <td>0.3327</td>
-            </tr>
-            <tr>
-              <td>postcss-preset-env</td>
-              <td>14</td>
-              <td>0.3172</td>
-            </tr>
-            <tr>
-              <td>react-scripts</td>
-              <td>14</td>
-              <td>0.2865</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-s3</td>
-              <td>9</td>
-              <td>0.2867</td>
-            </tr>
-            <tr>
-              <td>eslint</td>
-              <td>8</td>
-              <td>0.2810</td>
-            </tr>
-            <tr>
-              <td>jsdom</td>
-              <td>8</td>
-              <td>0.2838</td>
-            </tr>
-            <tr>
-              <td>regexpu-core</td>
-              <td>8</td>
-              <td>0.2856</td>
-            </tr>
-            <tr>
-              <td>@babel/helper-plugin-utils</td>
-              <td>7</td>
-              <td>0.4530</td>
-            </tr>
-            <tr>
-              <td>@babel/types</td>
-              <td>7</td>
-              <td>0.3487</td>
-            </tr>
-            <tr>
-              <td>execa</td>
-              <td>7</td>
-              <td>0.2768</td>
-            </tr>
-            <tr>
-              <td>jest-haste-map</td>
-              <td>7</td>
-              <td>0.3003</td>
-            </tr>
-            <tr>
-              <td>cssnano-preset-default</td>
-              <td>6</td>
-              <td>0.2725</td>
-            </tr>
-            <tr>
-              <td>source-map-resolve</td>
-              <td>6</td>
-              <td>0.2523</td>
-            </tr>
-            <tr>
-              <td>micromatch</td>
-              <td>5</td>
-              <td>0.2850</td>
-            </tr>
-            <tr>
-              <td>sax</td>
-              <td>5</td>
-              <td>0.2592</td>
-            </tr>
-            <tr>
-              <td>webpack-dev-server</td>
-              <td>5</td>
-              <td>0.2334</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section>
-      <h2>3. Centrality Metrics</h2>
-      <div class="viz-grid">
-        <!-- Correlations -->
-        <div class="viz-card">
-          <div class="viz-header">
-            <h3>🔄 Metric Correlations</h3>
-          </div>
-          <div class="viz-body">
-            <a href="results/plots/scatter_correlations.png" target="_blank">
-              <img src="results/plots/scatter_correlations.png" alt="Correlations" loading="lazy">
-            </a>
-          </div>
-          <div class="viz-footer">
-            <span class="viz-desc">Correlation matrix between metrics.</span>
-            <div class="btn-group">
-              <a href="results/plots/scatter_correlations.png" download class="btn btn-primary">PNG</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Metric Heatmap -->
-        <div class="viz-card">
-          <div class="viz-header">
-            <h3>🔥 Metric Heatmap (Top 20)</h3>
-          </div>
-          <div class="viz-body">
-            <a href="results/plots/metric_heatmap_top20.png" target="_blank">
-              <img src="results/plots/metric_heatmap_top20.png" alt="Metric Heatmap" loading="lazy">
-            </a>
-          </div>
-          <div class="viz-footer">
-            <span class="viz-desc">Heatmap comparing different centrality metrics for top packages.</span>
-            <div class="btn-group">
-              <a href="results/plots/metric_heatmap_top20.png" download class="btn btn-primary">PNG</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h3 style="margin-top: 40px;">🔗 Top 20 Most Depended-upon Packages (In-Degree)</h3>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Package</th>
-              <th>In-Degree</th>
-              <th>Risk Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>tslib</td>
-              <td>156</td>
-              <td>0.5368</td>
-            </tr>
-            <tr>
-              <td>@babel/helper-plugin-utils</td>
-              <td>110</td>
-              <td>0.4530</td>
-            </tr>
-            <tr>
-              <td>@smithy/types</td>
-              <td>94</td>
-              <td>0.3923</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/types</td>
-              <td>57</td>
-              <td>0.3255</td>
-            </tr>
-            <tr>
-              <td>debug</td>
-              <td>51</td>
-              <td>0.3807</td>
-            </tr>
-            <tr>
-              <td>@smithy/protocol-http</td>
-              <td>45</td>
-              <td>0.2890</td>
-            </tr>
-            <tr>
-              <td>@types/node</td>
-              <td>42</td>
-              <td>0.3327</td>
-            </tr>
-            <tr>
-              <td>call-bound</td>
-              <td>41</td>
-              <td>0.3095</td>
-            </tr>
-            <tr>
-              <td>postcss-value-parser</td>
-              <td>39</td>
-              <td>0.3165</td>
-            </tr>
-            <tr>
-              <td>call-bind</td>
-              <td>36</td>
-              <td>0.3666</td>
-            </tr>
-            <tr>
-              <td>@smithy/util-utf8</td>
-              <td>35</td>
-              <td>0.2881</td>
-            </tr>
-            <tr>
-              <td>@smithy/node-config-provider</td>
-              <td>34</td>
-              <td>0.2820</td>
-            </tr>
-            <tr>
-              <td>es-errors</td>
-              <td>33</td>
-              <td>0.2493</td>
-            </tr>
-            <tr>
-              <td>@babel/types</td>
-              <td>32</td>
-              <td>0.3487</td>
-            </tr>
-            <tr>
-              <td>chalk</td>
-              <td>32</td>
-              <td>0.2930</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/core</td>
-              <td>32</td>
-              <td>0.3080</td>
-            </tr>
-            <tr>
-              <td>@smithy/util-middleware</td>
-              <td>29</td>
-              <td>0.2536</td>
-            </tr>
-            <tr>
-              <td>define-properties</td>
-              <td>29</td>
-              <td>0.3010</td>
-            </tr>
-            <tr>
-              <td>@smithy/smithy-client</td>
-              <td>29</td>
-              <td>0.3151</td>
-            </tr>
-            <tr>
-              <td>@csstools/css-tokenizer</td>
-              <td>28</td>
-              <td>0.2733</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h3 style="margin-top: 40px;">📦 Top 20 Most Dependent Packages (Out-Degree)</h3>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Package</th>
-              <th>Out-Degree</th>
-              <th>Risk Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>telecom-mas-agent</td>
-              <td>83</td>
-              <td>0.2976</td>
-            </tr>
-            <tr>
-              <td>@babel/preset-env</td>
-              <td>70</td>
-              <td>0.4198</td>
-            </tr>
-            <tr>
-              <td>postcss-preset-env</td>
-              <td>69</td>
-              <td>0.3172</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-s3</td>
-              <td>55</td>
-              <td>0.2867</td>
-            </tr>
-            <tr>
-              <td>es-abstract</td>
-              <td>54</td>
-              <td>0.6637</td>
-            </tr>
-            <tr>
-              <td>react-scripts</td>
-              <td>48</td>
-              <td>0.2865</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-s3-control</td>
-              <td>45</td>
-              <td>0.2300</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-lambda</td>
-              <td>44</td>
-              <td>0.2567</td>
-            </tr>
-            <tr>
-              <td>cypress</td>
-              <td>42</td>
-              <td>0.3173</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-dynamodb</td>
-              <td>42</td>
-              <td>0.2549</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-cloudwatch</td>
-              <td>41</td>
-              <td>0.2408</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-cloudfront</td>
-              <td>41</td>
-              <td>0.2393</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-rds</td>
-              <td>41</td>
-              <td>0.2404</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-ec2</td>
-              <td>41</td>
-              <td>0.2451</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-sqs</td>
-              <td>41</td>
-              <td>0.2488</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-cloudformation</td>
-              <td>40</td>
-              <td>0.2425</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-ses</td>
-              <td>40</td>
-              <td>0.2469</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-iam</td>
-              <td>40</td>
-              <td>0.2486</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-sns</td>
-              <td>39</td>
-              <td>0.2419</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/client-cloudsearch</td>
-              <td>39</td>
-              <td>0.2112</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h3 style="margin-top: 40px;">🌉 Top 20 Bridges (Betweenness Centrality)</h3>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Package</th>
-              <th>Betweenness</th>
-              <th>Risk Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>es-abstract</td>
-              <td>0.000319</td>
-              <td>0.6637</td>
-            </tr>
-            <tr>
-              <td>jest-snapshot</td>
-              <td>0.000183</td>
-              <td>0.4629</td>
-            </tr>
-            <tr>
-              <td>@babel/core</td>
-              <td>0.000151</td>
-              <td>0.4428</td>
-            </tr>
-            <tr>
-              <td>@babel/traverse</td>
-              <td>0.000150</td>
-              <td>0.4481</td>
-            </tr>
-            <tr>
-              <td>workbox-build</td>
-              <td>0.000143</td>
-              <td>0.4320</td>
-            </tr>
-            <tr>
-              <td>@jest/transform</td>
-              <td>0.000115</td>
-              <td>0.3776</td>
-            </tr>
-            <tr>
-              <td>get-intrinsic</td>
-              <td>0.000111</td>
-              <td>0.4046</td>
-            </tr>
-            <tr>
-              <td>jest</td>
-              <td>0.000086</td>
-              <td>0.3217</td>
-            </tr>
-            <tr>
-              <td>@babel/preset-env</td>
-              <td>0.000084</td>
-              <td>0.4198</td>
-            </tr>
-            <tr>
-              <td>browserslist</td>
-              <td>0.000083</td>
-              <td>0.3665</td>
-            </tr>
-            <tr>
-              <td>@babel/helper-compilation-targets</td>
-              <td>0.000073</td>
-              <td>0.3312</td>
-            </tr>
-            <tr>
-              <td>@jest/types</td>
-              <td>0.000072</td>
-              <td>0.3623</td>
-            </tr>
-            <tr>
-              <td>reflect.getprototypeof</td>
-              <td>0.000069</td>
-              <td>0.2970</td>
-            </tr>
-            <tr>
-              <td>@jest/core</td>
-              <td>0.000069</td>
-              <td>0.3308</td>
-            </tr>
-            <tr>
-              <td>@babel/generator</td>
-              <td>0.000066</td>
-              <td>0.3040</td>
-            </tr>
-            <tr>
-              <td>@aws-sdk/credential-provider-node</td>
-              <td>0.000061</td>
-              <td>0.3271</td>
-            </tr>
-            <tr>
-              <td>side-channel</td>
-              <td>0.000059</td>
-              <td>0.2980</td>
-            </tr>
-            <tr>
-              <td>jest-message-util</td>
-              <td>0.000059</td>
-              <td>0.3132</td>
-            </tr>
-            <tr>
-              <td>jest-haste-map</td>
-              <td>0.000056</td>
-              <td>0.3003</td>
-            </tr>
-            <tr>
-              <td>call-bind</td>
-              <td>0.000055</td>
-              <td>0.3666</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h3 style="margin-top: 40px;">🌍 Top 20 Ecosystem Critical (Dependents Count)</h3>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Package</th>
-              <th>Dependents Count</th>
-              <th>Risk Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>supports-color</td>
-              <td>5,765,200</td>
-              <td>0.2547</td>
-            </tr>
-            <tr>
-              <td>fs.realpath</td>
-              <td>5,532,257</td>
-              <td>0.2437</td>
-            </tr>
-            <tr>
-              <td>fill-range</td>
-              <td>5,461,792</td>
-              <td>0.2643</td>
-            </tr>
-            <tr>
-              <td>to-regex-range</td>
-              <td>5,300,496</td>
-              <td>0.2563</td>
-            </tr>
-            <tr>
-              <td>fsevents</td>
-              <td>5,289,351</td>
-              <td>0.2425</td>
-            </tr>
-            <tr>
-              <td>resolve</td>
-              <td>5,229,428</td>
-              <td>0.2727</td>
-            </tr>
-            <tr>
-              <td>statuses</td>
-              <td>5,106,018</td>
-              <td>0.2022</td>
-            </tr>
-            <tr>
-              <td>setprototypeof</td>
-              <td>5,068,682</td>
-              <td>0.2456</td>
-            </tr>
-            <tr>
-              <td>unpipe</td>
-              <td>5,053,604</td>
-              <td>0.2445</td>
-            </tr>
-            <tr>
-              <td>fresh</td>
-              <td>5,019,855</td>
-              <td>0.1718</td>
-            </tr>
-            <tr>
-              <td>send</td>
-              <td>4,993,661</td>
-              <td>0.2537</td>
-            </tr>
-            <tr>
-              <td>serve-static</td>
-              <td>4,975,561</td>
-              <td>0.2036</td>
-            </tr>
-            <tr>
-              <td>fast-deep-equal</td>
-              <td>4,968,905</td>
-              <td>0.2507</td>
-            </tr>
-            <tr>
-              <td>fast-json-stable-stringify</td>
-              <td>4,957,551</td>
-              <td>0.2242</td>
-            </tr>
-            <tr>
-              <td>utils-merge</td>
-              <td>4,948,638</td>
-              <td>0.2419</td>
-            </tr>
-            <tr>
-              <td>finalhandler</td>
-              <td>4,946,523</td>
-              <td>0.2310</td>
-            </tr>
-            <tr>
-              <td>readdirp</td>
-              <td>4,905,460</td>
-              <td>0.2462</td>
-            </tr>
-            <tr>
-              <td>yargs</td>
-              <td>4,893,685</td>
-              <td>0.2676</td>
-            </tr>
-            <tr>
-              <td>camelcase</td>
-              <td>4,809,686</td>
-              <td>0.2548</td>
-            </tr>
-            <tr>
-              <td>uri-js</td>
-              <td>4,745,435</td>
-              <td>0.2444</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-
-
-    <section>
-      <h2>Documentation & Research</h2>
-      <div class="viz-grid">
-        <div class="viz-card">
-          <div class="viz-header">
-            <h3>📚 Literature Review</h3>
-          </div>
-          <div class="viz-body" style="padding: 20px; text-align: left; height: auto; display: block;">
-            <p>A comprehensive review of academic studies on NPM ecosystem security, threat taxonomies, and network
-              analysis.</p>
-            <ul style="margin-top: 10px; padding-left: 20px;">
-              <li>Threat Taxonomies (Backstabber’s Knife Collection)</li>
-              <li>NPM Network Topology (Small-world, Scale-free)</li>
-              <li>Dependency Resolution & Propagation</li>
-              <li>Detection Pipelines (Amalfi, Cerebro, OSCAR)</li>
-            </ul>
-          </div>
-          <div class="viz-footer">
-            <a href="docs/literature.html" class="btn btn-primary">Read Full Review</a>
-          </div>
-        </div>
-
-        <div class="viz-card">
-          <div class="viz-header">
-            <h3>🔬 Methodology</h3>
-          </div>
-          <div class="viz-body" style="padding: 20px; text-align: left; height: auto; display: block;">
-            <p>Details on how the NPM supply chain network is modeled using a <strong>Combined Sampling
-                Strategy</strong> (Top Dependents + Top Downloads) and the <strong>v3 Behavioral Risk Score
-                (BRS)</strong>.</p>
-            <ul style="margin-top: 10px; padding-left: 20px;">
-              <li>Combined Sampling (1,452 seed packages)</li>
-              <li>Centrality Metrics (In-Degree, Betweenness, Inverted Clustering)</li>
-              <li>Revised v3 BRS Formula (Log-normalized)</li>
-              <li>Robustness & Cascade Analysis</li>
-            </ul>
-          </div>
-          <div class="viz-footer">
-            <a href="docs/methodology.html" class="btn btn-outline" style="margin-right: 8px;">View Methodology</a>
-            <a href="paper/paper_revised.pdf" class="btn btn-primary" download>📄 Download Research Paper (PDF)</a>
-          </div>
-        </div>
-
-        <div class="viz-card">
-          <div class="viz-header">
-            <h3>🛡️ Security Landscape</h3>
-          </div>
-          <div class="viz-body" style="padding: 20px; text-align: left; height: auto; display: block;">
-            <p>An overview of active threats and attack vectors in the NPM ecosystem.</p>
-            <ul style="margin-top: 10px; padding-left: 20px;">
-              <li>Shrinkwrapped Clones</li>
-              <li>Typosquatting</li>
-              <li>Dependency Confusion</li>
-              <li>Account Takeover & Worms</li>
-            </ul>
-          </div>
-          <div class="viz-footer">
-            <a href="docs/npm_security_landscape.html" class="btn btn-primary">Explore Threats</a>
-          </div>
-        </div>
-
-        <div class="viz-card">
-          <div class="viz-header">
-            <h3>🐛 Case Study: Shai-Hulud</h3>
-          </div>
-          <div class="viz-body" style="padding: 20px; text-align: left; height: auto; display: block;">
-            <p>A deep dive into the "Shai-Hulud" wormable malware attack that targeted the NPM ecosystem in 2025.</p>
-            <ul style="margin-top: 10px; padding-left: 20px;">
-              <li>First Wave: Reconnaissance</li>
-              <li>Second Wave: Autonomous Worm</li>
-              <li>Comparative Technical Analysis</li>
-              <li>Topological Risk Implications</li>
-            </ul>
-          </div>
-          <div class="viz-footer">
-            <a href="docs/shai_hulud_incident.html" class="btn btn-primary">Read Case Study</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-
-    <section>
-      <h2>4. Detailed BRS Analysis</h2>
-
-      <!-- BRS Distributions -->
-      <div class="viz-grid" style="margin-bottom: 24px;">
-        <div class="viz-card">
-          <div class="viz-header">
-            <h3>📊 BRS Distribution Analysis</h3>
-          </div>
-          <div class="viz-body">
-            <a href="results/plots/brs_distribution_analysis.png" target="_blank">
-              <img src="results/plots/brs_distribution_analysis.png" alt="BRS Distribution" loading="lazy">
-            </a>
-          </div>
-          <div class="viz-footer">
-            <span class="viz-desc">Distribution of Behavioral Risk Scores across the network.</span>
-            <div class="btn-group">
-              <a href="results/plots/brs_distribution_analysis.png" download class="btn btn-primary">PNG</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="viz-card">
-          <div class="viz-header">
-            <h3>🎭 Risk Distribution by Package Type</h3>
-          </div>
-          <div class="viz-body">
-            <a href="results/plots/risk_distribution_by_type.png" target="_blank">
-              <img src="results/plots/risk_distribution_by_type.png" alt="Risk by Type" loading="lazy">
-            </a>
-          </div>
-          <div class="viz-footer">
-            <span class="viz-desc">Risk scores categorized by package type (Combined vs Dependents vs Downloads).</span>
-            <div class="btn-group">
-              <a href="results/plots/risk_distribution_by_type.png" download class="btn btn-primary">PNG</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- BRS Components -->
-      <div class="viz-grid" style="margin-bottom: 24px;">
-        <div class="viz-card">
-          <div class="viz-header">
-            <h3>🧩 BRS Components Breakdown</h3>
-          </div>
-          <div class="viz-body">
-            <a href="results/plots/brs_components_breakdown.png" target="_blank">
-              <img src="results/plots/brs_components_breakdown.png" alt="Components Breakdown" loading="lazy">
-            </a>
-          </div>
-          <div class="viz-footer">
-            <span class="viz-desc">Contribution of each metric to the total risk score.</span>
-            <div class="btn-group">
-              <a href="results/plots/brs_components_breakdown.png" download class="btn btn-primary">PNG</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="viz-card">
-          <div class="viz-header">
-            <h3>🌍 BRS vs Global Reach</h3>
-          </div>
-          <div class="viz-body">
-            <a href="results/plots/brs_vs_global_reach.png" target="_blank">
-              <img src="results/plots/brs_vs_global_reach.png" alt="Global Reach" loading="lazy">
-            </a>
-          </div>
-          <div class="viz-footer">
-            <span class="viz-desc">Correlation between risk score and global ecosystem reach.</span>
-            <div class="btn-group">
-              <a href="results/plots/brs_vs_global_reach.png" download class="btn btn-primary">PNG</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Component Lines -->
-      <div class="viz-card">
-        <div class="viz-header">
-          <h3>📈 Top 20 BRS Component Analysis</h3>
-        </div>
-        <div class="viz-body">
-          <a href="results/plots/top20_brs_component_lines.png" target="_blank">
-            <img src="results/plots/top20_brs_component_lines.png" alt="Component Lines" loading="lazy">
-          </a>
-        </div>
-        <div class="viz-footer">
-          <span class="viz-desc">Detailed breakdown of risk components for the top 20 critical packages.</span>
-          <div class="btn-group">
-            <a href="results/plots/top20_brs_component_lines.png" download class="btn btn-primary">PNG</a>
-          </div>
-        </div>
-      </div>
-
     </section>
 
     <section>
@@ -1559,7 +604,6 @@
         </div>
       </div>
     </section>
-
     <footer>
       <p>This work was prepared by <strong>Yusuf Talha Arabacı</strong> for academic research purposes.</p>
       <p style="opacity: 0.6; font-size: 0.75rem;">Last Update: December 2025</p>
