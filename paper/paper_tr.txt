@@ -1,0 +1,96 @@
+npm Yazılım Tedarik Zincirinde Topolojik Risk Analizi ve Kritiklik Haritalaması
+
+Yusuf Talha ARABACI
+Yazılım Mühendisliği Bölümü
+Karabük Üniversitesi
+Karabük, Türkiye
+
+ÖZET
+NPM gibi merkezi paket yöneticileri, kullanıma hazır kod kütüphaneleri sağlayarak yazılım geliştirmeyi hızlandırsa da, bu bileşenler arasındaki karmaşık iç içe geçmiş bağımlılık ağı, ekosistemi karmaşık ve kırılgan bir yapıya dönüştürmüştür. Mevcut güvenlik yaklaşımları, ağın yapısal mimarisinden kaynaklanan ve basamaklı etki potansiyeli taşıyan bu sistemik riskleri tespit etmekte yetersiz kalmaktadır. Bu çalışma, paket içeriğinden bağımsız topolojik analiz yöntemlerini kullanarak NPM ekosistemindeki sistemik riskleri haritalamayı amaçlamaktadır. Analiz kapsamında, NPM ekosisteminde en çok bağımlısı olan ilk 1.000 paket ve bunların 7 derinliğe kadar uzanan bağımlılıkları modellenerek yönlü bir çizge (graf) oluşturulmuştur. Ağ üzerinde iç derece (in-degree), dış derece (out-degree) ve arasılık (betweenness) metrikleri hesaplanmış ve bu değerlerin ağırlıklı kombinasyonu ile özgün bir "Davranışsal Risk Skoru" (BRS) geliştirilmiştir. Hesaplanan metriklerin istatistiksel dağılımı, ağın ölceksiz (scale-free) bir topoloji sergilediğini; dolayısıyla riskin, ekosistemin omurgasını oluşturan az sayıda kritik düğüm üzerinde yoğunlaştığını ortaya koymaktadır. Dayanıklılık simülasyonları, yüksek BRS skoruna sahip paketlerin kaldırılmasının ağ bütünlüğünde yıkıcı bir çöküşe yol açtığını doğrulamıştır. Bu araştırma, kısıtlı güvenlik kaynaklarının rastgele taramalar yerine ekosistemin omurgasını oluşturan kritik düğümlere yönlendirilmesi gerektiğini vurgulayarak literatüre özgün bir topoloji tabanlı bakış açısı kazandırmaktadır.
+
+1. GİRİŞ
+
+Modern yazılım mühendisliği, yeniden kullanılabilir kod kütüphanelerinden oluşan kapsamlı depoları barındıran npm gibi merkezi paket yöneticilerine bağımlıdır. Bu modülerlik geliştirmeyi hızlandırsa da, tek hata noktalarının tüm ekosisteme yayılabildiği kırılgan bir yazılım tedarik zinciri oluşturur. Milyonlarca paket ve karmaşık karşılıklı bağımlılıklarla karakterize edilen npm ekosistemi, önemli bir saldırı yüzeyi sunar. Güvenlik açıkları bağımlılık grafiği boyunca yayılır ve paket bakımındaki aksaklıklar bu sistemik riskleri katlar.
+
+Literatür, npm ağının, sınırlı sayıda paketin veya geliştiricinin orantısız bir etkiye sahip olduğu "küçük dünya" özelliklerini sergilediğini doğrulamaktadır. Bu topolojik yapı, ekosistemi 'typosquatting'den (yazım hatası avcılığı) güvenilir, popüler paketlerin ele geçirilmesine kadar değişen tedarik zinciri saldırılarına maruz bırakır. Makine öğrenimi, dinamik analiz ve meta veri taraması kullanan savunma mekanizmaları önerilmiş olsa da, ekosistemin ölçeği, kapsamlı kod düzeyinde taramayı hesaplama açısından engelleyici kılmaktadır.
+
+Mevcut araştırmalar genellikle riski bilinen güvenlik açıklarına veya bakım durumuna göre ölçmektedir. Ancak, yalnızca ağın topolojik mimarisinden türetilen sistemik riski nicelendiren çok az yaklaşım vardır. Bu çalışma, yalnızca yapısal bağımlılıklara odaklanan içerikten bağımsız bir model sunarak bu boşluğu ele almaktadır. Yapısal olarak kritik paketleri önceliklendirmek için çeşitli merkeziyet ölçümlerini ağırlıklandıran bileşik bir metrik olan Davranışsal Risk Skoru'nu (BRS) öneriyoruz. Amaç, sistemik tedarik zinciri tehditlerine karşı stratejik savunmayı kolaylaştırarak güvenlik kaynaklarının tahsisi için nicel bir çerçeve sağlamaktır.
+
+2. YÖNTEM
+
+2.1 Veri Seti ve Ağ Oluşumu
+
+Ağ modelinin hem altyapısal omurga paketlerini hem de yaygın olarak tüketilen son kullanıcı araçlarını kapsamasını sağlamak için Birleşik Örnekleme Stratejisi benimsedik. ecosyste.ms veri setinden bağımlı sayısına (altyapı) göre ilk 1.000 paketi ve indirme sayısına (popülerlik) göre ilk 1.000 paketi seçtik. Bu listelerin birleştirilmesi, 1.452 paketlik benzersiz bir çekirdek kümesiyle sonuçlandı. Bu çekirdek kümesinin tüm bağımlılıkları yedi derinliğe kadar dolaşıldı. Döngüsel referansları kaldırmak için yapılan ön işlemenin ardından, 1.506 düğüm (paket) ve 3.058 kenardan (bağımlılık) oluşan yönlü bir grafik oluşturduk. Ağ modelleme ve analizi için Python NetworkX kütüphanesi kullanıldı.
+
+2.2 Davranışsal Risk Skoru (BRS) Modeli
+
+BRS, bir paketin yapısal riskini ölçmek için tasarlanmış bileşik bir puandır. Ağın topolojik yapısını paketin ekosistemdeki yaygınlığıyla bütünleştirmek için birden fazla metriği sentezler.
+
+Her paket için aşağıdaki merkeziyet metriklerini hesapladık:
+
+* İç Derece (In-Degree): Gelen bağımlılıkların sayısı, popülerliği ve doğrudan etki yarıçapını gösterir.
+* Dış Derece (Out-Degree): Giden bağımlılıkların sayısı. Yüksek dış derece, genişletilmiş bir saldırı yüzeyine işaret eder.
+* Arasılık Merkeziliği (Betweenness Centrality): Bir düğümün diğer düğümler arasındaki en kısa yollarda görülme sıklığı, ağ "köprüsü" rolünü ölçer.
+* Ters Kümeleme Katsayısı (Inverted Clustering Coefficient): Yerel ağ kırılganlığının bir ölçüsüdür. Düşük kümelenmeyi (yapısal boşluklar) yüksek risk olarak yorumluyoruz, hesaplama: 1 - KümelemeKatsayısı.
+
+Topolojik metriklere ek olarak, Bağımlı Sayısı ve İndirme Sayısı küresel benimsemenin vekilleri olarak dahil edildi.
+
+Metrikler, Min-Max ölçekleme kullanılarak [0,1] aralığına normalize edildi. Ağır kuyruklu dağılımları ele almak için, Bağımlı Sayısı, İndirme Sayısı ve Eskime süresi ölçeklemeden önce logaritmik olarak normalize edildi.
+
+Nihai BRS, ağırlıklı bir toplam olarak hesaplanır:
+
+BRS = 0.35 * Arasılık' + 0.30 * İçDerece' + 0.15 * KümelemeTers' + 0.10 * DışDerece' + 0.05 * Bağımlılar' + 0.05 * İndirmeler'
+
+Ağırlıklandırma gerekçesi şöyledir:
+
+* Arasılık (w=0.35): Bilgi ve risk akışını kontrol eden "köprü" düğümlerine öncelik vermek için en yüksek ağırlık atandı.
+* İç Derece (w=0.30): Doğrudan etki yarıçapını ve anında erişimi temsil eder.
+* Ters Kümeleme (w=0.15): Yerel kırılganlığı yakalar; yedekli bağlantılar olmadan farklı kümeleri birbirine bağlayan düğümler daha yüksek sistemik risk oluşturur.
+* Dış Derece (w=0.10): Yukarı akış (upstream) bağımlılıklarından kaynaklanan genişletilmiş saldırı yüzeyini hesaba katar.
+* Küresel Metrikler (her biri w=0.05): Bağımlılar ve İndirmeler, ham popülerlik yerine yapısal topolojiye öncelik vermek için daha düşük ağırlıklandırılmıştır.
+
+2.3 Dayanıklılık ve Kademeli Etki (Cascade) Analizi
+
+Modeli doğrulamak için hedefli saldırı simülasyonları gerçekleştirdik. Yüksek BRS paketlerinin kaldırılmasının En Büyük Bağlı Bileşen (LCC) boyutu ve genel ağ erişilebilirliği üzerindeki etkisini analiz ettik. Bir kademeli etki analizi, modelin tahmin gücünü daha da doğruladı.
+
+3. SONUÇLAR VE TARTIŞMA
+
+3.1 Ağ Topolojisi ve Yapısal Özellikler
+
+Bağımlılık ağı, kümelenmiş bir topoloji ve ölçeksiz (scale-free) bir yapı sergilemektedir. Hem iç derece hem de dış derece dağılımları, ölçeksiz ağlarla tutarlı olarak ağır kuyruklar sergilemektedir. Bu, paketlerin azınlığının merkezi merkezler olarak işlev gördüğü, çoğunluğun ise az sayıda bağlantıya sahip olduğu anlamına gelir. Sonuç olarak, sistemik risk eşit olarak dağılmaz, ancak kritik paketlerin bir alt kümesinde yoğunlaşır.
+
+3.2 Merkeziyet İlişkileri
+
+Merkeziyet ölçümlerinin analizi, popülerlik (iç derece) ile yapısal önem (arasılık merkeziliği) arasında asimetrik bir ilişki olduğunu göstermektedir. Zayıf korelasyon, düşük popülariteye sahip paketlerin, farklı bileşenleri birbirine bağlayarak ağ bütünlüğünü etkili bir şekilde sürdürebileceğini düşündürmektedir. Yalnızca indirme sayıları gibi popülerlik metriklerine odaklanan güvenlik analizlerinin, bu yapısal riskleri gözden kaçırması muhtemeldir.
+
+3.3 Kritik Düğümlerin Analizi
+
+@babel/helper-plugin-utils gibi yüksek iç dereceye sahip paketler, yaygın olarak kullanılan bağımlılıklardır. @babel/preset-env gibi yüksek dış dereceye sahip paketler, daha geniş bir saldırı yüzeyine işaret eden çok sayıda bağımlılık sergiler. Yüksek arasılık merkeziliğine sahip paketler, köprü görevi görerek ağ bütünlüğü için kritiktir. Örneğin, jest-circus 1 gibi düşük bir iç dereceye sahip olmasına rağmen en yüksek arasılık skoruna sahiptir, bu da yapısal bir köprü olarak rolünün altını çizer. Tersine, @babel/core hem yüksek popülerlik hem de yüksek arasılık sergiler. Bu sonuçlar, tekil metriklerin kapsamlı risk analizi için yetersiz olduğunu ve yapısal olarak kritik köprü paketlerinin tanımlanmasını gerektirdiğini göstermektedir.
+
+3.4 Bileşik Risk Skoru (BRS) Sıralaması
+
+BRS modeli, popülerliği, saldırı yüzeyini ve stratejik konumu birleşik bir metrikte sentezler. Paketler, boyutlar genelindeki toplu puanlar nedeniyle BRS ölçeğinde üst sıralarda yer alır. Bu sıralama, güvenlik denetimi kaynak tahsisi için öncelikli bir liste sağlar.
+
+3.5 Sistemik Etki ve Kademeli Analiz
+
+Simülasyon sonuçları BRS modelinin geçerliliğini doğrulamaktadır. Yüksek BRS paketlerinin kaldırılması, LCC boyutunda önemli bir azalmaya neden olmaktadır. BRS puanı ile ortaya çıkan kademeli etki arasındaki korelasyon, metriğin risk tahmini için faydasını doğrulamaktadır.
+
+4. TARTIŞMA
+
+Bu çalışma, betimsel analizlerin ötesine geçerek npm yazılım tedarik zincirindeki yapısal riskleri ölçen bir model olan Bileşik Risk Skoru'nu (BRS) sunmuştur. BRS sıralaması, güvenlik kaynaklarının operasyonel önceliklendirilmesini kolaylaştırır. Analizimiz, ağ direncini yalnızca popüler paketlere değil, aynı zamanda jest-circus ve @babel/core gibi altyapısal "köprü" paketlerine de bağlı olduğunu göstermektedir. Bu bulgular, Zimmermann ve ark. tarafından tanımlanan "küçük dünya" ağ yapısıyla uyumluyken, riskin ara katman köprü paketlerinde yoğunlaştığını vurgulayarak literatürü genişletmektedir.
+
+Hesaplama kısıtlamaları nedeniyle tüm npm kayıt defteri için bir vekil olarak oluşturulan bağımlılık grafiği üzerinde "Kademeli Etki" simülasyonları gerçekleştirilmiştir. Bu metodoloji, bu yoğun kritik paket ağının topolojik dağılmasının, bağımlı projelerdeki işlevsel başarısızlık için bir vekil görevi gördüğü "tedarik zinciri omurgası" hipotezine dayanmaktadır. Bu yerel omurganın yapısal çöküşü, küresel sistemik riskin bir göstergesi olarak hareket eder.
+
+5. SINIRLILIKLAR
+
+Bu analiz, dinamik çalışma zamanı yüklemesini ve geliştirici hesap itibarını hariç tutarak package.json dosyalarında tanımlanan statik bağımlılıklarla sınırlıdır. Analiz statik bir anlık görüntüyü temsil eder ve zamansal evrimi yakalamaz. Lisans uyumluluğu gibi yasal riskler bu çalışmanın kapsamı dışındadır.
+
+6. SONUÇ
+
+Bu çalışma, npm yazılım tedarik zincirindeki yapısal olarak kritik paketleri belirlemek ve önceliklendirmek için topoloji tabanlı bir metodoloji önermiştir. Birden fazla ağ metriğini Davranışsal Risk Skoru'na (BRS) sentezleyerek, güvenlik kaynak tahsisini yönlendirmek için nicel bir çerçeve sağladık. Bulgular, yapısal olarak kritik düğümlere öncelik vermenin, sistemik riski azaltmak için yalnızca popülerliğe odaklanmaktan daha verimli bir strateji sunduğunu göstermektedir. Gelecekteki araştırmalar, geliştirici sosyal ağlarını ve bakım davranışlarını içerecek şekilde modeli genişletmeli ve genelleştirilmiş tedarik zinciri güvenlik modelleri türetmek için metodolojiyi diğer paket ekosistemlerine uygulamalıdır.
+
+7. TEKRARLANABİLİRLİK
+
+Tekrarlanabilirliği sağlamak için kaynak kodu ve veri setleri mevcuttur:
+* Analiz Kodu: analysis/analysis.ipynb (Python 3, NetworkX, pandas) içinde barındırılmaktadır.
+* Veri Çıktıları: Ara sonuçlar ve metrikler, results/ dizininde CSV formatında mevcuttur.
